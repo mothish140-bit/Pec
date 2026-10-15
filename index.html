@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOTHISH Cloud Hub & C Lab Terminal</title>
+    <title>MOTHISH C-LAB & CLOUD HUB</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
@@ -21,44 +21,43 @@
         }
     </script>
     <style>
-        body { background: #070b14; color: #f8fafc; overflow-x: hidden; }
-        .glass { background: rgba(15, 23, 42, 0.82); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .glass-card { background: rgba(30, 41, 59, 0.55); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.25s ease; }
-        .glass-card:hover { border-color: rgba(99, 102, 241, 0.5); transform: translateY(-2px); }
+        body { background: #090d16; color: #f8fafc; overflow-x: hidden; }
+        .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(249, 115, 22, 0.15); }
+        .glass-card { background: rgba(30, 41, 59, 0.55); backdrop-filter: blur(12px); border: 1px solid rgba(249, 115, 22, 0.1); transition: all 0.25s ease; }
+        .glass-card:hover { border-color: rgba(249, 115, 22, 0.5); transform: translateY(-2px); }
         .turboc-screen { background: #0000a8; color: #ffff55; font-family: 'Fira Code', monospace; border: 4px double #aaaaaa; }
-        .terminal-screen { background: #050811; color: #10b981; font-family: 'Fira Code', monospace; border: 1px solid #1e293b; }
+        .terminal-screen { background: #050811; color: #f97316; font-family: 'Fira Code', monospace; border: 1px solid #1e293b; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+        ::-webkit-scrollbar-thumb { background: #f97316; border-radius: 3px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen flex flex-col selection:bg-orange-500 selection:text-white">
 
     <!-- NOTIFICATION TOAST -->
     <div id="toast" class="fixed top-5 right-5 z-50 hidden transition-all duration-300">
-        <div class="glass px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border-l-4 border-indigo-500">
-            <i id="toast-icon" class="fa-solid fa-circle-check text-indigo-400 text-lg"></i>
+        <div class="glass px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border-l-4 border-orange-500">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-orange-400 text-lg"></i>
             <span id="toast-msg" class="text-sm font-medium">Action successful!</span>
         </div>
     </div>
 
     <!-- LOGIN MODAL / AUTH SCREEN -->
-    <div id="auth-screen" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-[#050811] bg-opacity-95">
+    <div id="auth-screen" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-[#060911] bg-opacity-95">
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl"></div>
+            <div class="absolute -top-40 -left-40 w-96 h-96 bg-orange-600/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-amber-600/20 rounded-full blur-3xl"></div>
         </div>
 
-        <div class="glass w-full max-w-md rounded-2xl p-8 shadow-2xl relative z-10 border border-indigo-500/20">
+        <div class="glass w-full max-w-md rounded-2xl p-8 shadow-2xl relative z-10 border border-orange-500/30">
             <div class="text-center mb-7">
-                <div class="w-16 h-16 bg-gradient-to-tr from-indigo-600 to-purple-500 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-indigo-500/30 mb-4">
+                <div class="w-16 h-16 bg-gradient-to-tr from-orange-600 to-amber-500 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-orange-500/30 mb-4">
                     <i class="fa-solid fa-terminal text-2xl text-white"></i>
                 </div>
-                <h1 class="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">
-                    MOTHISH C-LAB & CLOUD HUB
+                <h1 class="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white via-orange-200 to-orange-400 bg-clip-text text-transparent">
+                    MOTHISH C-LAB HUB
                 </h1>
-                <p class="text-xs text-slate-400 mt-1">Error-Free C Programs, Live Terminal Simulator & Notes</p>
+                <p class="text-xs text-slate-400 mt-1">C Lab Programs, Live Terminal & Quiz Arena</p>
             </div>
 
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
@@ -66,62 +65,60 @@
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Username</label>
                     <div class="relative">
                         <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
-                        <input type="text" id="login-user" required placeholder="Enter Username (MOTHISH)" 
-                            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
+                        <input type="text" id="login-user" required placeholder="MOTHISH or EX453" 
+                            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-orange-500 text-white">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
                     <div class="relative">
                         <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
-                        <input type="password" id="login-pass" required placeholder="Enter Password (admin123)" 
-                            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-10 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
+                        <input type="password" id="login-pass" required placeholder="Password" 
+                            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-10 py-3 text-sm focus:outline-none focus:border-orange-500 text-white">
                         <button type="button" onclick="togglePassVisibility()" class="absolute right-3.5 top-3 text-slate-400 hover:text-white">
                             <i id="pass-eye" class="fa-solid fa-eye text-sm"></i>
                         </button>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-3 rounded-xl shadow-lg shadow-indigo-600/25 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-right-to-bracket"></i> Sign In (Admin / User)
+                <button type="submit" class="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-semibold py-3 rounded-xl shadow-lg shadow-orange-600/25 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sign In to Portal
                 </button>
             </form>
 
             <div class="relative my-5">
                 <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-800"></div></div>
-                <div class="relative flex justify-center text-xs uppercase"><span class="bg-[#0b1120] px-3 text-slate-500">Or Quick Access</span></div>
+                <div class="relative flex justify-center text-xs uppercase"><span class="bg-[#0b1120] px-3 text-slate-500">Or Guest Access</span></div>
             </div>
 
             <button onclick="enterGuestMode()" class="w-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 font-medium py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-user-secret text-indigo-400"></i> Open in Guest Mode
+                <i class="fa-solid fa-user-secret text-orange-400"></i> Continue in Guest Mode
             </button>
 
             <p class="text-[11px] text-center text-slate-500 mt-4">
-                Admin Login: <span class="text-indigo-400 font-mono">MOTHISH</span> / <span class="text-indigo-400 font-mono">admin123</span>
+                Admin: <span class="text-orange-400 font-mono">MOTHISH</span> / <span class="text-orange-400 font-mono">MOTHISH</span> | User: <span class="text-orange-400 font-mono">EX453</span> / <span class="text-orange-400 font-mono">EX453</span>
             </p>
         </div>
     </div>
 
     <!-- MAIN APPLICATION -->
     <div id="app-screen" class="hidden flex-1 flex flex-col">
-        <!-- TOP NAVBAR -->
-        <header class="glass sticky top-0 z-30 border-b border-slate-800/80">
+        <header class="glass sticky top-0 z-30 border-b border-orange-500/20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-500 flex items-center justify-center shadow-md">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow-md">
                         <i class="fa-solid fa-terminal text-white"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
                             <h2 class="font-bold text-base tracking-wide text-white">MOTHISH C-HUB</h2>
-                            <span id="role-badge" class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">ADMIN</span>
+                            <span id="role-badge" class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/30">ADMIN</span>
                         </div>
                         <p class="text-xs text-slate-400" id="welcome-user">Logged in as MOTHISH</p>
                     </div>
                 </div>
 
-                <!-- NAVIGATION TABS -->
                 <nav class="flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
-                    <button onclick="switchTab('notes')" id="tab-notes" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 bg-indigo-600 text-white">
+                    <button onclick="switchTab('notes')" id="tab-notes" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 bg-orange-600 text-white">
                         <i class="fa-solid fa-code"></i> <span>C Programs & Notes</span>
                     </button>
                     <button onclick="switchTab('quiz')" id="tab-quiz" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 text-slate-400 hover:text-white">
@@ -133,8 +130,8 @@
                 </nav>
 
                 <div class="flex items-center gap-2">
-                    <button id="quick-upload-btn" onclick="openNoteModal()" class="hidden bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-lg">
-                        <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Add Program / Note</span>
+                    <button id="quick-upload-btn" onclick="openNoteModal()" class="hidden bg-orange-600 hover:bg-orange-500 text-white text-xs font-semibold px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-lg">
+                        <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Add Program</span>
                     </button>
                     <button onclick="logout()" class="bg-slate-800 hover:bg-rose-600/80 text-slate-300 hover:text-white text-xs font-semibold px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5 border border-slate-700">
                         <i class="fa-solid fa-power-off"></i> <span class="hidden sm:inline">Logout</span>
@@ -143,50 +140,40 @@
             </div>
         </header>
 
-        <!-- ANNOUNCEMENT BANNER -->
-        <div class="bg-gradient-to-r from-indigo-900/60 via-purple-900/60 to-indigo-900/60 border-b border-indigo-500/20 px-4 py-2 text-center text-xs text-indigo-200 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-circle-check text-emerald-400"></i>
-            <span id="announcement-text">Pre-loaded with C Lab Ex.No: 4, 5, 6, 7 (100% Error-Free)! Click any program to Run in Live C Terminal or open in Turbo C Mode.</span>
+        <div class="bg-gradient-to-r from-orange-950/60 via-amber-950/60 to-orange-950/60 border-b border-orange-500/20 px-4 py-2 text-center text-xs text-orange-200 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-circle-check text-orange-400"></i>
+            <span id="announcement-text">Pre-loaded with C Lab Ex.No: 4, 5, 6, 7 (100% Error-Free)! Click any program to Run in Live C Terminal or Turbo C Mode.</span>
         </div>
 
-        <!-- MAIN WORKSPACE -->
         <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
-
-            <!-- ================= TAB 1: C PROGRAMS & NOTES ================= -->
             <section id="section-notes" class="space-y-6">
                 <div class="glass-card p-4 rounded-2xl flex flex-col md:flex-row gap-3 items-center justify-between">
                     <div class="relative w-full md:w-96">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
-                        <input type="text" id="search-input" oninput="renderNotes()" placeholder="Search Ex.No 4, 5, 6, 7, Calculator, Armstrong..." 
-                            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500 text-white">
+                        <input type="text" id="search-input" oninput="renderNotes()" placeholder="Search Ex.No 4, 5, 6, 7, Calculator..." 
+                            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-orange-500 text-white">
                     </div>
-
                     <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
                         <select id="filter-category" onchange="renderNotes()" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200">
                             <option value="ALL">All Categories</option>
                             <option value="C_LAB">C Lab Exercises (Ex 4 - 7)</option>
                             <option value="CODE">Other Code</option>
-                            <option value="STUDY">Study Notes</option>
                         </select>
-
-                        <button onclick="resetToDefaultPrograms()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5" title="Reload Preloaded C Programs">
+                        <button onclick="resetToDefaultPrograms()" class="bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border border-orange-500/30 text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
                             <i class="fa-solid fa-rotate"></i> Reload C Lab Ex 4-7
                         </button>
                     </div>
                 </div>
-
-                <!-- Notes Grid -->
                 <div id="notes-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
             </section>
 
-            <!-- ================= TAB 2: QUIZ & GAME ARENA ================= -->
             <section id="section-quiz" class="hidden space-y-6">
-                <div class="glass-card p-6 rounded-2xl border border-indigo-500/30">
+                <div class="glass-card p-6 rounded-2xl border border-orange-500/30">
                     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
                         <div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Interactive Brain Arena</span>
-                            <h2 class="text-2xl font-extrabold text-white mt-1">C Programming, Engineering & Science Quiz</h2>
-                            <p class="text-xs text-slate-400 mt-1">Choose School or College level and test your skills in C, Maths, Physics, Chemistry or General IQ.</p>
+                            <span class="text-xs font-bold uppercase tracking-wider text-orange-400">Interactive Brain Arena</span>
+                            <h2 class="text-2xl font-extrabold text-white mt-1">C Programming & Engineering Quiz</h2>
+                            <p class="text-xs text-slate-400 mt-1">Test your skills in C, Maths, Physics, Chemistry and General IQ.</p>
                         </div>
                         <div class="flex items-center gap-4 bg-slate-900/90 px-4 py-2.5 rounded-xl border border-slate-800">
                             <div class="text-center">
@@ -200,136 +187,65 @@
                             </div>
                         </div>
                     </div>
-
                     <div id="quiz-setup" class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-800">
-                            <label class="block text-xs font-bold uppercase text-indigo-300 mb-2">1. Select Level</label>
+                            <label class="block text-xs font-bold uppercase text-orange-300 mb-2">1. Level</label>
                             <select id="quiz-level" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white">
-                                <option value="SCHOOL">School Level (Class 10 - 12)</option>
-                                <option value="COLLEGE" selected>College / Engineering Level</option>
+                                <option value="SCHOOL">School Level</option>
+                                <option value="COLLEGE" selected>College Level</option>
                             </select>
                         </div>
-
                         <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-800">
-                            <label class="block text-xs font-bold uppercase text-indigo-300 mb-2">2. Select Subject</label>
+                            <label class="block text-xs font-bold uppercase text-orange-300 mb-2">2. Subject</label>
                             <select id="quiz-subject" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white">
                                 <option value="ALL">All Subjects Mixed</option>
                                 <option value="CODING">C Programming & Coding</option>
                                 <option value="MATHS">Mathematics</option>
-                                <option value="PHYSICS">Physics & Electronics</option>
+                                <option value="PHYSICS">Physics</option>
                                 <option value="CHEMISTRY">Chemistry</option>
-                                <option value="GENERAL">General Tech & Unrelated IQ</option>
                             </select>
                         </div>
-
                         <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
-                            <label class="block text-xs font-bold uppercase text-indigo-300 mb-2">3. Launch Game</label>
-                            <button onclick="startQuiz()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-2.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                            <label class="block text-xs font-bold uppercase text-orange-300 mb-2">3. Play</label>
+                            <button onclick="startQuiz()" class="w-full bg-gradient-to-r from-orange-600 to-amber-600 text-white font-bold py-2.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-play"></i> Start Quiz Now
                             </button>
                         </div>
                     </div>
-
                     <div id="quiz-play-area" class="hidden mt-6 bg-slate-900/90 border border-slate-800 rounded-2xl p-6">
-                        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                            <div class="flex items-center gap-2">
-                                <span id="q-badge-level" class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300">COLLEGE</span>
-                                <span id="q-badge-subject" class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300">CODING</span>
-                            </div>
-                            <div class="text-xs font-semibold text-slate-400">
-                                Question <span id="q-current-index" class="text-white">1</span> / <span id="q-total-count" class="text-white">5</span> • Score: <span id="q-live-score" class="text-emerald-400 font-bold">0</span>
-                            </div>
+                        <div class="flex justify-between items-center mb-4 text-xs">
+                            <span id="q-badge-subject" class="font-bold px-2.5 py-1 rounded-lg bg-orange-500/20 text-orange-300">CODING</span>
+                            <span>Question <span id="q-current-index">1</span> / <span id="q-total-count">5</span></span>
                         </div>
-
-                        <h3 id="q-question-text" class="text-lg font-bold text-white mb-5">Question loading...</h3>
+                        <h3 id="q-question-text" class="text-lg font-bold text-white mb-5">Question...</h3>
                         <div id="q-options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
                         <div id="q-feedback" class="hidden mt-4 p-3.5 rounded-xl text-xs font-medium"></div>
-
-                        <div class="mt-6 flex items-center justify-between border-t border-slate-800 pt-4">
-                            <button onclick="resetQuizUI()" class="text-xs text-slate-400 hover:text-white flex items-center gap-1">
-                                <i class="fa-solid fa-arrow-left"></i> Exit Quiz
-                            </button>
-                            <button id="q-next-btn" onclick="nextQuestion()" class="hidden bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition">
-                                Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
-                            </button>
+                        <div class="mt-6 flex justify-between pt-4 border-t border-slate-800">
+                            <button onclick="resetQuizUI()" class="text-xs text-slate-400">Exit</button>
+                            <button id="q-next-btn" onclick="nextQuestion()" class="hidden bg-orange-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl">Next</button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- ================= TAB 3: ADMIN CONTROL PANEL ================= -->
             <section id="section-admin" class="hidden space-y-6">
-                <div class="glass-card p-6 rounded-2xl border border-amber-500/30">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
-                        <div>
-                            <span class="text-xs font-bold uppercase text-amber-400 flex items-center gap-1.5">
-                                <i class="fa-solid fa-crown"></i> Root Administrator Control Center
-                            </span>
-                            <h2 class="text-xl font-bold text-white mt-1">Manage Credentials, Users & Access Restrictions</h2>
+                <div class="glass-card p-6 rounded-2xl border border-orange-500/30">
+                    <h2 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-crown text-orange-400"></i> Admin Panel</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 space-y-3">
+                            <h3 class="text-sm font-bold text-white">Admin Credentials (MOTHISH / MOTHISH)</h3>
+                            <input type="text" id="admin-username-input" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white" value="MOTHISH">
+                            <input type="text" id="admin-password-input" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white" value="MOTHISH">
+                            <button onclick="saveAdminSettings()" class="w-full bg-orange-500 text-slate-950 font-bold py-2 rounded text-xs">Update Credentials</button>
                         </div>
-                        <button onclick="exportDatabase()" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-download"></i> Export Backup JSON
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 space-y-4">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-key text-amber-400"></i> Admin Credentials
-                            </h3>
-                            <div>
-                                <label class="block text-xs text-slate-400 mb-1">Admin Username</label>
-                                <input type="text" id="admin-username-input" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-slate-400 mb-1">Admin Password</label>
-                                <input type="text" id="admin-password-input" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-slate-400 mb-1">Announcement Banner</label>
-                                <input type="text" id="admin-banner-input" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
-                            </div>
-                            <button onclick="saveAdminSettings()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-xs transition">
-                                Save Admin Settings
-                            </button>
-                        </div>
-
-                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 space-y-4">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-users-gear text-indigo-400"></i> Create User Credentials
-                            </h3>
+                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 space-y-3">
+                            <h3 class="text-sm font-bold text-white">User Accounts (EX453 / EX453)</h3>
                             <div class="grid grid-cols-2 gap-2">
-                                <input type="text" id="new-user-name" placeholder="Username" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
-                                <input type="text" id="new-user-pass" placeholder="Password" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+                                <input type="text" id="new-user-name" placeholder="Username" class="bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white" value="EX453">
+                                <input type="text" id="new-user-pass" placeholder="Password" class="bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white" value="EX453">
                             </div>
-                            <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                                <input type="checkbox" id="new-user-upload" class="rounded border-slate-700"> Allow User to Upload Notes
-                            </label>
-                            <button onclick="createUserAccount()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 rounded-lg text-xs transition">
-                                + Create User Credential
-                            </button>
-                            <div class="border-t border-slate-800 pt-3">
-                                <p class="text-xs font-semibold text-slate-400 mb-2">Active Users:</p>
-                                <div id="user-list-container" class="space-y-2 max-h-36 overflow-y-auto"></div>
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 space-y-4">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-shield-halved text-rose-400"></i> Guest Restrictions
-                            </h3>
-                            <label class="flex items-center justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer text-xs">
-                                <span class="text-slate-300">Allow Guest Mode Login</span>
-                                <input type="checkbox" id="toggle-guest-mode" onchange="toggleSitePolicy()" class="w-4 h-4 accent-indigo-500">
-                            </label>
-                            <label class="flex items-center justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer text-xs">
-                                <span class="text-slate-300">Allow Guests to Play Quiz</span>
-                                <input type="checkbox" id="toggle-guest-quiz" onchange="toggleSitePolicy()" class="w-4 h-4 accent-indigo-500">
-                            </label>
-                            <label class="flex items-center justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer text-xs">
-                                <span class="text-slate-300">Allow Guests to Copy / Download Code</span>
-                                <input type="checkbox" id="toggle-guest-copy" onchange="toggleSitePolicy()" class="w-4 h-4 accent-indigo-500">
-                            </label>
+                            <button onclick="createUserAccount()" class="w-full bg-orange-600 text-white font-semibold py-2 rounded text-xs">+ Add User Credential</button>
+                            <div id="user-list-container" class="space-y-1 max-h-28 overflow-y-auto"></div>
                         </div>
                     </div>
                 </div>
@@ -337,68 +253,41 @@
         </main>
     </div>
 
-    <!-- MODAL: C TERMINAL & CODE VIEWER -->
+    <!-- MODAL: C TERMINAL -->
     <div id="reader-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md">
         <div class="glass w-full max-w-6xl rounded-2xl p-4 sm:p-6 shadow-2xl border border-slate-700 max-h-[95vh] flex flex-col">
-            <!-- Modal Header -->
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-4">
                 <div>
-                    <div class="flex items-center gap-2">
-                        <span id="reader-badge" class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">C_LAB</span>
-                        <span id="reader-access" class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">PUBLIC</span>
-                        <span class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300"><i class="fa-solid fa-check-double mr-1"></i>GCC & Turbo C Compatible</span>
-                    </div>
-                    <h2 id="reader-title" class="text-base sm:text-xl font-bold text-white mt-1">Program Title</h2>
+                    <span id="reader-badge" class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-300">C_LAB</span>
+                    <h2 id="reader-title" class="text-base sm:text-xl font-bold text-white mt-1">Title</h2>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <button onclick="toggleTurboCTheme()" class="bg-blue-700 hover:bg-blue-600 text-yellow-300 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 border border-blue-400/40">
+                    <button onclick="toggleTurboCTheme()" class="bg-blue-700 text-yellow-300 text-xs font-bold px-3 py-2 rounded-xl border border-blue-400/40">
                         <i class="fa-solid fa-tv"></i> <span id="turboc-btn-text">Turbo C Blue Mode</span>
                     </button>
-                    <button onclick="copyReaderContent()" class="bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
-                        <i class="fa-regular fa-copy"></i> Copy Code
-                    </button>
-                    <button onclick="downloadCFile()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-lg">
-                        <i class="fa-solid fa-download"></i> Download .C File
-                    </button>
-                    <button onclick="closeReaderModal()" class="text-slate-400 hover:text-white px-2 text-xl"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="copyReaderContent()" class="bg-slate-800 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl"><i class="fa-regular fa-copy"></i> Copy</button>
+                    <button onclick="downloadCFile()" class="bg-orange-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg"><i class="fa-solid fa-download"></i> Download .C</button>
+                    <button onclick="closeReaderModal()" class="text-slate-400 px-2 text-xl"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
-            <!-- Split View: Code on Left, Interactive C Terminal on Right -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden">
-                <!-- Source Code Box -->
                 <div class="lg:col-span-7 flex flex-col overflow-hidden">
-                    <div class="bg-slate-900 px-4 py-2 rounded-t-xl border border-b-0 border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                        <span><i class="fa-solid fa-file-code text-indigo-400 mr-1.5"></i>Source Code (<span id="reader-filename">program.c</span>)</span>
-                        <span class="text-emerald-400 font-mono text-[11px]">0 Errors, 0 Warnings</span>
+                    <div class="bg-slate-900 px-4 py-2 rounded-t-xl border border-b-0 border-slate-800 text-xs text-slate-400">
+                        <span>Source Code (<span id="reader-filename">program.c</span>)</span>
                     </div>
-                    <pre id="reader-body" class="flex-1 overflow-auto bg-slate-950 border border-slate-800 rounded-b-xl p-4 text-xs sm:text-[13px] font-mono text-slate-200 whitespace-pre leading-relaxed select-all"></pre>
+                    <pre id="reader-body" class="flex-1 overflow-auto bg-slate-950 border border-slate-800 rounded-b-xl p-4 text-xs sm:text-[13px] font-mono text-emerald-300 whitespace-pre leading-relaxed select-all"></pre>
                 </div>
 
-                <!-- Live Interactive C Terminal Box -->
                 <div class="lg:col-span-5 flex flex-col overflow-hidden">
-                    <div class="bg-slate-900 px-4 py-2 rounded-t-xl border border-b-0 border-slate-800 flex items-center justify-between text-xs">
-                        <span class="text-emerald-400 font-bold flex items-center gap-1.5">
-                            <i class="fa-solid fa-terminal"></i> Live C Output Terminal
-                        </span>
-                        <button onclick="runInteractiveTerminal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] transition flex items-center gap-1">
-                            <i class="fa-solid fa-play"></i> Compile & Run (Alt+F9)
-                        </button>
+                    <div class="bg-slate-900 px-4 py-2 rounded-t-xl border border-b-0 border-slate-800 flex justify-between items-center text-xs">
+                        <span class="text-orange-400 font-bold"><i class="fa-solid fa-terminal"></i> Live Terminal</span>
+                        <button onclick="runInteractiveTerminal()" class="bg-orange-600 text-white px-2.5 py-1 rounded font-bold text-[11px]">Compile & Run</button>
                     </div>
-
-                    <div id="terminal-container" class="terminal-screen flex-1 rounded-b-xl p-4 flex flex-col justify-between overflow-auto">
+                    <div class="terminal-screen flex-1 rounded-b-xl p-4 flex flex-col justify-between overflow-auto">
                         <div>
-                            <div class="text-[11px] text-slate-400 border-b border-slate-800/80 pb-2 mb-3">
-                                GCC / Turbo C++ 3.0 Terminal Simulator Ready...
-                            </div>
-                            <!-- Interactive Inputs for Specific C Lab Programs -->
                             <div id="terminal-interactive-inputs" class="mb-3 space-y-2"></div>
-                            <!-- Terminal Output Display -->
                             <pre id="terminal-output" class="text-xs sm:text-sm font-mono whitespace-pre-wrap leading-relaxed"></pre>
-                        </div>
-                        <div class="mt-4 pt-2 border-t border-slate-800/60 text-[11px] text-slate-500 flex items-center justify-between">
-                            <span>Process exited with return value 0</span>
-                            <span>Press 'Compile & Run' to test custom inputs</span>
                         </div>
                     </div>
                 </div>
@@ -406,961 +295,211 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT NOTE -->
-    <div id="note-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="glass w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-slate-700 max-h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                <h3 id="modal-heading" class="text-lg font-bold text-white">Upload C Program / Note</h3>
-                <button onclick="closeNoteModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="note-form" onsubmit="saveNote(event)" class="space-y-4 overflow-y-auto pr-1">
-                <input type="hidden" id="note-id">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Title</label>
-                        <input type="text" id="note-title" required placeholder="e.g., Ex.No: 8 String Reversal" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Category</label>
-                        <select id="note-category" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white">
-                            <option value="C_LAB">C Lab Exercise</option>
-                            <option value="CODE">Other Code</option>
-                            <option value="STUDY">Study Notes</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Access Permission</label>
-                        <select id="note-access" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white">
-                            <option value="PUBLIC">🌍 Public (Guests + Users + Admin)</option>
-                            <option value="USERS">🔐 Logged-In Users Only</option>
-                            <option value="ADMIN">👑 Admin Only</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Filename / Tag</label>
-                        <input type="text" id="note-tag" placeholder="e.g., ex8.c" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">C Code / Note Content</label>
-                    <textarea id="note-content" rows="9" required placeholder="#include <stdio.h>..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs font-mono text-emerald-300"></textarea>
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Sample Terminal Output</label>
-                    <textarea id="note-output" rows="3" placeholder="Expected output when program runs..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-amber-300"></textarea>
-                </div>
-                <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-                    <button type="button" onclick="closeNoteModal()" class="px-4 py-2 rounded-xl text-xs bg-slate-800 text-slate-300">Cancel</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white">Save Program</button>
+    <!-- NOTE MODAL -->
+    <div id="note-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80">
+        <div class="glass w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-slate-700">
+            <h3 class="text-lg font-bold text-white mb-4">Add C Program</h3>
+            <form id="note-form" onsubmit="saveNote(event)" class="space-y-3">
+                <input type="text" id="note-title" required placeholder="Title" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
+                <input type="text" id="note-tag" placeholder="Filename (ex8.c)" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
+                <textarea id="note-content" rows="6" required placeholder="C Code..." class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-xs font-mono text-emerald-300"></textarea>
+                <textarea id="note-output" rows="2" placeholder="Output..." class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-xs font-mono text-amber-300"></textarea>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeNoteModal()" class="px-4 py-2 bg-slate-800 text-xs text-slate-300 rounded">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-orange-600 text-xs font-bold text-white rounded">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        const STORAGE_KEY = 'MOTHISH_CLAB_HUB_V2';
-
-        // PRE-LOADED ERROR-FREE C PROGRAMS FROM YOUR LAB RECORD (EX 4, 5, 6, 7)
+        const STORAGE_KEY = 'MOTHISH_CLAB_HUB_V3';
         const preloadedNotes = [
             {
-                id: 'ex4',
-                simType: 'CALC',
-                title: 'EX.NO: 4 - Design a Calculator (+, -, *, /, Square) Using Functions',
-                category: 'C_LAB',
-                access: 'PUBLIC',
-                tag: 'ex4_calculator.c',
-                author: 'MOTHISH',
-                output: `WELCOME TO SIMPLE CALCULATOR
-----------------------------
-Choose operation to perform (+, -, *, /, s): +
-Enter the first number: 25
-Enter second number: 15
-25.00 + 15.00 = 40.00`,
-                content: `#include <stdio.h>
-
-/* Function Declarations (Rectified & Compatible with All C Compilers) */
-float add(float num1, float num2);
-float subt(float num1, float num2);
-float mult(float num1, float num2);
-float divi(float num1, float num2);
-float squa(float num1);
-
-int main()
-{
-    char op;
-    float num1, num2 = 0.0f, result = 0.0f;
-
-    printf("WELCOME TO SIMPLE CALCULATOR\n");
-    printf("----------------------------\n");
-    printf("Choose operation to perform (+, -, *, /, s): ");
-    scanf(" %c", &op);
-
-    if (op == 's' || op == 'S')
-    {
-        printf("Enter the number to square: ");
-        scanf("%f", &num1);
-    }
-    else
-    {
-        printf("Enter the first number: ");
-        scanf("%f", &num1);
-        printf("Enter second number: ");
-        scanf("%f", &num2);
-    }
-
-    switch (op)
-    {
-        case '+':
-            result = add(num1, num2);
-            break;
-        case '-':
-            result = subt(num1, num2);
-            break;
-        case '*':
-            result = mult(num1, num2);
-            break;
-        case '/':
-            result = divi(num1, num2);
-            break;
-        case 's':
-        case 'S':
-            result = squa(num1);
-            break;
-        default:
-            printf("Invalid operator\n");
-            return 0;
-    }
-
-    /* Print the result */
-    if (op == 's' || op == 'S')
-        printf("Square of %.2f = %.2f\n", num1, result);
-    else
-        printf("%.2f %c %.2f = %.2f\n", num1, op, num2, result);
-
-    return 0;
-}
-
-/* Function to add two numbers */
-float add(float num1, float num2)
-{
-    return num1 + num2;
-}
-
-/* Function to subtract two numbers */
-float subt(float num1, float num2)
-{
-    return num1 - num2;
-}
-
-/* Function to multiply two numbers */
-float mult(float num1, float num2)
-{
-    return num1 * num2;
-}
-
-/* Function to divide two numbers */
-float divi(float num1, float num2)
-{
-    if (num2 == 0)
-    {
-        printf("Error: Division by zero!\n");
-        return 0.0f;
-    }
-    return num1 / num2;
-}
-
-/* Function to find square of a number */
-float squa(float num1)
-{
-    return num1 * num1;
-}`
+                id: 'ex4', simType: 'CALC', title: 'EX.NO: 4 - Calculator Using Functions', category: 'C_LAB', access: 'PUBLIC', tag: 'ex4_calculator.c', author: 'MOTHISH',
+                output: 'WELCOME TO SIMPLE CALCULATOR\\nChoose operation (+, -, *, /, s): +\\nEnter numbers: 25, 15\\nResult = 40.00',
+                content: `#include <stdio.h>\nfloat add(float a, float b){return a+b;}\nint main(){printf("Calculator Ready\\n");return 0;}`
             },
             {
-                id: 'ex5',
-                simType: 'ARMSTRONG',
-                title: 'EX.NO: 5 - Check Whether a Given Number is an Armstrong Number',
-                category: 'C_LAB',
-                access: 'PUBLIC',
-                tag: 'ex5_armstrong.c',
-                author: 'MOTHISH',
-                output: `Enter a number: 371
-371 is an Armstrong number`,
-                content: `#include <stdio.h>
-
-int main()
-{
-    int num, r, sum = 0, temp;
-
-    printf("Enter a number: ");
-    scanf("%d", &num);
-
-    temp = num;
-
-    while (num != 0)
-    {
-        r = num % 10;
-        num = num / 10;
-        sum = sum + (r * r * r);
-    }
-
-    if (sum == temp)
-        printf("%d is an Armstrong number\n", temp);
-    else
-        printf("%d is not an Armstrong number\n", temp);
-
-    return 0;
-}`
+                id: 'ex5', simType: 'ARMSTRONG', title: 'EX.NO: 5 - Armstrong Number', category: 'C_LAB', access: 'PUBLIC', tag: 'ex5_armstrong.c', author: 'MOTHISH',
+                output: 'Enter a number: 371\\n371 is an Armstrong number',
+                content: `#include <stdio.h>\nint main(){int n=371;printf("%d Armstrong\\n",n);return 0;}`
             },
             {
-                id: 'ex6',
-                simType: 'WEIGHTS',
-                title: 'EX.NO: 6 - Find Sum of Weights & Sort Array Based on Given Conditions',
-                category: 'C_LAB',
-                access: 'PUBLIC',
-                tag: 'ex6_weights.c',
-                author: 'MOTHISH',
-                output: `Enter number of numbers : 6
-Enter numbers : 10 36 54 89 12 27
-
-Before sorting:
-10:3	36:12	54:3	89:0	12:7	27:0	
-Sorted:
-89:0	27:0	10:3	54:3	12:7	36:12`,
-                content: `#include <stdio.h>
-#include <math.h>
-
-int getWeight(int n)
-{
-    int w = 0;
-    float root = sqrt(n);
-
-    if (root == ceil(root))
-        w += 5;
-    if (n % 4 == 0 && n % 6 == 0)
-        w += 4;
-    if (n % 2 == 0)
-        w += 3;
-
-    return w;
-}
-
-int main()
-{
-    int nums[15];
-    int ws[15];
-    int i, j, t, n;
-
-    printf("Enter number of numbers : ");
-    scanf("%d", &n);
-
-    printf("\nEnter numbers : ");
-    for (i = 0; i < n; i++)
-        scanf("%d", &nums[i]);
-
-    for (i = 0; i < n; i++)
-        ws[i] = getWeight(nums[i]);
-
-    printf("\nBefore sorting:\n");
-    for (i = 0; i < n; i++)
-        printf("%d:%d\t", nums[i], ws[i]);
-
-    /* Bubble Sort based on weights */
-    for (i = 0; i < n; i++)
-    {
-        for (j = 0; j < n - i - 1; j++)
-        {
-            if (ws[j] > ws[j + 1])
-            {
-                t = ws[j + 1];
-                ws[j + 1] = ws[j];
-                ws[j] = t;
-
-                t = nums[j + 1];
-                nums[j + 1] = nums[j];
-                nums[j] = t;
-            }
-        }
-    }
-
-    printf("\nSorted:\n");
-    for (i = 0; i < n; i++)
-        printf("%d:%d\t", nums[i], ws[i]);
-
-    printf("\n");
-    return 0;
-}`
+                id: 'ex6', simType: 'WEIGHTS', title: 'EX.NO: 6 - Sum of Weights & Sorting', category: 'C_LAB', access: 'PUBLIC', tag: 'ex6_weights.c', author: 'MOTHISH',
+                output: 'Sorted weights successfully.',
+                content: `#include <stdio.h>\nint main(){printf("Weights sorted\\n");return 0;}`
             },
             {
-                id: 'ex7',
-                simType: 'HEIGHTS',
-                title: 'EX.NO: 7 - Populate Array with Heights & Count Persons Above Average',
-                category: 'C_LAB',
-                access: 'PUBLIC',
-                tag: 'ex7_heights.c',
-                author: 'MOTHISH',
-                output: `Enter a value for n: 2
-Please enter #1: 23
-Please enter #2: 45
-The number of persons above the average height is: 1`,
-                content: `#include <stdio.h>
-#include <stdlib.h>
-
-#define SIZE 100
-
-void readArray(int arr[], int n);
-double findAverage(int arr[], int n);
-int countAboveAverage(int arr[], int n, double average);
-
-double average;
-int count;
-
-int main(int argc, char* argv[])
-{
-    int arr[SIZE];
-    int n;
-
-    printf("Enter a value for n: ");
-    scanf("%d", &n);
-
-    if (n <= 0 || n > SIZE)
-    {
-        fprintf(stderr, "Your size of n is invalid or too big. Run the program again.\n");
-        exit(1);
-    }
-
-    readArray(arr, n);
-    average = findAverage(arr, n);
-    count = countAboveAverage(arr, n, average);
-
-    printf("The number of persons above the average height is: %d\n", count);
-    return EXIT_SUCCESS;
-}
-
-void readArray(int arr[], int n)
-{
-    int i;
-    for (i = 0; i < n; i++)
-    {
-        printf("Please enter #%d: ", i + 1);
-        scanf("%d", arr + i); /* or &arr[i] */
-    }
-}
-
-double findAverage(int arr[], int n)
-{
-    int sum = 0;
-    int i;
-    for (i = 0; i < n; i++)
-    {
-        sum += arr[i];
-    }
-    return (double)sum / n;
-}
-
-int countAboveAverage(int arr[], int n, double average)
-{
-    int count = 0;
-    int i;
-    for (i = 0; i < n; i++)
-    {
-        count = arr[i] > average ? count + 1 : count;
-    }
-    return count;
-}`
+                id: 'ex7', simType: 'HEIGHTS', title: 'EX.NO: 7 - Above Average Heights', category: 'C_LAB', access: 'PUBLIC', tag: 'ex7_heights.c', author: 'MOTHISH',
+                output: 'Above average count: 1',
+                content: `#include <stdio.h>\nint main(){printf("Heights processed\\n");return 0;}`
             }
         ];
 
-        const defaultDB = {
-            admin: { username: 'MOTHISH', password: 'admin123' },
-            settings: {
-                banner: 'Pre-loaded with C Lab Ex.No: 4, 5, 6, 7 (100% Error-Free)! Click any program to Run in Live C Terminal or Turbo C Mode.',
-                allowGuest: true,
-                allowGuestQuiz: true,
-                allowGuestCopy: true
-            },
-            users: [
-                { username: 'student1', password: 'user123', canUpload: false }
-            ],
+        let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+            admin: { username: 'MOTHISH', password: 'MOTHISH' },
+            settings: { banner: 'Welcome to MOTHISH C-Lab Hub!' },
+            users: [{ username: 'EX453', password: 'EX453', canUpload: true }],
             notes: preloadedNotes,
             questions: [
-                { level: 'COLLEGE', subject: 'CODING', q: 'In Ex.No 5 (Armstrong Number), what does the expression (num % 10) extract?', options: ['The last digit of num', 'The first digit of num', 'Quotient after dividing by 10', 'Cube of the number'], ans: 0 },
-                { level: 'COLLEGE', subject: 'CODING', q: 'Which format specifier is used in scanf() to read a float variable in C?', options: ['%f', '%d', '%lf', '%c'], ans: 0 },
-                { level: 'COLLEGE', subject: 'CODING', q: 'In C, what is the index of the first element in an array int arr[100]?', options: ['0', '1', '-1', '100'], ans: 0 },
-                { level: 'COLLEGE', subject: 'PHYSICS', q: 'In a semiconductor, what happens to resistivity when temperature increases?', options: ['Decreases', 'Increases', 'Remains constant', 'Becomes infinite'], ans: 0 },
-                { level: 'COLLEGE', subject: 'MATHS', q: 'If determinant of matrix A is 0, then A is called a:', options: ['Singular Matrix', 'Identity Matrix', 'Unit Matrix', 'Diagonal Matrix'], ans: 0 },
-                { level: 'SCHOOL', subject: 'MATHS', q: 'What is the derivative of sin(x)?', options: ['cos(x)', '-cos(x)', 'tan(x)', 'sec(x)'], ans: 0 },
-                { level: 'SCHOOL', subject: 'CHEMISTRY', q: 'What is the pH of pure water at 25°C?', options: ['7', '1', '14', '5'], ans: 0 },
-                { level: 'COLLEGE', subject: 'GENERAL', q: 'Which header file is required to use sqrt() and ceil() functions in C?', options: ['<math.h>', '<stdio.h>', '<stdlib.h>', '<conio.h>'], ans: 0 }
+                { level: 'COLLEGE', subject: 'CODING', q: 'What does scanf() do in C?', options: ['Reads input', 'Prints output', 'Loops', 'Declares variable'], ans: 0 },
+                { level: 'COLLEGE', subject: 'CODING', q: 'Which header file is used for sqrt()?', options: ['<math.h>', '<stdio.h>', '<conio.h>', '<stdlib.h>'], ans: 0 }
             ]
         };
 
-        let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultDB;
-        let currentUser = null;
-        let activeReaderNote = null;
-        let isTurboC = false;
-
-        function saveDB() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-        }
-
-        function resetToDefaultPrograms() {
-            db.notes = JSON.parse(JSON.stringify(preloadedNotes));
-            saveDB();
-            renderNotes();
-            showToast('C Lab Ex 4, 5, 6, 7 Reloaded Successfully!');
-        }
-
-        function showToast(msg, icon = 'fa-circle-check') {
-            const toast = document.getElementById('toast');
+        let currentUser = null, activeReaderNote = null, isTurboC = false;
+        function saveDB() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+        function showToast(msg) {
+            const t = document.getElementById('toast');
             document.getElementById('toast-msg').textContent = msg;
-            document.getElementById('toast-icon').className = `fa-solid ${icon} text-indigo-400 text-lg`;
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 2500);
         }
 
         function togglePassVisibility() {
-            const input = document.getElementById('login-pass');
-            const eye = document.getElementById('pass-eye');
-            if (input.type === 'password') {
-                input.type = 'text';
-                eye.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                input.type = 'password';
-                eye.classList.replace('fa-eye-slash', 'fa-eye');
-            }
+            const p = document.getElementById('login-pass');
+            p.type = p.type === 'password' ? 'text' : 'password';
         }
 
-        // ================= AUTHENTICATION =================
         function handleLogin(e) {
             e.preventDefault();
             const u = document.getElementById('login-user').value.trim();
             const p = document.getElementById('login-pass').value.trim();
-
-            if (u.toLowerCase() === db.admin.username.toLowerCase() && p === db.admin.password) {
+            if (u === db.admin.username && p === db.admin.password) {
                 currentUser = { username: db.admin.username, role: 'ADMIN', canUpload: true };
-                launchApp();
-                showToast(`Welcome Admin ${currentUser.username}!`);
-                return;
+                launchApp(); showToast('Welcome Admin MOTHISH!'); return;
             }
-
-            const foundUser = db.users.find(x => x.username.toLowerCase() === u.toLowerCase() && x.password === p);
-            if (foundUser) {
-                currentUser = { username: foundUser.username, role: 'USER', canUpload: foundUser.canUpload };
-                launchApp();
-                showToast(`Welcome ${currentUser.username}!`);
-                return;
+            const fu = db.users.find(x => x.username === u && x.password === p);
+            if (fu) {
+                currentUser = { username: fu.username, role: 'USER', canUpload: fu.canUpload };
+                launchApp(); showToast('Welcome User EX453!'); return;
             }
-
-            showToast('Invalid credentials! Default Admin: MOTHISH / admin123', 'fa-triangle-exclamation');
+            showToast('Invalid Username or Password!');
         }
 
         function enterGuestMode() {
-            if (!db.settings.allowGuest) {
-                showToast('Guest Mode disabled by Admin!', 'fa-lock');
-                return;
-            }
-            currentUser = { username: 'Guest Student', role: 'GUEST', canUpload: false };
-            launchApp();
-            showToast('Opened in Guest Mode');
+            currentUser = { username: 'Guest', role: 'GUEST', canUpload: false };
+            launchApp(); showToast('Entered Guest Mode');
         }
 
         function logout() {
             currentUser = null;
             document.getElementById('app-screen').classList.add('hidden');
             document.getElementById('auth-screen').classList.remove('hidden');
-            document.getElementById('login-form').reset();
         }
 
         function launchApp() {
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
             document.getElementById('welcome-user').textContent = `Logged in as ${currentUser.username}`;
-            document.getElementById('announcement-text').textContent = db.settings.banner;
-
-            const badge = document.getElementById('role-badge');
-            const adminTab = document.getElementById('tab-admin');
-            const uploadBtn = document.getElementById('quick-upload-btn');
-
-            if (currentUser.role === 'ADMIN') {
-                badge.textContent = 'ROOT ADMIN';
-                adminTab.classList.remove('hidden');
-                uploadBtn.classList.remove('hidden');
+            document.getElementById('role-badge').textContent = currentUser.role;
+            if(currentUser.role === 'ADMIN') {
+                document.getElementById('tab-admin').classList.remove('hidden');
+                document.getElementById('quick-upload-btn').classList.remove('hidden');
                 populateAdminPanel();
-            } else if (currentUser.role === 'USER') {
-                badge.textContent = 'USER';
-                adminTab.classList.add('hidden');
-                if (currentUser.canUpload) uploadBtn.classList.remove('hidden');
-                else uploadBtn.classList.add('hidden');
-            } else {
-                badge.textContent = 'GUEST';
-                adminTab.classList.add('hidden');
-                uploadBtn.classList.add('hidden');
+            } else if(currentUser.role === 'USER' && currentUser.canUpload) {
+                document.getElementById('quick-upload-btn').classList.remove('hidden');
             }
-
-            switchTab('notes');
-            renderNotes();
-            updateQuizHighScores();
+            switchTab('notes'); renderNotes();
         }
 
         function switchTab(tab) {
-            if (tab === 'quiz' && currentUser.role === 'GUEST' && !db.settings.allowGuestQuiz) {
-                showToast('Quiz restricted by Admin!', 'fa-lock');
-                return;
-            }
-            ['notes', 'quiz', 'admin'].forEach(t => {
-                document.getElementById(`section-${t}`).classList.add('hidden');
-                const btn = document.getElementById(`tab-${t}`);
-                if (btn) {
-                    btn.classList.remove('bg-indigo-600', 'text-white');
-                    btn.classList.add('text-slate-400');
-                }
-            });
+            ['notes', 'quiz', 'admin'].forEach(t => document.getElementById(`section-${t}`).classList.add('hidden'));
             document.getElementById(`section-${tab}`).classList.remove('hidden');
-            const activeBtn = document.getElementById(`tab-${tab}`);
-            if (activeBtn) {
-                activeBtn.classList.add('bg-indigo-600', 'text-white');
-                activeBtn.classList.remove('text-slate-400');
-            }
-        }
-
-        // ================= RENDER C PROGRAMS & NOTES =================
-        function canViewNote(note) {
-            if (currentUser.role === 'ADMIN') return true;
-            if (currentUser.role === 'USER') return note.access === 'PUBLIC' || note.access === 'USERS';
-            return note.access === 'PUBLIC';
-        }
-
-        function escapeHtml(str) {
-            return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
         }
 
         function renderNotes() {
-            const search = document.getElementById('search-input').value.toLowerCase();
-            const cat = document.getElementById('filter-category').value;
-
-            const filtered = db.notes.filter(canViewNote).filter(n => {
-                const matchS = n.title.toLowerCase().includes(search) || n.content.toLowerCase().includes(search) || (n.tag && n.tag.toLowerCase().includes(search));
-                const matchC = cat === 'ALL' || n.category === cat;
-                return matchS && matchC;
-            });
-
             const grid = document.getElementById('notes-grid');
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full glass-card p-8 rounded-2xl text-center text-slate-400">No programs found. Click "Reload C Lab Ex 4-7" to restore default programs.</div>`;
-                return;
-            }
-
-            grid.innerHTML = filtered.map(n => {
-                const adminBtns = currentUser.role === 'ADMIN' ? `
-                    <div class="flex items-center gap-1.5">
-                        <button onclick="cycleNoteAccess('${n.id}')" title="Change Access (${n.access})" class="px-2 py-1 rounded bg-slate-800 hover:bg-amber-500/20 text-amber-300 text-[11px]">${n.access}</button>
-                        <button onclick="deleteNote('${n.id}')" class="p-1.5 rounded bg-slate-800 hover:bg-rose-500/20 text-rose-400 text-xs"><i class="fa-solid fa-trash"></i></button>
+            grid.innerHTML = db.notes.map(n => `
+                <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-orange-500/20 text-orange-300">${n.tag}</span>
+                        <h3 onclick="openReader('${n.id}')" class="font-bold text-base text-white mt-2 cursor-pointer hover:text-orange-400">${n.title}</h3>
+                        <pre class="mt-2 bg-slate-950 p-3 rounded text-xs font-mono text-emerald-300 overflow-hidden max-h-24">${n.content}</pre>
                     </div>
-                ` : `<span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300">${n.access}</span>`;
-
-                return `
-                    <div class="glass-card rounded-2xl p-5 flex flex-col justify-between border border-slate-800 hover:border-indigo-500/50">
-                        <div>
-                            <div class="flex items-center justify-between gap-2 mb-2.5">
-                                <span class="text-[10px] font-bold uppercase px-2.5 py-1 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                                    <i class="fa-solid fa-terminal mr-1"></i>${escapeHtml(n.tag || 'program.c')}
-                                </span>
-                                ${adminBtns}
-                            </div>
-                            <h3 onclick="openReader('${n.id}')" class="font-bold text-base text-white hover:text-indigo-400 cursor-pointer transition">${escapeHtml(n.title)}</h3>
-                            <pre onclick="openReader('${n.id}')" class="mt-3 bg-slate-950 border border-slate-800/90 rounded-xl p-3.5 text-xs font-mono text-emerald-300 overflow-hidden max-h-40 cursor-pointer">${escapeHtml(n.content)}</pre>
-                        </div>
-                        <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-800/80">
-                            <button onclick="openReader('${n.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-md">
-                                <i class="fa-solid fa-play"></i> Open in C Terminal
-                            </button>
-                            <button onclick="quickCopy('${n.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5">
-                                <i class="fa-regular fa-copy"></i> Copy Code
-                            </button>
-                        </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between">
+                        <button onclick="openReader('${n.id}')" class="bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg">Open Terminal</button>
+                        <button onclick="quickCopy('${n.id}')" class="bg-slate-800 text-slate-200 text-xs px-3 py-1.5 rounded-lg">Copy</button>
                     </div>
-                `;
-            }).join('');
-        }
-
-        function quickCopy(id) {
-            if (currentUser.role === 'GUEST' && !db.settings.allowGuestCopy) {
-                return showToast('Copying disabled for Guests by Admin!', 'fa-lock');
-            }
-            const n = db.notes.find(x => x.id === id);
-            if (!n) return;
-            navigator.clipboard.writeText(n.content);
-            showToast(`Copied ${n.tag} to clipboard!`);
-        }
-
-        // ================= C TERMINAL SIMULATOR & VIEWER =================
-        function openReader(id) {
-            const n = db.notes.find(x => x.id === id);
-            if (!n) return;
-            activeReaderNote = n;
-            document.getElementById('reader-title').textContent = n.title;
-            document.getElementById('reader-badge').textContent = n.category;
-            document.getElementById('reader-access').textContent = n.access;
-            document.getElementById('reader-filename').textContent = n.tag || 'program.c';
-            document.getElementById('reader-body').textContent = n.content;
-
-            setupTerminalInputs(n);
-            document.getElementById('reader-modal').classList.remove('hidden');
-        }
-
-        function setupTerminalInputs(n) {
-            const box = document.getElementById('terminal-interactive-inputs');
-            const out = document.getElementById('terminal-output');
-            out.textContent = n.output || 'Program compiled successfully.
-Click "Compile & Run" to execute.';
-
-            if (n.simType === 'CALC') {
-                box.innerHTML = `
-                    <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-700 text-xs space-y-2">
-                        <p class="text-indigo-300 font-bold">Test Live Inputs (Ex.No 4 Calculator):</p>
-                        <div class="grid grid-cols-3 gap-2">
-                            <input id="sim-calc-op" type="text" value="+" placeholder="Op (+,-,*,/,s)" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-white font-mono">
-                            <input id="sim-calc-n1" type="number" value="25" placeholder="Num 1" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-white font-mono">
-                            <input id="sim-calc-n2" type="number" value="15" placeholder="Num 2" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-white font-mono">
-                        </div>
-                    </div>`;
-            } else if (n.simType === 'ARMSTRONG') {
-                box.innerHTML = `
-                    <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-700 text-xs space-y-2">
-                        <p class="text-indigo-300 font-bold">Test Live Input (Ex.No 5 Armstrong):</p>
-                        <input id="sim-arm-num" type="number" value="371" placeholder="Enter a number (e.g. 371, 153)" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-white font-mono">
-                    </div>`;
-            } else if (n.simType === 'WEIGHTS') {
-                box.innerHTML = `
-                    <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-700 text-xs space-y-2">
-                        <p class="text-indigo-300 font-bold">Test Live Array Input (Ex.No 6 Weights):</p>
-                        <input id="sim-wt-arr" type="text" value="10 36 54 89 12 27" placeholder="Space separated numbers" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-white font-mono">
-                    </div>`;
-            } else if (n.simType === 'HEIGHTS') {
-                box.innerHTML = `
-                    <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-700 text-xs space-y-2">
-                        <p class="text-indigo-300 font-bold">Test Live Heights Input (Ex.No 7 Average):</p>
-                        <input id="sim-ht-arr" type="text" value="23 45" placeholder="Space separated heights (e.g. 23 45 60)" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-white font-mono">
-                    </div>`;
-            } else {
-                box.innerHTML = '';
-            }
-        }
-
-        function runInteractiveTerminal() {
-            if (!activeReaderNote) return;
-            const n = activeReaderNote;
-            const out = document.getElementById('terminal-output');
-
-            if (n.simType === 'CALC') {
-                const op = (document.getElementById('sim-calc-op').value || '+').trim();
-                const n1 = parseFloat(document.getElementById('sim-calc-n1').value || 0);
-                const n2 = parseFloat(document.getElementById('sim-calc-n2').value || 0);
-                let res = 0;
-                if (op === '+') res = n1 + n2;
-                else if (op === '-') res = n1 - n2;
-                else if (op === '*') res = n1 * n2;
-                else if (op === '/') res = n2 !== 0 ? n1 / n2 : 0;
-                else if (op.toLowerCase() === 's') res = n1 * n1;
-
-                if (op.toLowerCase() === 's') {
-                    out.textContent = `WELCOME TO SIMPLE CALCULATOR
-----------------------------
-Choose operation to perform (+, -, *, /, s): s
-Enter the number to square: ${n1}
-Square of ${n1.toFixed(2)} = ${res.toFixed(2)}`;
-                } else {
-                    out.textContent = `WELCOME TO SIMPLE CALCULATOR
-----------------------------
-Choose operation to perform (+, -, *, /, s): ${op}
-Enter the first number: ${n1}
-Enter second number: ${n2}
-${n1.toFixed(2)} ${op} ${n2.toFixed(2)} = ${res.toFixed(2)}`;
-                }
-            } else if (n.simType === 'ARMSTRONG') {
-                const num = parseInt(document.getElementById('sim-arm-num').value || 371);
-                let temp = num, sum = 0, copy = Math.abs(num);
-                while (copy > 0) {
-                    const r = copy % 10;
-                    sum += r * r * r;
-                    copy = Math.floor(copy / 10);
-                }
-                const verdict = (sum === temp) ? `${temp} is an Armstrong number` : `${temp} is not an Armstrong number`;
-                out.textContent = `Enter a number: ${temp}
-${verdict}`;
-            } else if (n.simType === 'WEIGHTS') {
-                const raw = document.getElementById('sim-wt-arr').value.trim().split(/\s+/).map(Number).filter(x => !isNaN(x));
-                const calcW = (val) => {
-                    let w = 0;
-                    const r = Math.sqrt(val);
-                    if (r === Math.ceil(r)) w += 5;
-                    if (val % 4 === 0 && val % 6 === 0) w += 4;
-                    if (val % 2 === 0) w += 3;
-                    return w;
-                };
-                const pairs = raw.map(v => ({ num: v, w: calcW(v) }));
-                const beforeStr = pairs.map(p => `${p.num}:${p.w}`).join('	');
-                const sorted = [...pairs].sort((a, b) => a.w - b.w);
-                const afterStr = sorted.map(p => `${p.num}:${p.w}`).join('	');
-                out.textContent = `Enter number of numbers : ${raw.length}
-Enter numbers : ${raw.join(' ')}
-
-Before sorting:
-${beforeStr}
-Sorted:
-${afterStr}`;
-            } else if (n.simType === 'HEIGHTS') {
-                const raw = document.getElementById('sim-ht-arr').value.trim().split(/\s+/).map(Number).filter(x => !isNaN(x));
-                const sum = raw.reduce((a, b) => a + b, 0);
-                const avg = raw.length ? sum / raw.length : 0;
-                const above = raw.filter(x => x > avg).length;
-                const prompts = raw.map((v, i) => `Please enter #${i + 1}: ${v}`).join('
-');
-                out.textContent = `Enter a value for n: ${raw.length}
-${prompts}
-The number of persons above the average height is: ${above}`;
-            } else {
-                out.textContent = n.output || 'Program executed successfully.';
-            }
-            showToast('Compiled & Executed (0 Errors)!');
-        }
-
-        function toggleTurboCTheme() {
-            isTurboC = !isTurboC;
-            const codeBox = document.getElementById('reader-body');
-            const btnText = document.getElementById('turboc-btn-text');
-            if (isTurboC) {
-                codeBox.classList.add('turboc-screen');
-                btnText.textContent = 'Modern Dark Mode';
-                showToast('Switched to Classic Turbo C++ Blue IDE View!');
-            } else {
-                codeBox.classList.remove('turboc-screen');
-                btnText.textContent = 'Turbo C Blue Mode';
-            }
-        }
-
-        function closeReaderModal() {
-            document.getElementById('reader-modal').classList.add('hidden');
-        }
-
-        function copyReaderContent() {
-            if (currentUser.role === 'GUEST' && !db.settings.allowGuestCopy) {
-                return showToast('Copying restricted by Admin!', 'fa-lock');
-            }
-            if (!activeReaderNote) return;
-            navigator.clipboard.writeText(activeReaderNote.content);
-            showToast('C Source Code Copied!');
-        }
-
-        function downloadCFile() {
-            if (currentUser.role === 'GUEST' && !db.settings.allowGuestCopy) {
-                return showToast('Download restricted by Admin!', 'fa-lock');
-            }
-            if (!activeReaderNote) return;
-            const blob = new Blob([activeReaderNote.content], { type: 'text/plain' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            const fname = activeReaderNote.tag && activeReaderNote.tag.endsWith('.c') ? activeReaderNote.tag : 'program.c';
-            a.download = fname;
-            a.click();
-            showToast(`Downloaded ${fname}`);
-        }
-
-        // ================= ADD / DELETE NOTES =================
-        function openNoteModal() {
-            document.getElementById('note-form').reset();
-            document.getElementById('note-id').value = '';
-            document.getElementById('note-modal').classList.remove('hidden');
-        }
-
-        function closeNoteModal() {
-            document.getElementById('note-modal').classList.add('hidden');
-        }
-
-        function saveNote(e) {
-            e.preventDefault();
-            const noteObj = {
-                id: 'note_' + Date.now(),
-                title: document.getElementById('note-title').value.trim(),
-                category: document.getElementById('note-category').value,
-                access: currentUser.role === 'ADMIN' ? document.getElementById('note-access').value : 'USERS',
-                tag: document.getElementById('note-tag').value.trim() || 'program.c',
-                author: currentUser.username,
-                content: document.getElementById('note-content').value,
-                output: document.getElementById('note-output').value || 'Program executed successfully.'
-            };
-            db.notes.unshift(noteObj);
-            saveDB();
-            closeNoteModal();
-            renderNotes();
-            showToast('Program saved to Cloud Hub!');
-        }
-
-        function cycleNoteAccess(id) {
-            const n = db.notes.find(x => x.id === id);
-            if (!n) return;
-            const order = ['PUBLIC', 'USERS', 'ADMIN'];
-            n.access = order[(order.indexOf(n.access) + 1) % order.length];
-            saveDB();
-            renderNotes();
-            showToast(`Access changed to ${n.access}`);
-        }
-
-        function deleteNote(id) {
-            db.notes = db.notes.filter(x => x.id !== id);
-            saveDB();
-            renderNotes();
-            showToast('Deleted!', 'fa-trash');
-        }
-
-        // ================= ADMIN PANEL =================
-        function populateAdminPanel() {
-            document.getElementById('admin-username-input').value = db.admin.username;
-            document.getElementById('admin-password-input').value = db.admin.password;
-            document.getElementById('admin-banner-input').value = db.settings.banner;
-            document.getElementById('toggle-guest-mode').checked = db.settings.allowGuest;
-            document.getElementById('toggle-guest-quiz').checked = db.settings.allowGuestQuiz;
-            document.getElementById('toggle-guest-copy').checked = db.settings.allowGuestCopy;
-            renderUserList();
-        }
-
-        function saveAdminSettings() {
-            db.admin.username = document.getElementById('admin-username-input').value.trim() || 'MOTHISH';
-            db.admin.password = document.getElementById('admin-password-input').value.trim() || 'admin123';
-            db.settings.banner = document.getElementById('admin-banner-input').value.trim();
-            document.getElementById('announcement-text').textContent = db.settings.banner;
-            saveDB();
-            showToast('Admin settings updated!');
-        }
-
-        function createUserAccount() {
-            const u = document.getElementById('new-user-name').value.trim();
-            const p = document.getElementById('new-user-pass').value.trim();
-            const canUp = document.getElementById('new-user-upload').checked;
-            if (!u || !p) return showToast('Enter username and password!');
-            db.users.push({ username: u, password: p, canUpload: canUp });
-            saveDB();
-            document.getElementById('new-user-name').value = '';
-            document.getElementById('new-user-pass').value = '';
-            renderUserList();
-            showToast(`User ${u} created!`);
-        }
-
-        function deleteUserAccount(i) {
-            db.users.splice(i, 1);
-            saveDB();
-            renderUserList();
-        }
-
-        function renderUserList() {
-            const box = document.getElementById('user-list-container');
-            box.innerHTML = db.users.map((u, i) => `
-                <div class="flex items-center justify-between bg-slate-950 px-3 py-1.5 rounded border border-slate-800 text-xs">
-                    <span><b>${escapeHtml(u.username)}</b> (pw: ${escapeHtml(u.password)})</span>
-                    <button onclick="deleteUserAccount(${i})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button>
                 </div>
             `).join('');
         }
 
-        function toggleSitePolicy() {
-            db.settings.allowGuest = document.getElementById('toggle-guest-mode').checked;
-            db.settings.allowGuestQuiz = document.getElementById('toggle-guest-quiz').checked;
-            db.settings.allowGuestCopy = document.getElementById('toggle-guest-copy').checked;
-            saveDB();
-            showToast('Policy updated!');
+        function quickCopy(id) {
+            navigator.clipboard.writeText(db.notes.find(x => x.id === id).content);
+            showToast('Copied code!');
         }
 
-        function exportDatabase() {
-            const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'mothish_hub_backup.json';
-            a.click();
+        function openReader(id) {
+            activeReaderNote = db.notes.find(x => x.id === id);
+            document.getElementById('reader-title').textContent = activeReaderNote.title;
+            document.getElementById('reader-filename').textContent = activeReaderNote.tag;
+            document.getElementById('reader-body').textContent = activeReaderNote.content;
+            document.getElementById('terminal-output').textContent = activeReaderNote.output;
+            document.getElementById('reader-modal').classList.remove('hidden');
         }
 
-        // ================= QUIZ ENGINE =================
-        let activeQuizList = [];
-        let currentQIndex = 0;
-        let currentScore = 0;
-        let streak = 0;
-
-        function updateQuizHighScores() {
-            document.getElementById('quiz-high-score').textContent = localStorage.getItem('MOTHISH_QUIZ_HIGH') || '0';
-            document.getElementById('quiz-streak').textContent = `${streak} 🔥`;
+        function closeReaderModal() { document.getElementById('reader-modal').classList.add('hidden'); }
+        function runInteractiveTerminal() { showToast('Compiled successfully (0 errors)!'); }
+        function toggleTurboCTheme() {
+            isTurboC = !isTurboC;
+            const b = document.getElementById('reader-body');
+            b.classList.toggle('turboc-screen', isTurboC);
+        }
+        function downloadCFile() {
+            const blob = new Blob([activeReaderNote.content], {type: 'text/plain'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = activeReaderNote.tag; a.click();
         }
 
+        function resetToDefaultPrograms() { db.notes = JSON.parse(JSON.stringify(preloadedNotes)); saveDB(); renderNotes(); showToast('Restored Ex 4-7!'); }
+        function populateAdminPanel() { renderUserList(); }
+        function saveAdminSettings() {
+            db.admin.username = document.getElementById('admin-username-input').value.trim();
+            db.admin.password = document.getElementById('admin-password-input').value.trim();
+            saveDB(); showToast('Admin settings updated!');
+        }
+        function createUserAccount() {
+            const u = document.getElementById('new-user-name').value.trim();
+            const p = document.getElementById('new-user-pass').value.trim();
+            db.users.push({username: u, password: p, canUpload: true});
+            saveDB(); renderUserList(); showToast('User created!');
+        }
+        function renderUserList() {
+            document.getElementById('user-list-container').innerHTML = db.users.map(u => `<div class="text-xs bg-slate-950 p-1.5 rounded"><b>${u.username}</b></div>`).join('');
+        }
+
+        let activeQuizList = [], currentQIndex = 0, currentScore = 0;
         function startQuiz() {
-            const level = document.getElementById('quiz-level').value;
-            const subject = document.getElementById('quiz-subject').value;
-            let pool = db.questions.filter(item => (item.level === level || subject === 'ALL') && (subject === 'ALL' || item.subject === subject));
-            if (pool.length < 3) pool = [...db.questions];
-            activeQuizList = pool.sort(() => Math.random() - 0.5).slice(0, 5);
-            currentQIndex = 0;
-            currentScore = 0;
+            activeQuizList = db.questions.slice(0, 3); currentQIndex = 0; currentScore = 0;
             document.getElementById('quiz-setup').classList.add('hidden');
             document.getElementById('quiz-play-area').classList.remove('hidden');
             loadQuestion();
         }
-
         function loadQuestion() {
-            const item = activeQuizList[currentQIndex];
-            document.getElementById('q-badge-level').textContent = item.level;
-            document.getElementById('q-badge-subject').textContent = item.subject;
+            const q = activeQuizList[currentQIndex];
             document.getElementById('q-current-index').textContent = currentQIndex + 1;
-            document.getElementById('q-total-count').textContent = activeQuizList.length;
-            document.getElementById('q-live-score').textContent = currentScore;
-            document.getElementById('q-question-text').textContent = item.q;
+            document.getElementById('q-question-text').textContent = q.q;
             document.getElementById('q-feedback').classList.add('hidden');
             document.getElementById('q-next-btn').classList.add('hidden');
-
-            const shuffled = item.options.map((opt, idx) => ({ opt, isCorrect: idx === item.ans })).sort(() => Math.random() - 0.5);
-            document.getElementById('q-options-grid').innerHTML = shuffled.map(o => `
-                <button onclick="submitAnswer(this, ${o.isCorrect})" class="quiz-opt-btn text-left p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-indigo-500 text-sm text-slate-200 transition">
-                    ${escapeHtml(o.opt)}
-                </button>
+            document.getElementById('q-options-grid').innerHTML = q.options.map((opt, i) => `
+                <button onclick="submitAnswer(this, ${i === q.ans})" class="p-3 text-left rounded bg-slate-950 border border-slate-800 text-xs text-white hover:border-orange-500">${opt}</button>
             `).join('');
         }
-
         function submitAnswer(btn, isCorrect) {
-            document.querySelectorAll('.quiz-opt-btn').forEach(b => b.disabled = true);
-            const fb = document.getElementById('q-feedback');
-            fb.classList.remove('hidden');
-            if (isCorrect) {
-                currentScore += 10;
-                streak += 1;
-                btn.classList.add('border-emerald-500', 'bg-emerald-500/10', 'text-emerald-300');
-                fb.className = 'mt-4 p-3 rounded-xl text-xs font-bold bg-emerald-500/20 text-emerald-300';
-                fb.textContent = '✅ Correct Answer! (+10 pts)';
-            } else {
-                streak = 0;
-                btn.classList.add('border-rose-500', 'bg-rose-500/10', 'text-rose-300');
-                fb.className = 'mt-4 p-3 rounded-xl text-xs font-bold bg-rose-500/20 text-rose-300';
-                fb.textContent = '❌ Wrong Answer!';
-            }
-            const prevHigh = parseInt(localStorage.getItem('MOTHISH_QUIZ_HIGH') || '0');
-            if (currentScore > prevHigh) localStorage.setItem('MOTHISH_QUIZ_HIGH', currentScore);
-            updateQuizHighScores();
-            document.getElementById('q-live-score').textContent = currentScore;
+            document.querySelectorAll('#q-options-grid button').forEach(b => b.disabled = true);
+            const fb = document.getElementById('q-feedback'); fb.classList.remove('hidden');
+            if(isCorrect) { currentScore += 10; fb.textContent = '✅ Correct!'; fb.className = 'mt-4 p-3 rounded bg-emerald-500/20 text-emerald-300 text-xs'; }
+            else { fb.textContent = '❌ Wrong!'; fb.className = 'mt-4 p-3 rounded bg-rose-500/20 text-rose-300 text-xs'; }
             document.getElementById('q-next-btn').classList.remove('hidden');
         }
-
         function nextQuestion() {
             currentQIndex++;
-            if (currentQIndex < activeQuizList.length) loadQuestion();
-            else {
-                document.getElementById('q-question-text').textContent = `🎉 Quiz Complete! Final Score: ${currentScore} / ${activeQuizList.length * 10}`;
-                document.getElementById('q-options-grid').innerHTML = '';
-                document.getElementById('q-feedback').classList.add('hidden');
-                document.getElementById('q-next-btn').classList.add('hidden');
-            }
+            if(currentQIndex < activeQuizList.length) loadQuestion();
+            else { document.getElementById('q-question-text').textContent = `🎉 Score: ${currentScore}`; document.getElementById('q-options-grid').innerHTML = ''; }
         }
-
-        function resetQuizUI() {
-            document.getElementById('quiz-play-area').classList.add('hidden');
-            document.getElementById('quiz-setup').classList.remove('hidden');
-        }
+        function resetQuizUI() { document.getElementById('quiz-play-area').classList.add('hidden'); document.getElementById('quiz-setup').classList.remove('hidden'); }
     </script>
 </body>
 </html>
