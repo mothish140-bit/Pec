@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOTHISH Hub | Notes, Code & Quiz Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #090d16;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.14) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.25);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5;
+        }
+
+        .code-block {
+            background: #070a12;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .animate-glow {
+            animation: pulseGlow 2.5s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- ==========================================
+         1. AUTHENTICATION / LOGIN VIEW
+    =========================================== -->
+    <div id="authScreen" class="min-h-screen flex items-center justify-center p-4 relative">
+        <!-- Decorative Background Orbs -->
+        <div class="absolute w-72 h-72 bg-brand-600/20 rounded-full blur-3xl -top-10 -left-10 pointer-events-none"></div>
+        <div class="absolute w-72 h-72 bg-purple-600/20 rounded-full blur-3xl bottom-10 right-10 pointer-events-none"></div>
+
+        <div class="glass w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl relative z-10 border border-white/10">
+            <!-- Logo & Header -->
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-500/30">
+                    <i class="fa-solid fa-shield-halved text-2xl text-white"></i>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">
+                    MOTHISH HUB
+                </h1>
+                <p class="text-slate-400 text-sm mt-1">Secure Cloud Notes, Code Vault & Quiz Arena</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                        <i class="fa-regular fa-user mr-1.5 text-brand-400"></i> Username
+                    </label>
+                    <input type="text" id="loginUsername" required placeholder="Enter Username (e.g. MOTHISH)" 
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                        <i class="fa-solid fa-lock mr-1.5 text-brand-400"></i> Password
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="loginPassword" required placeholder="Enter Password" 
+                            class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition pr-11">
+                        <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEyeIcon')" 
+                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1">
+                            <i id="loginEyeIcon" class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" 
+                    class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-brand-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 text-white font-semibold shadow-lg shadow-brand-600/30 transition flex items-center justify-center gap-2">
+                    <span>Sign In to Vault</span>
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-slate-700/70"></div>
+                </div>
+                <div class="relative flex justify-center text-xs uppercase">
+                    <span class="bg-[#0f172a] px-3 text-slate-400 font-medium">Or Quick Access</span>
+                </div>
+            </div>
+
+            <!-- Guest Mode Button -->
+            <button type="button" onclick="enterGuestMode()" 
+                class="w-full py-3 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600/50 text-slate-200 font-medium transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-user-astronaut text-amber-400"></i>
+                <span>Continue in Guest Mode</span>
+            </button>
+
+            <!-- Security Note -->
+            <div class="mt-6 pt-4 border-t border-slate-800/80 text-center">
+                <p class="text-xs text-slate-400 flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-key text-emerald-400"></i>
+                    <span>Role-Based Encryption & Access Control Active</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         2. MAIN APPLICATION LAYOUT
+    =========================================== -->
+    <div id="appScreen" class="hidden min-h-screen flex flex-col">
+        
+        <!-- Top Navigation Bar -->
+        <header class="glass sticky top-0 z-40 border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 sm:h-20 gap-3">
+                    
+                    <!-- Brand Logo -->
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('notes')">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center shadow-md shadow-brand-500/20">
+                            <i class="fa-solid fa-code-branch text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-lg tracking-tight text-white">MOTHISH</span>
+                                <span id="roleBadge" class="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full">ADMIN</span>
+                            </div>
+                            <p class="text-xs text-slate-400 hidden sm:block">Personal Cloud Repository & Learning Portal</p>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Links -->
+                    <nav class="flex items-center gap-1 sm:gap-2 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
+                        <button onclick="switchTab('notes')" id="tabBtn-notes" 
+                            class="nav-tab px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2 bg-brand-600 text-white shadow">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <span>Notes & Code</span>
+                        </button>
+                        <button onclick="switchTab('quiz')" id="tabBtn-quiz" 
+                            class="nav-tab px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition flex items-center gap-2 text-slate-300 hover:text-white">
+                            <i class="fa-solid fa-gamepad"></i>
+                            <span>Quiz & Game</span>
+                        </button>
+                        <button onclick="switchTab('admin')" id="tabBtn-admin" 
+                            class="nav-tab hidden px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition items-center gap-2 text-slate-300 hover:text-white">
+                            <i class="fa-solid fa-sliders"></i>
+                            <span>Admin Panel</span>
+                        </button>
+                    </nav>
+
+                    <!-- User Info & Logout -->
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="hidden md:flex flex-col text-right">
+                            <span id="currentUserDisplay" class="text-sm font-semibold text-white">MOTHISH</span>
+                            <span id="currentAccessLevelText" class="text-[11px] text-emerald-400">Full Access</span>
+                        </div>
+                        <button onclick="handleLogout()" title="Sign Out"
+                            class="p-2.5 sm:px-3.5 sm:py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 text-sm font-medium transition flex items-center gap-2">
+                            <i class="fa-solid fa-power-off"></i>
+                            <span class="hidden sm:inline">Logout</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace Container -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+            <!-- ==========================================
+                 VIEW A: NOTES & CODE REPOSITORY
+            =========================================== -->
+            <section id="view-notes" class="space-y-6">
+                
+                <!-- Top Hero & Action Bar -->
+                <div class="glass rounded-3xl p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border border-white/10">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+                            <i class="fa-solid fa-book-bookmark text-brand-400"></i>
+                            <span>Knowledge & Code Repository</span>
+                        </h2>
+                        <p id="repoSubtitle" class="text-sm text-slate-400 mt-1">
+                            Read, search, and copy notes or code snippets from anywhere.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3">
+                        <!-- Admin Quick Upload Button -->
+                        <button id="btnOpenUploadModal" onclick="openNoteModal()" 
+                            class="hidden px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 text-white font-semibold text-sm shadow-lg shadow-brand-600/30 transition items-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>Upload Note / Code</span>
+                        </button>
+
+                        <!-- File Upload Trigger for Admin -->
+                        <label id="btnQuickFileUpload" class="hidden cursor-pointer px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600/60 text-slate-200 font-medium text-sm transition items-center gap-2">
+                            <i class="fa-solid fa-file-import text-amber-400"></i>
+                            <span>Import File (.txt, .py, .js, .md)</span>
+                            <input type="file" id="quickFileInput" class="hidden" onchange="handleDirectFileImport(event)">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Filters & Search Bar -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                    <!-- Search Input -->
+                    <div class="md:col-span-6 relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="searchNotesInput" oninput="renderNotes()" placeholder="Search by title, programming language, tag, or content..." 
+                            class="w-full pl-11 pr-4 py-3 rounded-2xl glass text-sm text-white placeholder-slate-400 focus:outline-none focus:border-brand-500">
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="md:col-span-3">
+                        <select id="filterCategory" onchange="renderNotes()" 
+                            class="w-full px-4 py-3 rounded-2xl glass text-sm text-white bg-slate-900/90 focus:outline-none focus:border-brand-500">
+                            <option value="ALL">All Categories & Types</option>
+                            <option value="CODE">Coding & Programs</option>
+                            <option value="NOTES">Study & Lecture Notes</option>
+                            <option value="DOCUMENT">Uploaded Files & Docs</option>
+                            <option value="PROJECT">Projects & Snippets</option>
+                        </select>
+                    </div>
+
+                    <!-- Visibility Filter -->
+                    <div class="md:col-span-3">
+                        <select id="filterVisibility" onchange="renderNotes()" 
+                            class="w-full px-4 py-3 rounded-2xl glass text-sm text-white bg-slate-900/90 focus:outline-none focus:border-brand-500">
+                            <option value="ALL">All Accessible Levels</option>
+                            <option value="public">Public (Guest Friendly)</option>
+                            <option value="users">Logged-in Users Only</option>
+                            <option value="admin" id="filterAdminOption">Admin Secret Only</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Permission Info Banner for Guest -->
+                <div id="guestRestrictionBanner" class="hidden rounded-2xl bg-amber-500/10 border border-amber-500/30 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-amber-300">Guest Mode Active (Restricted View)</h4>
+                            <p class="text-xs text-slate-300">You are currently viewing Public notes enabled by Admin MOTHISH. Log in with an authorized account to unlock private notes & code.</p>
+                        </div>
+                    </div>
+                    <button onclick="handleLogout()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs shrink-0 transition">
+                        Login Now
+                    </button>
+                </div>
+
+                <!-- Notes Grid Container -->
+                <div id="notesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+
+            </section>
+
+            <!-- ==========================================
+                 VIEW B: INTERACTIVE QUIZ & GAME ARENA
+            =========================================== -->
+            <section id="view-quiz" class="hidden space-y-6">
+                
+                <!-- Quiz Header Banner -->
+                <div class="glass rounded-3xl p-6 border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs font-semibold mb-2">
+                            <i class="fa-solid fa-bolt"></i> Interactive Brain Arena
+                        </div>
+                        <h2 class="text-2xl font-bold text-white">Smart Quiz & Challenge Mode</h2>
+                        <p class="text-sm text-slate-400">Select your academic level (School or College) and test your skills in Maths, Physics, Chemistry, Coding, or General Trivia!</p>
+                    </div>
+
+                    <div class="flex items-center gap-4 bg-slate-900/90 px-5 py-3 rounded-2xl border border-slate-800">
+                        <div class="text-center">
+                            <span class="block text-[11px] uppercase text-slate-400">High Score</span>
+                            <span id="quizHighScoreDisplay" class="text-xl font-extrabold text-amber-400">0</span>
+                        </div>
+                        <div class="h-8 w-px bg-slate-800"></div>
+                        <div class="text-center">
+                            <span class="block text-[11px] uppercase text-slate-400">Games Played</span>
+                            <span id="quizGamesPlayedDisplay" class="text-xl font-extrabold text-brand-400">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QUIZ SETUP SCREEN -->
+                <div id="quizSetupCard" class="glass rounded-3xl p-6 sm:p-8 border border-white/10 max-w-3xl mx-auto space-y-6">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-brand-400"></i> Configure Your Challenge
+                    </h3>
+
+                    <!-- Step 1: Choose Level (School vs College) -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+                            1. Select Academic Level
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button type="button" onclick="selectQuizLevel('SCHOOL')" id="lvlBtn-SCHOOL"
+                                class="quiz-lvl-btn p-4 rounded-2xl border-2 border-brand-500 bg-brand-500/15 text-left transition flex items-start gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-brand-500 flex items-center justify-center text-white shrink-0">
+                                    <i class="fa-solid fa-school text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white">School Level</h4>
+                                    <p class="text-xs text-slate-300 mt-0.5">Foundational concepts, high school formulas & quick brain teasers.</p>
+                                </div>
+                            </button>
+
+                            <button type="button" onclick="selectQuizLevel('COLLEGE')" id="lvlBtn-COLLEGE"
+                                class="quiz-lvl-btn p-4 rounded-2xl border-2 border-slate-700/80 bg-slate-900/60 hover:border-slate-600 text-left transition flex items-start gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-purple-600 flex items-center justify-center text-white shrink-0">
+                                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white">College / Engineering</h4>
+                                    <p class="text-xs text-slate-300 mt-0.5">Advanced calculus, quantum/applied physics, organic chem & DSA coding.</p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Choose Subject -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+                            2. Select Subject / Topic
+                        </label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <button type="button" onclick="selectQuizTopic('MATHS')" id="topicBtn-MATHS"
+                                class="quiz-topic-btn p-3.5 rounded-2xl border border-brand-500 bg-brand-500/20 text-white font-semibold text-sm flex items-center gap-2.5 transition">
+                                <i class="fa-solid fa-square-root-variable text-brand-400"></i> Maths
+                            </button>
+                            <button type="button" onclick="selectQuizTopic('PHYSICS')" id="topicBtn-PHYSICS"
+                                class="quiz-topic-btn p-3.5 rounded-2xl border border-slate-700 bg-slate-900/70 text-slate-300 hover:text-white font-semibold text-sm flex items-center gap-2.5 transition">
+                                <i class="fa-solid fa-atom text-cyan-400"></i> Physics
+                            </button>
+                            <button type="button" onclick="selectQuizTopic('CHEMISTRY')" id="topicBtn-CHEMISTRY"
+                                class="quiz-topic-btn p-3.5 rounded-2xl border border-slate-700 bg-slate-900/70 text-slate-300 hover:text-white font-semibold text-sm flex items-center gap-2.5 transition">
+                                <i class="fa-solid fa-flask-vial text-emerald-400"></i> Chemistry
+                            </button>
+                            <button type="button" onclick="selectQuizTopic('CODING')" id="topicBtn-CODING"
+                                class="quiz-topic-btn p-3.5 rounded-2xl border border-slate-700 bg-slate-900/70 text-slate-300 hover:text-white font-semibold text-sm flex items-center gap-2.5 transition">
+                                <i class="fa-solid fa-laptop-code text-purple-400"></i> Coding & CS
+                            </button>
+                            <button type="button" onclick="selectQuizTopic('RANDOM')" id="topicBtn-RANDOM"
+                                class="quiz-topic-btn p-3.5 rounded-2xl border border-slate-700 bg-slate-900/70 text-slate-300 hover:text-white font-semibold text-sm flex items-center gap-2.5 transition col-span-2 sm:col-span-2">
+                                <i class="fa-solid fa-dice text-amber-400"></i> Unrelated / General Knowledge & Tech Mix
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Start Quiz Button -->
+                    <div class="pt-2">
+                        <button type="button" onclick="startQuizGame()" 
+                            class="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 text-white font-bold text-base shadow-xl shadow-brand-600/30 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Launch Quiz Session</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ACTIVE QUIZ GAMEPLAY AREA -->
+                <div id="quizPlayCard" class="hidden glass rounded-3xl p-6 sm:p-8 border border-white/10 max-w-3xl mx-auto space-y-6">
+                    <!-- Top Status Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <span id="activeQuizBadgeLevel" class="px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-xs font-bold uppercase">SCHOOL</span>
+                            <span id="activeQuizBadgeTopic" class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold uppercase">MATHS</span>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <div class="text-sm font-semibold text-slate-300">
+                                Streak: <span id="quizStreakCount" class="text-amber-400 font-bold">0 🔥</span>
+                            </div>
+                            <div class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-sm font-bold text-emerald-400">
+                                Score: <span id="quizCurrentScore">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress & Question Number -->
+                    <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
+                        <span id="quizQuestionCounter">Question 1 of 5</span>
+                        <button onclick="resetQuizToSetup()" class="text-rose-400 hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-xmark"></i> Quit Game
+                        </button>
+                    </div>
+
+                    <!-- Question Box -->
+                    <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800">
+                        <h3 id="quizQuestionText" class="text-lg sm:text-xl font-bold text-white leading-relaxed">
+                            Loading question...
+                        </h3>
+                    </div>
+
+                    <!-- Options Grid -->
+                    <div id="quizOptionsContainer" class="grid grid-cols-1 gap-3"></div>
+
+                    <!-- Explanation / Feedback Box -->
+                    <div id="quizFeedbackBox" class="hidden p-4 rounded-2xl border text-sm"></div>
+
+                    <!-- Next Button -->
+                    <div class="flex justify-end">
+                        <button id="quizNextBtn" onclick="nextQuizQuestion()" 
+                            class="hidden px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm transition items-center gap-2">
+                            <span>Next Question</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QUIZ RESULTS CARD -->
+                <div id="quizResultCard" class="hidden glass rounded-3xl p-8 border border-white/10 max-w-xl mx-auto text-center space-y-6">
+                    <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/30">
+                        <i class="fa-solid fa-trophy text-3xl text-slate-950"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-extrabold text-white">Challenge Completed!</h3>
+                        <p id="quizResultSummaryText" class="text-slate-400 text-sm mt-1">Great effort in the arena!</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <div>
+                            <span class="text-xs text-slate-400 uppercase block">Final Score</span>
+                            <span id="quizFinalScore" class="text-2xl font-black text-emerald-400">0</span>
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-400 uppercase block">Accuracy</span>
+                            <span id="quizFinalAccuracy" class="text-2xl font-black text-brand-400">0%</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        <button onclick="startQuizGame()" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm transition">
+                            <i class="fa-solid fa-rotate-right mr-1.5"></i> Play Again
+                        </button>
+                        <button onclick="resetQuizToSetup()" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition">
+                            <i class="fa-solid fa-sliders mr-1.5"></i> Change Subject / Level
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ==========================================
+                 VIEW C: ADMIN CONTROL PANEL (MOTHISH ONLY)
+            =========================================== -->
+            <section id="view-admin" class="hidden space-y-8">
+                
+                <!-- Admin Header -->
+                <div class="glass rounded-3xl p-6 border border-emerald-500/30 bg-gradient-to-r from-emerald-950/30 via-slate-900/80 to-slate-900/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold uppercase mb-2">
+                            <i class="fa-solid fa-crown"></i> Root Administrator Control
+                        </span>
+                        <h2 class="text-2xl font-bold text-white">MOTHISH Master Security & User Panel</h2>
+                        <p class="text-sm text-slate-400">Manage user credentials, update admin password, control note permissions, or export your database for GitHub hosting.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="openNoteModal()" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs sm:text-sm transition flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Create New Note
+                        </button>
+                        <button onclick="exportDatabaseJSON()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm transition flex items-center gap-2">
+                            <i class="fa-solid fa-download"></i> Backup JSON (GitHub)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- 1. Create & Manage User Credentials (Left 7 Cols) -->
+                    <div class="lg:col-span-7 glass rounded-3xl p-6 border border-white/10 space-y-6">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-users-gear text-brand-400"></i> Authorized User Accounts
+                                </h3>
+                                <p class="text-xs text-slate-400">Only Admin MOTHISH can issue login credentials to users.</p>
+                            </div>
+                            <span id="userCountBadge" class="px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-xs font-bold">0 Users</span>
+                        </div>
+
+                        <!-- Add New User Form -->
+                        <form onsubmit="handleCreateUser(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-slate-900/70 p-4 rounded-2xl border border-slate-800">
+                            <div class="sm:col-span-5">
+                                <label class="block text-[11px] uppercase text-slate-400 font-semibold mb-1">New Username</label>
+                                <input type="text" id="newUserUsername" required placeholder="e.g. karthik_01" 
+                                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div class="sm:col-span-4">
+                                <label class="block text-[11px] uppercase text-slate-400 font-semibold mb-1">Assign Password</label>
+                                <input type="text" id="newUserPassword" required placeholder="e.g. pass123" 
+                                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div class="sm:col-span-3 flex items-end">
+                                <button type="submit" class="w-full py-2.5 px-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm transition flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-user-plus"></i> Add User
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- User List Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-800 text-[11px] uppercase text-slate-400">
+                                        <th class="py-3 px-3">Username</th>
+                                        <th class="py-3 px-3">Password</th>
+                                        <th class="py-3 px-3">Created</th>
+                                        <th class="py-3 px-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminUsersTableBody" class="divide-y divide-slate-800/70 text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 2. Admin Security & Database Sync (Right 5 Cols) -->
+                    <div class="lg:col-span-5 space-y-6">
+                        
+                        <!-- Change Admin Credentials Card -->
+                        <div class="glass rounded-3xl p-6 border border-white/10 space-y-4">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-key text-amber-400"></i> Admin Security Settings
+                            </h3>
+                            <p class="text-xs text-slate-400">Update the master password for admin account <strong id="adminNameLabel" class="text-white">MOTHISH</strong>.</p>
+
+                            <form onsubmit="handleChangeAdminPassword(event)" class="space-y-3">
+                                <div>
+                                    <label class="block text-xs text-slate-300 mb-1">Admin Username</label>
+                                    <input type="text" id="adminUsernameInput" required 
+                                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-300 mb-1">New Admin Password</label>
+                                    <input type="text" id="adminNewPasswordInput" required placeholder="Enter new master password" 
+                                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-brand-500">
+                                </div>
+                                <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition">
+                                    Update Admin Credentials
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- GitHub Repository Sync / Backup Card -->
+                        <div class="glass rounded-3xl p-6 border border-white/10 space-y-4">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-brands fa-github text-white"></i> Portability & Cloud Backup
+                            </h3>
+                            <p class="text-xs text-slate-400">
+                                Export all your uploaded notes, code snippets, and user accounts into a single JSON file or restore them anytime.
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <button onclick="exportDatabaseJSON()" class="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition">
+                                    <i class="fa-solid fa-file-export text-emerald-400"></i> Export Backup
+                                </button>
+                                <label class="cursor-pointer py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-xs font-semibold flex items-center justify-center gap-2 transition">
+                                    <i class="fa-solid fa-file-import text-brand-400"></i> Restore JSON
+                                    <input type="file" accept=".json" class="hidden" onchange="importDatabaseJSON(event)">
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 3. Quick Content Visibility Manager Table -->
+                <div class="glass rounded-3xl p-6 border border-white/10 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-eye-low-vision text-purple-400"></i> Content Access & Restriction Matrix
+                            </h3>
+                            <p class="text-xs text-slate-400">Instantly switch who can view each note (Guest Mode vs Logged-in Users vs Admin Only).</p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-800 text-[11px] uppercase text-slate-400">
+                                    <th class="py-3 px-3">Title</th>
+                                    <th class="py-3 px-3">Type / Lang</th>
+                                    <th class="py-3 px-3">Who Can View (Permission)</th>
+                                    <th class="py-3 px-3 text-right">Manage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminNotesMatrixBody" class="divide-y divide-slate-800/70 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-slate-800/80 py-5 px-4 text-center text-xs text-slate-500">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+                <p>MOTHISH Cloud Hub &bull; Single-File GitHub Ready Architecture</p>
+                <p>Role-Based Access Control: <span class="text-slate-400">Admin / Registered User / Guest Mode</span></p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==========================================
+         3. MODAL: CREATE / EDIT NOTE OR CODE
+    =========================================== -->
+    <div id="noteFormModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass w-full max-w-2xl rounded-3xl p-6 sm:p-8 border border-white/15 shadow-2xl my-8">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+                <h3 id="noteModalTitle" class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-brand-400"></i>
+                    <span>Upload New Note / Code</span>
+                </h3>
+                <button onclick="closeNoteModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="noteForm" onsubmit="handleSaveNote(event)" class="space-y-4">
+                <input type="hidden" id="editNoteId">
+
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                    <div class="sm:col-span-8">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Title</label>
+                        <input type="text" id="noteTitle" required placeholder="e.g. Binary Search Algorithm in Python" 
+                            class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-brand-500">
+                    </div>
+
+                    <div class="sm:col-span-4">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Category</label>
+                        <select id="noteCategory" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-brand-500">
+                            <option value="CODE">Coding / Program</option>
+                            <option value="NOTES">Study / Text Note</option>
+                            <option value="DOCUMENT">File / Document</option>
+                            <option value="PROJECT">Project Snippet</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Language / Format</label>
+                        <select id="noteLanguage" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-brand-500">
+                            <option value="Markdown / Text">Plain Text / Markdown</option>
+                            <option value="Python">Python (.py)</option>
+                            <option value="JavaScript">JavaScript (.js)</option>
+                            <option value="C / C++">C / C++ (.cpp)</option>
+                            <option value="Java">Java (.java)</option>
+                            <option value="HTML / CSS">HTML / CSS</option>
+                            <option value="SQL">SQL Database</option>
+                            <option value="Shell / Bash">Shell / Terminal</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Access Restriction</label>
+                        <select id="noteVisibility" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-brand-500">
+                            <option value="public">🌍 Public (Guest + Users)</option>
+                            <option value="users">🔐 Logged-In Users Only</option>
+                            <option value="admin">🛡️ Admin (MOTHISH) Only</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Tags (comma separated)</label>
+                        <input type="text" id="noteTags" placeholder="dsa, exam, web" 
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+
+                <!-- Load from local file helper -->
+                <div class="flex items-center justify-between bg-slate-900/60 px-4 py-2.5 rounded-xl border border-slate-800">
+                    <span class="text-xs text-slate-400">Want to load content directly from a file on your device?</span>
+                    <label class="cursor-pointer text-xs font-semibold text-brand-400 hover:text-brand-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-arrow-up"></i> Browse Local File
+                        <input type="file" class="hidden" onchange="populateModalFromFile(event)">
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Note Content / Source Code</label>
+                    <textarea id="noteContent" rows="10" required placeholder="Paste your code, lecture notes, formulas, or documentation here..." 
+                        class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-700 text-slate-100 font-mono text-xs sm:text-sm focus:outline-none focus:border-brand-500 leading-relaxed"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeNoteModal()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 text-white text-sm font-semibold shadow-lg shadow-brand-600/30">
+                        Save to Repository
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         4. MODAL: FULL READER & CODE VIEWER
+    =========================================== -->
+    <div id="noteReaderModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass w-full max-w-4xl rounded-3xl p-6 sm:p-8 border border-white/15 shadow-2xl my-8 max-h-[90vh] flex flex-col">
+            
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                        <span id="readerCategoryBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase bg-brand-500/20 text-brand-300">CODE</span>
+                        <span id="readerLangBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-slate-800 text-slate-300">Python</span>
+                        <span id="readerVisibilityBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold">Public</span>
+                    </div>
+                    <h2 id="readerTitle" class="text-xl sm:text-2xl font-bold text-white">Note Title</h2>
+                    <p id="readerMeta" class="text-xs text-slate-400 mt-1">Uploaded by MOTHISH</p>
+                </div>
+                <button onclick="closeReaderModal()" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Action Toolbar -->
+            <div class="flex flex-wrap items-center justify-between gap-2 py-3 border-b border-slate-800/80">
+                <div id="readerTagsContainer" class="flex flex-wrap gap-1.5"></div>
+                <div class="flex items-center gap-2">
+                    <button onclick="copyReaderContent()" class="px-3.5 py-1.5 rounded-xl bg-brand-600/20 hover:bg-brand-600/30 border border-brand-500/40 text-brand-300 text-xs font-semibold flex items-center gap-1.5 transition">
+                        <i class="fa-regular fa-copy"></i> Copy Content
+                    </button>
+                    <button onclick="downloadReaderNote()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-download"></i> Download File
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable Content Body -->
+            <div class="flex-1 overflow-y-auto my-4 pr-1">
+                <pre id="readerContentBox" class="code-block p-5 rounded-2xl font-mono text-xs sm:text-sm text-slate-100 whitespace-pre-wrap break-words leading-relaxed overflow-x-auto"></pre>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==========================================
+         JAVASCRIPT ENGINE
+    =========================================== -->
+    <script>
+        /* -----------------------------------------------------------
+           DATABASE & STATE INITIALIZATION (LocalStorage + Defaults)
+        ----------------------------------------------------------- */
+        const STORAGE_KEY = 'MOTHISH_HUB_DB_V1';
+
+        const defaultDatabase = {
+            admin: {
+                username: 'MOTHISH',
+                password: 'admin123'
+            },
+            users: [
+                { id: 'u1', username: 'student1', password: 'user123', createdAt: '2025-02-10' },
+                { id: 'u2', username: 'friend', password: '12345', createdAt: '2025-02-12' }
+            ],
+            quizStats: {
+                highScore: 0,
+                gamesPlayed: 0
+            },
+            notes: [
+                {
+                    id: 'n1',
+                    title: 'Python Quick Sort & Binary Search Implementation',
+                    category: 'CODE',
+                    language: 'Python',
+                    visibility: 'public',
+                    tags: ['python', 'dsa', 'algorithms'],
+                    updatedAt: '2025-02-15',
+                    content: `def binary_search(arr, target):\n    low, high = 0, len(arr) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n\n# Example Usage\nnumbers = [10, 24, 35, 47, 59, 62, 88]\nprint("Found at index:", binary_search(numbers, 47))`
+                },
+                {
+                    id: 'n2',
+                    title: 'Engineering Physics & Calculus Essential Formulas',
+                    category: 'NOTES',
+                    language: 'Markdown / Text',
+                    visibility: 'public',
+                    tags: ['physics', 'maths', 'revision'],
+                    updatedAt: '2025-02-16',
+                    content: `📌 IMPORTANT REVISION NOTES (PUBLIC ACCESS)\n\n1. Newton's Second Law: F = m * a\n2. Kinetic Energy: KE = 1/2 * m * v^2\n3. Euler's Identity: e^(i*pi) + 1 = 0\n4. Integration by Parts: ∫ u dv = u*v - ∫ v du\n5. Maxwell's First Equation (Gauss's Law): ∇ · E = ρ / ε₀\n\nUse these notes anywhere from your phone or laptop!`
+                },
+                {
+                    id: 'n3',
+                    title: 'Full-Stack API Authentication & JWT Snippet (Members Only)',
+                    category: 'CODE',
+                    language: 'JavaScript',
+                    visibility: 'users',
+                    tags: ['javascript', 'nodejs', 'security'],
+                    updatedAt: '2025-02-17',
+                    content: `// Restricted to Logged-In Users & Admin Only\nconst crypto = require('crypto');\n\nfunction generateToken(username, role) {\n    const payload = { username, role, issuedAt: Date.now() };\n    return Buffer.from(JSON.stringify(payload)).toString('base64');\n}\n\nconsole.log("Generated Token:", generateToken("MOTHISH", "ADMIN"));`
+                },
+                {
+                    id: 'n4',
+                    title: 'MOTHISH Private Server Keys & Deployment Checklist',
+                    category: 'DOCUMENT',
+                    language: 'Markdown / Text',
+                    visibility: 'admin',
+                    tags: ['secret', 'admin', 'github'],
+                    updatedAt: '2025-02-18',
+                    content: `🔒 CONFIDENTIAL ADMIN NOTE (Visible ONLY to MOTHISH)\n\n- GitHub Pages Repo: mothish-notes-hub\n- Admin Username: MOTHISH\n- Remember to use 'Export Backup JSON' after adding major notes on your local browser to commit to GitHub if needed.`
+                }
+            ]
+        };
+
+        let db = loadDatabase();
+        let currentSession = null; // { role: 'admin' | 'user' | 'guest', username: string }
+        let activeReaderNote = null;
+
+        function loadDatabase() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultDatabase));
+                    return JSON.parse(JSON.stringify(defaultDatabase));
+                }
+                const parsed = JSON.parse(raw);
+                return {
+                    admin: parsed.admin || defaultDatabase.admin,
+                    users: Array.isArray(parsed.users) ? parsed.users : defaultDatabase.users,
+                    quizStats: parsed.quizStats || { highScore: 0, gamesPlayed: 0 },
+                    notes: Array.isArray(parsed.notes) ? parsed.notes : defaultDatabase.notes
+                };
+            } catch (e) {
+                return JSON.parse(JSON.stringify(defaultDatabase));
+            }
+        }
+
+        function saveDatabase() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+        }
+
+        /* -----------------------------------------------------------
+           TOAST NOTIFICATION HELPER
+        ----------------------------------------------------------- */
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const colors = {
+                success: 'border-emerald-500/50 bg-emerald-950/90 text-emerald-200',
+                error: 'border-rose-500/50 bg-rose-950/90 text-rose-200',
+                warning: 'border-amber-500/50 bg-amber-950/90 text-amber-200',
+                info: 'border-brand-500/50 bg-slate-900/95 text-slate-100'
+            };
+            const icons = {
+                success: 'fa-circle-check text-emerald-400',
+                error: 'fa-circle-exclamation text-rose-400',
+                warning: 'fa-triangle-exclamation text-amber-400',
+                info: 'fa-circle-info text-brand-400'
+            };
+
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl border shadow-xl backdrop-blur-md transition-all duration-300 ${colors[type] || colors.info}`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icons[type] || icons.info} text-lg"></i>
+                <span class="text-xs sm:text-sm font-medium">${escapeHTML(message)}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3200);
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        /* -----------------------------------------------------------
+           AUTHENTICATION & ROLE ACCESS CONTROL
+        ----------------------------------------------------------- */
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('loginUsername').value.trim();
+            const passwordInput = document.getElementById('loginPassword').value;
+
+            // 1. Check Admin Credentials (case-insensitive username check for MOTHISH)
+            if (
+                usernameInput.toUpperCase() === db.admin.username.toUpperCase() &&
+                passwordInput === db.admin.password
+            ) {
+                currentSession = {
+                    role: 'admin',
+                    username: db.admin.username
+                };
+                showToast(`Welcome back, Root Admin ${db.admin.username}!`, 'success');
+                launchAppSession();
+                return;
+            }
+
+            // 2. Check Registered Users created by Admin
+            const matchedUser = db.users.find(
+                u => u.username.toLowerCase() === usernameInput.toLowerCase() && u.password === passwordInput
+            );
+
+            if (matchedUser) {
+                currentSession = {
+                    role: 'user',
+                    username: matchedUser.username
+                };
+                showToast(`Signed in as Authorized User: ${matchedUser.username}`, 'success');
+                launchAppSession();
+                return;
+            }
+
+            showToast('Invalid Username or Password! Contact Admin MOTHISH or use Guest Mode.', 'error');
+        }
+
+        function enterGuestMode() {
+            currentSession = {
+                role: 'guest',
+                username: 'Guest Visitor'
+            };
+            showToast('Entered Guest Mode. Showing public notes permitted by Admin.', 'warning');
+            launchAppSession();
+        }
+
+        function handleLogout() {
+            currentSession = null;
+            document.getElementById('loginForm').reset();
+            document.getElementById('appScreen').classList.add('hidden');
+            document.getElementById('authScreen').classList.remove('hidden');
+            showToast('Logged out safely.', 'info');
+        }
+
+        function launchAppSession() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('appScreen').classList.remove('hidden');
+
+            const roleBadge = document.getElementById('roleBadge');
+            const userDisplay = document.getElementById('currentUserDisplay');
+            const accessText = document.getElementById('currentAccessLevelText');
+            const tabAdmin = document.getElementById('tabBtn-admin');
+            const btnUpload = document.getElementById('btnOpenUploadModal');
+            const btnQuickFile = document.getElementById('btnQuickFileUpload');
+            const guestBanner = document.getElementById('guestRestrictionBanner');
+            const filterAdminOption = document.getElementById('filterAdminOption');
+
+            userDisplay.textContent = currentSession.username;
+
+            if (currentSession.role === 'admin') {
+                roleBadge.textContent = 'ADMIN';
+                roleBadge.className = 'text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+                accessText.textContent = 'Full Root Control';
+                accessText.className = 'text-[11px] text-emerald-400';
+
+                tabAdmin.classList.remove('hidden');
+                tabAdmin.classList.add('flex');
+                btnUpload.classList.remove('hidden');
+                btnUpload.classList.add('flex');
+                btnQuickFile.classList.remove('hidden');
+                btnQuickFile.classList.add('flex');
+                guestBanner.classList.add('hidden');
+                filterAdminOption.classList.remove('hidden');
+
+                // Populate Admin settings fields
+                document.getElementById('adminUsernameInput').value = db.admin.username;
+                document.getElementById('adminNameLabel').textContent = db.admin.username;
+                renderAdminPanel();
+            } else if (currentSession.role === 'user') {
+                roleBadge.textContent = 'VERIFIED USER';
+                roleBadge.className = 'text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/40';
+                accessText.textContent = 'Member Access';
+                accessText.className = 'text-[11px] text-brand-400';
+
+                tabAdmin.classList.add('hidden');
+                tabAdmin.classList.remove('flex');
+                btnUpload.classList.add('hidden');
+                btnUpload.classList.remove('flex');
+                btnQuickFile.classList.add('hidden');
+                btnQuickFile.classList.remove('flex');
+                guestBanner.classList.add('hidden');
+                filterAdminOption.classList.add('hidden');
+            } else {
+                // Guest Mode
+                roleBadge.textContent = 'GUEST MODE';
+                roleBadge.className = 'text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40';
+                accessText.textContent = 'Public Read-Only';
+                accessText.className = 'text-[11px] text-amber-400';
+
+                tabAdmin.classList.add('hidden');
+                tabAdmin.classList.remove('flex');
+                btnUpload.classList.add('hidden');
+                btnUpload.classList.remove('flex');
+                btnQuickFile.classList.add('hidden');
+                btnQuickFile.classList.remove('flex');
+                guestBanner.classList.remove('hidden');
+                filterAdminOption.classList.add('hidden');
+            }
+
+            document.getElementById('filterVisibility').value = 'ALL';
+            switchTab('notes');
+            renderNotes();
+            updateQuizScoreHeader();
+        }
+
+        /* -----------------------------------------------------------
+           NAVIGATION TABS
+        ----------------------------------------------------------- */
+        function switchTab(tabName) {
+            if (tabName === 'admin' && (!currentSession || currentSession.role !== 'admin')) {
+                showToast('Access Denied! Only Admin MOTHISH can open the Control Panel.', 'error');
+                return;
+            }
+
+            const views = ['notes', 'quiz', 'admin'];
+            views.forEach(v => {
+                const sec = document.getElementById(`view-${v}`);
+                const btn = document.getElementById(`tabBtn-${v}`);
+                if (v === tabName) {
+                    sec.classList.remove('hidden');
+                    btn.classList.add('bg-brand-600', 'text-white', 'shadow');
+                    btn.classList.remove('text-slate-300');
+                } else {
+                    sec.classList.add('hidden');
+                    btn.classList.remove('bg-brand-600', 'text-white', 'shadow');
+                    btn.classList.add('text-slate-300');
+                }
+            });
+
+            if (tabName === 'admin') {
+                renderAdminPanel();
+            }
+        }
+
+        /* -----------------------------------------------------------
+           NOTES & CODE REPOSITORY ENGINE
+        ----------------------------------------------------------- */
+        function canUserAccessNote(note) {
+            if (!currentSession) return false;
+            if (currentSession.role === 'admin') return true;
+            if (currentSession.role === 'user') {
+                return note.visibility === 'public' || note.visibility === 'users';
+            }
+            // Guest role
+            return note.visibility === 'public';
+        }
+
+        function getVisibilityBadgeHTML(visibility) {
+            if (visibility === 'public') {
+                return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"><i class="fa-solid fa-globe mr-1"></i>Public</span>`;
+            }
+            if (visibility === 'users') {
+                return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-brand-500/15 text-brand-300 border border-brand-500/30"><i class="fa-solid fa-user-lock mr-1"></i>Users Only</span>`;
+            }
+            return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30"><i class="fa-solid fa-shield-halved mr-1"></i>Admin Only</span>`;
+        }
+
+        function renderNotes() {
+            const grid = document.getElementById('notesGrid');
+            const searchQuery = document.getElementById('searchNotesInput').value.trim().toLowerCase();
+            const categoryFilter = document.getElementById('filterCategory').value;
+            const visibilityFilter = document.getElementById('filterVisibility').value;
+
+            const accessibleNotes = db.notes.filter(note => {
+                if (!canUserAccessNote(note)) return false;
+
+                if (categoryFilter !== 'ALL' && note.category !== categoryFilter) return false;
+                if (visibilityFilter !== 'ALL' && note.visibility !== visibilityFilter) return false;
+
+                if (searchQuery) {
+                    const hay = `${note.title} ${note.language} ${note.content} ${(note.tags || []).join(' ')}`.toLowerCase();
+                    if (!hay.includes(searchQuery)) return false;
+                }
+                return true;
+            });
+
+            if (accessibleNotes.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full glass rounded-3xl p-12 text-center border border-white/10">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto mb-4 text-slate-400">
+                            <i class="fa-regular fa-folder-open text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">No Matching Notes or Code Found</h3>
+                        <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-md mx-auto">
+                            ${currentSession?.role === 'guest' 
+                                ? 'Some notes may be restricted by Admin MOTHISH. Log in with a user account or try another search.' 
+                                : 'Try clearing your search filters or upload a new note.'}
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = accessibleNotes.map(note => {
+                const isAdmin = currentSession && currentSession.role === 'admin';
+                const categoryIcons = {
+                    CODE: 'fa-code text-brand-400',
+                    NOTES: 'fa-book-open text-amber-400',
+                    DOCUMENT: 'fa-file-lines text-emerald-400',
+                    PROJECT: 'fa-cubes text-purple-400'
+                };
+
+                const tagsHTML = (note.tags || []).slice(0, 3).map(tag => 
+                    `<span class="px-2 py-0.5 rounded-md bg-slate-800/90 text-slate-300 text-[11px]">#${escapeHTML(tag)}</span>`
+                ).join('');
+
+                return `
+                    <article class="glass-card rounded-3xl p-5 flex flex-col justify-between gap-4">
+                        <div>
+                            <!-- Top Meta Row -->
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-300">
+                                    <i class="fa-solid ${categoryIcons[note.category] || 'fa-file'}"></i>
+                                    ${escapeHTML(note.language)}
+                                </span>
+                                ${getVisibilityBadgeHTML(note.visibility)}
+                            </div>
+
+                            <!-- Title -->
+                            <h3 onclick="openReaderModal('${note.id}')" class="text-base sm:text-lg font-bold text-white hover:text-brand-400 cursor-pointer transition line-clamp-2">
+                                ${escapeHTML(note.title)}
+                            </h3>
+
+                            <!-- Code / Note Preview Box -->
+                            <div onclick="openReaderModal('${note.id}')" class="mt-3 p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800/90 cursor-pointer group">
+                                <pre class="font-mono text-xs text-slate-300 line-clamp-4 whitespace-pre-wrap break-words">${escapeHTML(note.content)}</pre>
+                            </div>
+                        </div>
+
+                        <!-- Card Footer -->
+                        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
+                            <div class="flex flex-wrap gap-1">
+                                ${tagsHTML}
+                            </div>
+
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button onclick="copyNoteById('${note.id}')" title="Copy Code/Note" 
+                                    class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs transition">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                                <button onclick="openReaderModal('${note.id}')" 
+                                    class="px-3 py-1.5 rounded-xl bg-brand-600/20 hover:bg-brand-600 text-brand-300 hover:text-white text-xs font-semibold transition">
+                                    Read
+                                </button>
+                                ${isAdmin ? `
+                                    <button onclick="openNoteModal('${note.id}')" title="Edit Note"
+                                        class="p-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 text-xs transition">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button onclick="deleteNoteById('${note.id}')" title="Delete Note"
+                                        class="p-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 text-xs transition">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        /* -----------------------------------------------------------
+           READER MODAL & CLIPBOARD ACTIONS
+        ----------------------------------------------------------- */
+        function openReaderModal(noteId) {
+            const note = db.notes.find(n => n.id === noteId);
+            if (!note || !canUserAccessNote(note)) {
+                showToast('You do not have permission to view this note.', 'error');
+                return;
+            }
+            activeReaderNote = note;
+
+            document.getElementById('readerCategoryBadge').textContent = note.category;
+            document.getElementById('readerLangBadge').textContent = note.language;
+            document.getElementById('readerVisibilityBadge').outerHTML = `<span id="readerVisibilityBadge">${getVisibilityBadgeHTML(note.visibility)}</span>`;
+            document.getElementById('readerTitle').textContent = note.title;
+            document.getElementById('readerMeta').textContent = `Last updated: ${note.updatedAt || 'Recently'} • Hosted on MOTHISH Hub`;
+            document.getElementById('readerContentBox').textContent = note.content;
+
+            const tagsContainer = document.getElementById('readerTagsContainer');
+            tagsContainer.innerHTML = (note.tags || []).map(t => 
+                `<span class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 text-xs">#${escapeHTML(t)}</span>`
+            ).join('');
+
+            document.getElementById('noteReaderModal').classList.remove('hidden');
+        }
+
+        function closeReaderModal() {
+            document.getElementById('noteReaderModal').classList.add('hidden');
+            activeReaderNote = null;
+        }
+
+        function copyTextFallback(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast('Copied to clipboard!', 'success');
+            } catch (err) {
+                showToast('Failed to copy.', 'error');
+            }
+            document.body.removeChild(ta);
+        }
+
+        function copyNoteById(noteId) {
+            const note = db.notes.find(n => n.id === noteId);
+            if (note) copyTextFallback(note.content);
+        }
+
+        function copyReaderContent() {
+            if (activeReaderNote) copyTextFallback(activeReaderNote.content);
+        }
+
+        function downloadReaderNote() {
+            if (!activeReaderNote) return;
+            const blob = new Blob([activeReaderNote.content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const safeName = activeReaderNote.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            a.href = url;
+            a.download = `${safeName || 'note'}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('File downloaded!', 'success');
+        }
+
+        /* -----------------------------------------------------------
+           CREATE / EDIT / UPLOAD NOTES (ADMIN)
+        ----------------------------------------------------------- */
+        function openNoteModal(editId = null) {
+            if (!currentSession || currentSession.role !== 'admin') {
+                showToast('Only Admin MOTHISH can upload or edit notes.', 'error');
+                return;
+            }
+
+            const form = document.getElementById('noteForm');
+            form.reset();
+
+            if (editId) {
+                const note = db.notes.find(n => n.id === editId);
+                if (!note) return;
+                document.getElementById('noteModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-400"></i> <span>Edit Note / Code</span>`;
+                document.getElementById('editNoteId').value = note.id;
+                document.getElementById('noteTitle').value = note.title;
+                document.getElementById('noteCategory').value = note.category;
+                document.getElementById('noteLanguage').value = note.language;
+                document.getElementById('noteVisibility').value = note.visibility;
+                document.getElementById('noteTags').value = (note.tags || []).join(', ');
+                document.getElementById('noteContent').value = note.content;
+            } else {
+                document.getElementById('noteModalTitle').innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-brand-400"></i> <span>Upload New Note / Code</span>`;
+                document.getElementById('editNoteId').value = '';
+            }
+
+            document.getElementById('noteFormModal').classList.remove('hidden');
+        }
+
+        function closeNoteModal() {
+            document.getElementById('noteFormModal').classList.add('hidden');
+        }
+
+        function handleSaveNote(e) {
+            e.preventDefault();
+            if (!currentSession || currentSession.role !== 'admin') return;
+
+            const editId = document.getElementById('editNoteId').value;
+            const title = document.getElementById('noteTitle').value.trim();
+            const category = document.getElementById('noteCategory').value;
+            const language = document.getElementById('noteLanguage').value;
+            const visibility = document.getElementById('noteVisibility').value;
+            const rawTags = document.getElementById('noteTags').value;
+            const content = document.getElementById('noteContent').value;
+
+            const tags = rawTags.split(',').map(t => t.trim()).filter(Boolean);
+            const today = new Date().toISOString().split('T')[0];
+
+            if (editId) {
+                const idx = db.notes.findIndex(n => n.id === editId);
+                if (idx > -1) {
+                    db.notes[idx] = { ...db.notes[idx], title, category, language, visibility, tags, content, updatedAt: today };
+                    showToast('Note updated successfully!', 'success');
+                }
+            } else {
+                const newNote = {
+                    id: 'n_' + Date.now(),
+                    title,
+                    category,
+                    language,
+                    visibility,
+                    tags: tags.length ? tags : ['general'],
+                    content,
+                    updatedAt: today
+                };
+                db.notes.unshift(newNote);
+                showToast('New note uploaded to repository!', 'success');
+            }
+
+            saveDatabase();
+            closeNoteModal();
+            renderNotes();
+            renderAdminPanel();
+        }
+
+        function deleteNoteById(noteId) {
+            if (!currentSession || currentSession.role !== 'admin') return;
+            db.notes = db.notes.filter(n => n.id !== noteId);
+            saveDatabase();
+            renderNotes();
+            renderAdminPanel();
+            showToast('Note removed from repository.', 'warning');
+        }
+
+        function populateModalFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('noteContent').value = e.target.result;
+                if (!document.getElementById('noteTitle').value) {
+                    document.getElementById('noteTitle').value = file.name;
+                }
+                showToast(`Loaded file: ${file.name}`, 'info');
+            };
+            reader.readAsText(file);
+        }
+
+        function handleDirectFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                openNoteModal();
+                document.getElementById('noteTitle').value = file.name;
+                document.getElementById('noteCategory').value = 'DOCUMENT';
+                document.getElementById('noteContent').value = e.target.result;
+                showToast(`File "${file.name}" ready to upload. Choose visibility and save!`, 'info');
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        /* -----------------------------------------------------------
+           ADMIN CONTROL PANEL FUNCTIONS
+        ----------------------------------------------------------- */
+        function renderAdminPanel() {
+            if (!currentSession || currentSession.role !== 'admin') return;
+
+            // 1. Render Users Table
+            const userBody = document.getElementById('adminUsersTableBody');
+            document.getElementById('userCountBadge').textContent = `${db.users.length} Users`;
+
+            if (db.users.length === 0) {
+                userBody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400 text-xs">No user accounts created yet. Create one above!</td></tr>`;
+            } else {
+                userBody.innerHTML = db.users.map(u => `
+                    <tr class="hover:bg-slate-900/50">
+                        <td class="py-3 px-3 font-semibold text-white flex items-center gap-2">
+                            <i class="fa-regular fa-circle-user text-brand-400"></i>
+                            ${escapeHTML(u.username)}
+                        </td>
+                        <td class="py-3 px-3 font-mono text-xs text-amber-300">${escapeHTML(u.password)}</td>
+                        <td class="py-3 px-3 text-xs text-slate-400">${escapeHTML(u.createdAt || 'Active')}</td>
+                        <td class="py-3 px-3 text-right">
+                            <button onclick="deleteUserAccount('${u.id}')" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 text-xs font-medium transition">
+                                <i class="fa-solid fa-trash-can mr-1"></i>Revoke
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // 2. Render Notes Permission Matrix
+            const matrixBody = document.getElementById('adminNotesMatrixBody');
+            matrixBody.innerHTML = db.notes.map(n => `
+                <tr class="hover:bg-slate-900/50">
+                    <td class="py-3 px-3 font-semibold text-white">${escapeHTML(n.title)}</td>
+                    <td class="py-3 px-3 text-xs text-slate-400">${escapeHTML(n.category)} &bull; ${escapeHTML(n.language)}</td>
+                    <td class="py-3 px-3">
+                        <select onchange="quickUpdateNoteVisibility('${n.id}', this.value)" 
+                            class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-brand-500">
+                            <option value="public" ${n.visibility === 'public' ? 'selected' : ''}>🌍 Public (Guest + Users)</option>
+                            <option value="users" ${n.visibility === 'users' ? 'selected' : ''}>🔐 Logged-in Users Only</option>
+                            <option value="admin" ${n.visibility === 'admin' ? 'selected' : ''}>🛡️ Admin MOTHISH Only</option>
+                        </select>
+                    </td>
+                    <td class="py-3 px-3 text-right space-x-1">
+                        <button onclick="openNoteModal('${n.id}')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs">
+                            Edit
+                        </button>
+                        <button onclick="deleteNoteById('${n.id}')" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 text-xs">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function handleCreateUser(e) {
+            e.preventDefault();
+            const username = document.getElementById('newUserUsername').value.trim();
+            const password = document.getElementById('newUserPassword').value.trim();
+
+            if (!username || !password) return;
+
+            if (username.toUpperCase() === db.admin.username.toUpperCase()) {
+                showToast('Cannot create a user with the Admin username!', 'error');
+                return;
+            }
+
+            if (db.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+                showToast('Username already exists!', 'error');
+                return;
+            }
+
+            db.users.push({
+                id: 'u_' + Date.now(),
+                username,
+                password,
+                createdAt: new Date().toISOString().split('T')[0]
+            });
+
+            saveDatabase();
+            document.getElementById('newUserUsername').value = '';
+            document.getElementById('newUserPassword').value = '';
+            renderAdminPanel();
+            showToast(`Created credentials for user "${username}"!`, 'success');
+        }
+
+        function deleteUserAccount(userId) {
+            db.users = db.users.filter(u => u.id !== userId);
+            saveDatabase();
+            renderAdminPanel();
+            showToast('User credentials revoked.', 'warning');
+        }
+
+        function handleChangeAdminPassword(e) {
+            e.preventDefault();
+            const newAdminUser = document.getElementById('adminUsernameInput').value.trim();
+            const newAdminPass = document.getElementById('adminNewPasswordInput').value.trim();
+
+            if (!newAdminUser || !newAdminPass) return;
+
+            db.admin.username = newAdminUser;
+            db.admin.password = newAdminPass;
+            currentSession.username = newAdminUser;
+            saveDatabase();
+
+            document.getElementById('currentUserDisplay').textContent = newAdminUser;
+            document.getElementById('adminNameLabel').textContent = newAdminUser;
+            document.getElementById('adminNewPasswordInput').value = '';
+            showToast('Master Admin credentials updated!', 'success');
+        }
+
+        function quickUpdateNoteVisibility(noteId, newVisibility) {
+            const note = db.notes.find(n => n.id === noteId);
+            if (!note) return;
+            note.visibility = newVisibility;
+            saveDatabase();
+            renderNotes();
+            showToast(`Updated visibility for "${note.title}" to ${newVisibility.toUpperCase()}.`, 'info');
+        }
+
+        function exportDatabaseJSON() {
+            const dataStr = JSON.stringify(db, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mothish_hub_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Database JSON exported! You can commit this to GitHub.', 'success');
+        }
+
+        function importDatabaseJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.admin && Array.isArray(imported.notes)) {
+                        db = imported;
+                        saveDatabase();
+                        renderNotes();
+                        renderAdminPanel();
+                        showToast('Database restored successfully!', 'success');
+                    } else {
+                        showToast('Invalid JSON backup file format.', 'error');
+                    }
+                } catch (err) {
+                    showToast('Failed to parse JSON file.', 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        /* -----------------------------------------------------------
+           INTERACTIVE QUIZ & GAME ENGINE (SCHOOL & COLLEGE)
+        ----------------------------------------------------------- */
+        const questionBank = {
+            SCHOOL: {
+                MATHS: [
+                    { q: "What is the value of sin²(θ) + cos²(θ) for any angle θ?", options: ["0", "1", "2", "tan(θ)"], answer: 1, exp: "By the fundamental Pythagorean trigonometric identity, sin²(θ) + cos²(θ) = 1." },
+                    { q: "If a triangle has base = 12 cm and height = 8 cm, what is its area?", options: ["96 cm²", "48 cm²", "20 cm²", "40 cm²"], answer: 1, exp: "Area = 1/2 × base × height = 1/2 × 12 × 8 = 48 cm²." },
+                    { q: "What are the roots of the quadratic equation x² - 5x + 6 = 0?", options: ["2 and 3", "-2 and -3", "1 and 6", "-1 and 6"], answer: 0, exp: "Factoring (x - 2)(x - 3) = 0 gives x = 2 and x = 3." },
+                    { q: "What is the sum of interior angles of a pentagon (5-sided polygon)?", options: ["360°", "540°", "720°", "450°"], answer: 1, exp: "Sum = (n - 2) × 180° = (5 - 2) × 180° = 540°." },
+                    { q: "What is the probability of getting a sum of 7 when rolling two fair dice?", options: ["1/6", "1/12", "5/36", "7/36"], answer: 0, exp: "There are 6 favorable outcomes out of 36 total: 6/36 = 1/6." }
+                ],
+                PHYSICS: [
+                    { q: "What is the SI unit of electric current?", options: ["Volt", "Ohm", "Ampere", "Watt"], answer: 2, exp: "Electric current is measured in Amperes (A)." },
+                    { q: "According to Ohm's Law, if Voltage (V) = 24V and Resistance (R) = 6Ω, what is the Current (I)?", options: ["144 A", "4 A", "0.25 A", "18 A"], answer: 1, exp: "I = V / R = 24 / 6 = 4 A." },
+                    { q: "Which mirror is commonly used as a rear-view mirror in vehicles?", options: ["Concave mirror", "Convex mirror", "Plane mirror", "Cylindrical mirror"], answer: 1, exp: "Convex mirrors provide a wider field of view and form erect, diminished images." },
+                    { q: "What is the acceleration due to gravity (g) near the Earth's surface?", options: ["9.8 m/s²", "1.6 m/s²", "3.0 × 10⁸ m/s²", "6.67 m/s²"], answer: 0, exp: "Standard acceleration due to Earth's gravity is approximately 9.8 m/s²." },
+                    { q: "Sound waves cannot travel through which of the following?", options: ["Steel", "Water", "Air", "Vacuum"], answer: 3, exp: "Sound is a mechanical wave and requires a medium; it cannot travel through a vacuum." }
+                ],
+                CHEMISTRY: [
+                    { q: "What is the pH of pure neutral water at 25°C?", options: ["0", "5.5", "7", "14"], answer: 2, exp: "Pure water is neutral with a pH of 7." },
+                    { q: "Which gas is liberated when dilute hydrochloric acid reacts with zinc metal?", options: ["Oxygen", "Hydrogen", "Chlorine", "Carbon dioxide"], answer: 1, exp: "Zn + 2HCl → ZnCl₂ + H₂↑ (Hydrogen gas)." },
+                    { q: "What is the atomic number of Carbon?", options: ["6", "12", "8", "14"], answer: 0, exp: "Carbon has 6 protons in its nucleus, so its atomic number is 6." },
+                    { q: "Which of the following is Known as 'Baking Soda'?", options: ["Sodium Carbonate", "Sodium Hydroxide", "Sodium Hydrogen Carbonate (NaHCO₃)", "Calcium Oxychloride"], answer: 2, exp: "Sodium bicarbonate (NaHCO₃) is common baking soda." },
+                    { q: "Which non-metal exists as a liquid at room temperature?", options: ["Mercury", "Bromine", "Iodine", "Gallium"], answer: 1, exp: "Bromine (Br) is the only non-metal that is liquid at room temperature." }
+                ],
+                CODING: [
+                    { q: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Tech Modern Language", "Hyperlink Text Management Language", "Home Tool Markup Language"], answer: 0, exp: "HTML stands for Hyper Text Markup Language." },
+                    { q: "In Python, what is the output of print(2 ** 3)?", options: ["6", "8", "5", "9"], answer: 1, exp: "The ** operator is exponentiation: 2³ = 8." },
+                    { q: "Which symbol is used for single-line comments in Python?", options: ["//", "/* */", "#", "<!--"], answer: 2, exp: "Python uses the # symbol for single-line comments." },
+                    { q: "Which data type is used to store True or False values?", options: ["String", "Integer", "Boolean", "Float"], answer: 2, exp: "Boolean data types store logical True or False values." },
+                    { q: "What is the index of the first element in a standard C/Java/Python array or list?", options: ["1", "0", "-1", "Depends on size"], answer: 1, exp: "Most programming languages use 0-based indexing." }
+                ],
+                RANDOM: [
+                    { q: "Which planet is known as the 'Red Planet'?", options: ["Venus", "Mars", "Jupiter", "Saturn"], answer: 1, exp: "Mars appears red due to iron oxide on its surface." },
+                    { q: "Who is known as the 'Missile Man of India'?", options: ["Dr. C.V. Raman", "Dr. Vikram Sarabhai", "Dr. A.P.J. Abdul Kalam", "Dr. Homi Bhabha"], answer: 2, exp: "Dr. A.P.J. Abdul Kalam is celebrated as the Missile Man of India." },
+                    { q: "How many bytes are in 1 Kilobyte (binary standard IEC)?", options: ["100", "512", "1024", "2048"], answer: 2, exp: "In binary computing, 1 KB = 2¹⁰ = 1024 bytes." },
+                    { q: "Which organ in the human body pumps blood?", options: ["Lungs", "Brain", "Heart", "Liver"], answer: 2, exp: "The heart pumps oxygenated and deoxygenated blood throughout the body." },
+                    { q: "What is the capital city of Tamil Nadu?", options: ["Madurai", "Coimbatore", "Chennai", "Tiruchirappalli"], answer: 2, exp: "Chennai is the capital city of Tamil Nadu." }
+                ]
+            },
+            COLLEGE: {
+                MATHS: [
+                    { q: "What is the derivative d/dx (e^(2x) * sin(x)) at x = 0?", options: ["0", "1", "2", "-1"], answer: 1, exp: "By product rule: 2e^(2x)sin(x) + e^(2x)cos(x). At x=0, 0 + 1*1 = 1." },
+                    { q: "If A is a 3×3 matrix with eigenvalues 2, 3, and 5, what is the determinant of A?", options: ["10", "30", "15", "25"], answer: 1, exp: "The determinant of a matrix is the product of its eigenvalues: 2 × 3 × 5 = 30." },
+                    { q: "What is the Laplace Transform L{tⁿ} for positive integer n?", options: ["n! / s^(n+1)", "n / s^n", "1 / (s - n)", "n! / s^n"], answer: 0, exp: "Standard Laplace transform formula: L{tⁿ} = n! / s^(n+1)." },
+                    { q: "For a vector field F, if curl(F) = ∇ × F = 0 everywhere, the field is called:", options: ["Solenoidal", "Irrotational", "Harmonic", "Divergent"], answer: 1, exp: "A vector field with zero curl (∇ × F = 0) is irrotational (conservative)." },
+                    { q: "What is the value of the improper integral ∫₀^∞ e^(-x) dx?", options: ["0", "1", "∞", "e"], answer: 1, exp: "[-e^(-x)] from 0 to ∞ = 0 - (-1) = 1." }
+                ],
+                PHYSICS: [
+                    { q: "According to Heisenberg's Uncertainty Principle, Δx · Δp is always greater than or equal to:", options: ["h", "ħ / 2", "h / 2", "m·c²"], answer: 1, exp: "Δx · Δp ≥ ħ / 2 (where ħ = h / 2π)." },
+                    { q: "In special relativity, as an object's speed approaches the speed of light (c), its relativistic time:", options: ["Speeds up", "Dilates (slows down)", "Remains constant", "Reverses"], answer: 1, exp: "Time dilation causes moving clocks to tick slower relative to a stationary observer." },
+                    { q: "Which Maxwell equation mathematically states that magnetic monopoles do not exist?", options: ["∇ · E = ρ/ε₀", "∇ · B = 0", "∇ × E = -∂B/∂t", "∇ × B = μ₀J"], answer: 1, exp: "Gauss's law for magnetism (∇ · B = 0) proves there are no isolated magnetic charges." },
+                    { q: "In a semiconductor, the Fermi level of an N-type material lies:", options: ["Close to the Valence Band", "Close to the Conduction Band", "Exactly at the center", "Outside the crystal"], answer: 1, exp: "Donor electrons shift the Fermi level closer to the conduction band in N-type semiconductors." },
+                    { q: "What is the de Broglie wavelength (λ) of a particle with momentum p?", options: ["h · p", "h / p", "p / h", "h / p²"], answer: 1, exp: "de Broglie relation: λ = h / p." }
+                ],
+                CHEMISTRY: [
+                    { q: "What is the hybridization of carbon atoms in Benzene (C₆H₆)?", options: ["sp", "sp²", "sp³", "dsp²"], answer: 1, exp: "Each carbon in the aromatic benzene ring is sp² hybridized with 120° bond angles." },
+                    { q: "For a spontaneous thermodynamic process at constant Temperature and Pressure, Gibbs Free Energy (ΔG) must be:", options: ["ΔG > 0", "ΔG < 0 (Negative)", "ΔG = 0", "Infinite"], answer: 1, exp: "A negative change in Gibbs Free Energy (ΔG < 0) indicates spontaneity." },
+                    { q: "In SN2 nucleophilic substitution reactions, the stereochemical outcome is:", options: ["Racemization", "100% Inversion of configuration (Walden Inversion)", "Retention of configuration", "Elimination"], answer: 1, exp: "SN2 proceeds via backside attack resulting in complete inversion of stereochemistry." },
+                    { q: "According to the First Law of Thermodynamics, ΔU = q + w. For an isothermal expansion of an ideal gas, ΔU equals:", options: ["q", "w", "0", "PΔV"], answer: 2, exp: "Internal energy U of an ideal gas depends only on temperature; since ΔT = 0, ΔU = 0." },
+                    { q: "Which spectroscopy technique primarily measures molecular bond vibrations in functional groups?", options: ["NMR Spectroscopy", "IR (Infrared) Spectroscopy", "Mass Spectrometry", "X-Ray Diffraction"], answer: 1, exp: "Infrared (IR) spectroscopy detects stretching and bending vibrations of chemical bonds." }
+                ],
+                CODING: [
+                    { q: "What is the worst-case time complexity of searching for an element in a balanced Binary Search Tree (AVL / Red-Black)?", options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"], answer: 1, exp: "Balanced BSTs guarantee height O(log n), making search O(log n) in the worst case." },
+                    { q: "Which data structure is used to implement Breadth-First Search (BFS) on a graph?", options: ["Stack", "Queue", "Priority Heap", "Hash Table"], answer: 1, exp: "BFS explores level by level using a FIFO Queue." },
+                    { q: "In SQL, which command removes all rows from a table without logging individual row deletions (faster DDL)?", options: ["DELETE", "TRUNCATE", "DROP", "REMOVE"], answer: 1, exp: "TRUNCATE TABLE removes all rows quickly while preserving the table structure." },
+                    { q: "In Git, which command creates a new branch and immediately switches to it?", options: ["git branch -d", "git checkout -b <branch>", "git commit -m", "git merge"], answer: 1, exp: "git checkout -b <name> (or git switch -c) creates and switches to a new branch." },
+                    { q: "Which HTTP status code indicates 'Unauthorized' or missing authentication?", options: ["200 OK", "401 Unauthorized", "404 Not Found", "500 Internal Error"], answer: 1, exp: "401 Unauthorized indicates that valid authentication credentials are required." }
+                ],
+                RANDOM: [
+                    { q: "What does 'CAP Theorem' stand for in distributed database systems?", options: ["Code, API, Protocol", "Consistency, Availability, Partition Tolerance", "Cache, Array, Pointer", "Compute, Access, Process"], answer: 1, exp: "CAP stands for Consistency, Availability, and Partition Tolerance." },
+                    { q: "Which company originally developed the React.js library?", options: ["Google", "Meta (Facebook)", "Microsoft", "Netflix"], answer: 1, exp: "React was created by Jordan Walke at Meta (Facebook)." },
+                    { q: "What is the escape velocity from Earth's surface?", options: ["9.8 km/s", "11.2 km/s", "29.8 km/s", "3.0 km/s"], answer: 1, exp: "Earth's escape velocity is approximately 11.2 km/s." },
+                    { q: "Which port number is the default for HTTPS secure web traffic?", options: ["80", "22", "443", "3000"], answer: 2, exp: "Port 443 is standard for HTTPS, while Port 80 is for HTTP." },
+                    { q: "In AI & Deep Learning, what does 'GPT' stand for?", options: ["General Processing Tensor", "Generative Pre-trained Transformer", "Graph Parallel Training", "Global Prompt Tool"], answer: 1, exp: "GPT stands for Generative Pre-trained Transformer." }
+                ]
+            }
+        };
+
+        let quizState = {
+            level: 'SCHOOL',
+            topic: 'MATHS',
+            questions: [],
+            currentIndex: 0,
+            score: 0,
+            streak: 0,
+            correctCount: 0,
+            answered: false
+        };
+
+        function updateQuizScoreHeader() {
+            document.getElementById('quizHighScoreDisplay').textContent = db.quizStats.highScore || 0;
+            document.getElementById('quizGamesPlayedDisplay').textContent = db.quizStats.gamesPlayed || 0;
+        }
+
+        function selectQuizLevel(level) {
+            quizState.level = level;
+            ['SCHOOL', 'COLLEGE'].forEach(lvl => {
+                const btn = document.getElementById(`lvlBtn-${lvl}`);
+                if (lvl === level) {
+                    btn.className = "quiz-lvl-btn p-4 rounded-2xl border-2 border-brand-500 bg-brand-500/15 text-left transition flex items-start gap-3.5";
+                } else {
+                    btn.className = "quiz-lvl-btn p-4 rounded-2xl border-2 border-slate-700/80 bg-slate-900/60 hover:border-slate-600 text-left transition flex items-start gap-3.5";
+                }
+            });
+        }
+
+        function selectQuizTopic(topic) {
+            quizState.topic = topic;
+            ['MATHS', 'PHYSICS', 'CHEMISTRY', 'CODING', 'RANDOM'].forEach(t => {
+                const btn = document.getElementById(`topicBtn-${t}`);
+                const spanClass = t === 'RANDOM' ? 'col-span-2 sm:col-span-2' : '';
+                if (t === topic) {
+                    btn.className = `quiz-topic-btn p-3.5 rounded-2xl border border-brand-500 bg-brand-500/20 text-white font-semibold text-sm flex items-center gap-2.5 transition ${spanClass}`;
+                } else {
+                    btn.className = `quiz-topic-btn p-3.5 rounded-2xl border border-slate-700 bg-slate-900/70 text-slate-300 hover:text-white font-semibold text-sm flex items-center gap-2.5 transition ${spanClass}`;
+                }
+            });
+        }
+
+        function startQuizGame() {
+            const pool = questionBank[quizState.level][quizState.topic] || [];
+            quizState.questions = [...pool].sort(() => Math.random() - 0.5);
+            quizState.currentIndex = 0;
+            quizState.score = 0;
+            quizState.streak = 0;
+            quizState.correctCount = 0;
+            quizState.answered = false;
+
+            document.getElementById('quizSetupCard').classList.add('hidden');
+            document.getElementById('quizResultCard').classList.add('hidden');
+            document.getElementById('quizPlayCard').classList.remove('hidden');
+
+            document.getElementById('activeQuizBadgeLevel').textContent = quizState.level;
+            document.getElementById('activeQuizBadgeTopic').textContent = quizState.topic;
+
+            renderCurrentQuizQuestion();
+        }
+
+        function renderCurrentQuizQuestion() {
+            const qObj = quizState.questions[quizState.currentIndex];
+            quizState.answered = false;
+
+            document.getElementById('quizQuestionCounter').textContent = `Question ${quizState.currentIndex + 1} of ${quizState.questions.length}`;
+            document.getElementById('quizCurrentScore').textContent = quizState.score;
+            document.getElementById('quizStreakCount').textContent = `${quizState.streak} 🔥`;
+            document.getElementById('quizQuestionText').textContent = qObj.q;
+
+            document.getElementById('quizFeedbackBox').classList.add('hidden');
+            document.getElementById('quizNextBtn').classList.add('hidden');
+            document.getElementById('quizNextBtn').classList.remove('flex');
+
+            const optionsContainer = document.getElementById('quizOptionsContainer');
+            optionsContainer.innerHTML = qObj.options.map((opt, idx) => `
+                <button type="button" onclick="submitQuizAnswer(${idx})" id="quizOpt-${idx}"
+                    class="w-full p-4 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 text-left text-sm sm:text-base font-medium text-slate-200 transition flex items-center justify-between">
+                    <span><strong class="text-brand-400 mr-2">${String.fromCharCode(65 + idx)}.</strong> ${escapeHTML(opt)}</span>
+                    <i class="fa-regular fa-circle text-slate-500"></i>
+                </button>
+            `).join('');
+        }
+
+        function submitQuizAnswer(selectedIndex) {
+            if (quizState.answered) return;
+            quizState.answered = true;
+
+            const qObj = quizState.questions[quizState.currentIndex];
+            const isCorrect = selectedIndex === qObj.answer;
+            const feedbackBox = document.getElementById('quizFeedbackBox');
+
+            qObj.options.forEach((_, idx) => {
+                const btn = document.getElementById(`quizOpt-${idx}`);
+                if (idx === qObj.answer) {
+                    btn.className = "w-full p-4 rounded-2xl bg-emerald-500/20 border-2 border-emerald-500 text-left text-sm sm:text-base font-bold text-emerald-200 flex items-center justify-between";
+                    btn.querySelector('i').className = "fa-solid fa-circle-check text-emerald-400";
+                } else if (idx === selectedIndex && !isCorrect) {
+                    btn.className = "w-full p-4 rounded-2xl bg-rose-500/20 border-2 border-rose-500 text-left text-sm sm:text-base font-bold text-rose-200 flex items-center justify-between";
+                    btn.querySelector('i').className = "fa-solid fa-circle-xmark text-rose-400";
+                } else {
+                    btn.className = "w-full p-4 rounded-2xl bg-slate-900/40 border border-slate-800 text-left text-sm sm:text-base text-slate-500 flex items-center justify-between opacity-60";
+                }
+            });
+
+            if (isCorrect) {
+                quizState.streak += 1;
+                quizState.correctCount += 1;
+                const bonus = quizState.streak * 5;
+                quizState.score += (20 + bonus);
+                feedbackBox.className = "p-4 rounded-2xl border border-emerald-500/40 bg-emerald-950/50 text-emerald-200 text-sm";
+                feedbackBox.innerHTML = `<strong><i class="fa-solid fa-check mr-1"></i> Correct! (+${20 + bonus} pts)</strong><br><span class="text-xs text-emerald-300/90">${escapeHTML(qObj.exp)}</span>`;
+            } else {
+                quizState.streak = 0;
+                feedbackBox.className = "p-4 rounded-2xl border border-rose-500/40 bg-rose-950/50 text-rose-200 text-sm";
+                feedbackBox.innerHTML = `<strong><i class="fa-solid fa-xmark mr-1"></i> Not quite!</strong><br><span class="text-xs text-rose-300/90">${escapeHTML(qObj.exp)}</span>`;
+            }
+
+            document.getElementById('quizCurrentScore').textContent = quizState.score;
+            document.getElementById('quizStreakCount').textContent = `${quizState.streak} 🔥`;
+            feedbackBox.classList.remove('hidden');
+
+            const nextBtn = document.getElementById('quizNextBtn');
+            nextBtn.classList.remove('hidden');
+            nextBtn.classList.add('flex');
+        }
+
+        function nextQuizQuestion() {
+            quizState.currentIndex += 1;
+            if (quizState.currentIndex < quizState.questions.length) {
+                renderCurrentQuizQuestion();
+            } else {
+                finishQuizGame();
+            }
+        }
+
+        function finishQuizGame() {
+            document.getElementById('quizPlayCard').classList.add('hidden');
+            document.getElementById('quizResultCard').classList.remove('hidden');
+
+            const accuracy = Math.round((quizState.correctCount / quizState.questions.length) * 100);
+            document.getElementById('quizFinalScore').textContent = quizState.score;
+            document.getElementById('quizFinalAccuracy').textContent = `${accuracy}%`;
+            document.getElementById('quizResultSummaryText').textContent = 
+                `You answered ${quizState.correctCount} out of ${quizState.questions.length} correctly in ${quizState.level} ${quizState.topic}!`;
+
+            db.quizStats.gamesPlayed = (db.quizStats.gamesPlayed || 0) + 1;
+            if (quizState.score > (db.quizStats.highScore || 0)) {
+                db.quizStats.highScore = quizState.score;
+                showToast(`New High Score: ${quizState.score} points!`, 'success');
+            }
+            saveDatabase();
+            updateQuizScoreHeader();
+        }
+
+        function resetQuizToSetup() {
+            document.getElementById('quizPlayCard').classList.add('hidden');
+            document.getElementById('quizResultCard').classList.add('hidden');
+            document.getElementById('quizSetupCard').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
