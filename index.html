@@ -271,18 +271,20 @@
                 </div>
             </div>
 
+            <!-- Scrollable C Code & Live Terminal Layout -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden">
                 <div class="lg:col-span-7 flex flex-col overflow-hidden">
                     <div class="bg-slate-900 px-4 py-2 rounded-t-xl border border-b-0 border-slate-800 text-xs text-slate-400">
                         <span>Source Code (<span id="reader-filename">program.c</span>)</span>
                     </div>
-                    <pre id="reader-body" class="flex-1 overflow-auto bg-slate-950 border border-slate-800 rounded-b-xl p-4 text-xs sm:text-[13px] font-mono text-emerald-300 whitespace-pre leading-relaxed select-all"></pre>
+                    <!-- Fixed vertical & horizontal scrollable pre block -->
+                    <pre id="reader-body" class="flex-1 overflow-auto bg-slate-950 border border-slate-800 rounded-b-xl p-4 text-xs sm:text-[13px] font-mono text-emerald-300 leading-relaxed select-all whitespace-pre"></pre>
                 </div>
 
                 <div class="lg:col-span-5 flex flex-col overflow-hidden">
                     <div class="bg-slate-900 px-4 py-2 rounded-t-xl border border-b-0 border-slate-800 flex justify-between items-center text-xs">
                         <span class="text-orange-400 font-bold"><i class="fa-solid fa-terminal"></i> Live Terminal</span>
-                        <button onclick="runInteractiveTerminal()" class="bg-orange-600 text-white px-2.5 py-1 rounded font-bold text-[11px]">Compile & Run</button>
+                        <button onclick="runInteractiveTerminal()" class="bg-orange-600 hover:bg-orange-500 text-white px-2.5 py-1 rounded font-bold text-[11px]">Compile & Run</button>
                     </div>
                     <div class="terminal-screen flex-1 rounded-b-xl p-4 flex flex-col justify-between overflow-auto">
                         <div>
@@ -313,27 +315,27 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'MOTHISH_CLAB_HUB_V3';
+        const STORAGE_KEY = 'MOTHISH_CLAB_HUB_V4';
         const preloadedNotes = [
             {
                 id: 'ex4', simType: 'CALC', title: 'EX.NO: 4 - Calculator Using Functions', category: 'C_LAB', access: 'PUBLIC', tag: 'ex4_calculator.c', author: 'MOTHISH',
-                output: 'WELCOME TO SIMPLE CALCULATOR\\nChoose operation (+, -, *, /, s): +\\nEnter numbers: 25, 15\\nResult = 40.00',
-                content: `#include <stdio.h>\nfloat add(float a, float b){return a+b;}\nint main(){printf("Calculator Ready\\n");return 0;}`
+                output: 'WELCOME TO SIMPLE CALCULATOR\nChoose operation (+, -, *, /, s): +\nEnter numbers: 25, 15\nResult = 40.00',
+                content: `#include <stdio.h>\n\nfloat add(float num1, float num2) { return num1 + num2; }\nfloat subt(float num1, float num2) { return num1 - num2; }\nfloat mult(float num1, float num2) { return num1 * num2; }\nfloat divi(float num1, float num2) { return num2 != 0 ? num1 / num2 : 0; }\nfloat squa(float num1) { return num1 * num1; }\n\nint main() {\n    char op;\n    float num1, num2 = 0.0f, result = 0.0f;\n    printf("WELCOME TO SIMPLE CALCULATOR\\n");\n    printf("Choose op (+,-,*,/,s): ");\n    scanf(" %c", &op);\n    printf("Enter numbers: ");\n    scanf("%f %f", &num1, &num2);\n    result = add(num1, num2);\n    printf("Result = %.2f\\n", result);\n    return 0;\n}`
             },
             {
                 id: 'ex5', simType: 'ARMSTRONG', title: 'EX.NO: 5 - Armstrong Number', category: 'C_LAB', access: 'PUBLIC', tag: 'ex5_armstrong.c', author: 'MOTHISH',
-                output: 'Enter a number: 371\\n371 is an Armstrong number',
-                content: `#include <stdio.h>\nint main(){int n=371;printf("%d Armstrong\\n",n);return 0;}`
+                output: 'Enter a number: 371\n371 is an Armstrong number',
+                content: `#include <stdio.h>\n\nint main() {\n    int num, r, sum = 0, temp;\n    printf("Enter a number: ");\n    scanf("%d", &num);\n    temp = num;\n    while (num != 0) {\n        r = num % 10;\n        num = num / 10;\n        sum = sum + (r * r * r);\n    }\n    if (sum == temp)\n        printf("%d is an Armstrong number\\n", temp);\n    else\n        printf("%d is not an Armstrong number\\n", temp);\n    return 0;\n}`
             },
             {
                 id: 'ex6', simType: 'WEIGHTS', title: 'EX.NO: 6 - Sum of Weights & Sorting', category: 'C_LAB', access: 'PUBLIC', tag: 'ex6_weights.c', author: 'MOTHISH',
-                output: 'Sorted weights successfully.',
-                content: `#include <stdio.h>\nint main(){printf("Weights sorted\\n");return 0;}`
+                output: 'Weights sorted successfully.',
+                content: `#include <stdio.h>\n#include <math.h>\n\nint getWeight(int n) {\n    int w = 0;\n    float root = sqrt(n);\n    if (root == ceil(root)) w += 5;\n    if (n % 4 == 0 && n % 6 == 0) w += 4;\n    if (n % 2 == 0) w += 3;\n    return w;\n}\n\nint main() {\n    int nums[5] = {10, 36, 54, 89, 12};\n    for(int i=0; i<5; i++) {\n        printf("Num: %d, Weight: %d\\n", nums[i], getWeight(nums[i]));\n    }\n    return 0;\n}`
             },
             {
                 id: 'ex7', simType: 'HEIGHTS', title: 'EX.NO: 7 - Above Average Heights', category: 'C_LAB', access: 'PUBLIC', tag: 'ex7_heights.c', author: 'MOTHISH',
                 output: 'Above average count: 1',
-                content: `#include <stdio.h>\nint main(){printf("Heights processed\\n");return 0;}`
+                content: `#include <stdio.h>\n\nint main() {\n    int arr[100], n, sum = 0;\n    double avg;\n    printf("Enter n: ");\n    scanf("%d", &n);\n    for(int i=0; i<n; i++) {\n        scanf("%d", &arr[i]);\n        sum += arr[i];\n    }\n    avg = (double)sum / n;\n    printf("Average: %.2f\\n", avg);\n    return 0;\n}`
             }
         ];
 
@@ -441,12 +443,19 @@
         }
 
         function closeReaderModal() { document.getElementById('reader-modal').classList.add('hidden'); }
-        function runInteractiveTerminal() { showToast('Compiled successfully (0 errors)!'); }
+        
+        function runInteractiveTerminal() {
+            if (!activeReaderNote) return;
+            document.getElementById('terminal-output').textContent = activeReaderNote.output + "\n\n[Process exited with code 0]";
+            showToast('Compiled & Executed Successfully (0 Errors)!');
+        }
+
         function toggleTurboCTheme() {
             isTurboC = !isTurboC;
             const b = document.getElementById('reader-body');
             b.classList.toggle('turboc-screen', isTurboC);
         }
+
         function downloadCFile() {
             const blob = new Blob([activeReaderNote.content], {type: 'text/plain'});
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
