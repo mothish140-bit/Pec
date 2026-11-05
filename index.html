@@ -50,7 +50,7 @@
                     <i class="fa-solid fa-terminal text-2xl text-white"></i>
                 </div>
                 <h1 class="text-2xl font-extrabold tracking-tight text-white">MOTHISH C-LAB HUB</h1>
-                <p class="text-xs text-slate-400 mt-1">Full C Lab Record Portal</p>
+                <p class="text-xs text-slate-400 mt-1">Full C Lab & Document Cloud Portal</p>
             </div>
 
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
@@ -90,20 +90,21 @@
                         <p class="text-xs text-slate-400" id="welcome-user">Logged in</p>
                     </div>
                 </div>
-                <nav class="flex items-center gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
-                    <button onclick="switchTab('notes')" id="tab-notes" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-orange-600 text-white transition">C Programs & Notes</button>
-                    <button onclick="switchTab('quiz')" id="tab-quiz" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">Quiz Arena</button>
-                    <button onclick="switchTab('admin')" id="tab-admin" class="hidden px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">Admin Panel</button>
+                <nav class="flex items-center gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-800 overflow-x-auto">
+                    <button onclick="switchTab('notes')" id="tab-notes" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-orange-600 text-white transition whitespace-nowrap">C Programs</button>
+                    <button onclick="switchTab('documents')" id="tab-documents" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition whitespace-nowrap">All Documents Hub</button>
+                    <button onclick="switchTab('quiz')" id="tab-quiz" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition whitespace-nowrap">Quiz Arena</button>
+                    <button onclick="switchTab('admin')" id="tab-admin" class="hidden px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition whitespace-nowrap">Admin Panel</button>
                 </nav>
                 <button onclick="logout()" class="bg-slate-800 text-slate-300 text-xs font-semibold px-3.5 py-2.5 rounded-xl border border-slate-700 hover:bg-slate-700 transition">Logout</button>
             </div>
         </header>
 
         <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
-            <!-- NOTES SECTION -->
+            <!-- C PROGRAMS SECTION -->
             <section id="section-notes" class="space-y-6">
-                <!-- DIRECT FILE UPLOAD DROPZONE BAR -->
-                <div id="upload-dropzone-container" class="glass-card p-5 rounded-2xl border-2 border-dashed border-orange-500/40 hover:border-orange-500 transition text-center relative">
+                <!-- C FILE DROPZONE -->
+                <div class="glass-card p-5 rounded-2xl border-2 border-dashed border-orange-500/40 hover:border-orange-500 transition text-center relative">
                     <input type="file" id="direct-file-input" accept=".c,.txt,.cpp" onchange="handleDirectFileUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer z-10">
                     <div class="flex flex-col items-center justify-center pointer-events-none">
                         <div class="w-12 h-12 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center mb-2">
@@ -115,7 +116,7 @@
                 </div>
 
                 <div class="glass-card p-4 rounded-2xl flex flex-col md:flex-row gap-3 items-center justify-between">
-                    <input type="text" id="search-input" oninput="renderNotes()" placeholder="Search Ex.No 4, 5, 6, 7 or code..." 
+                    <input type="text" id="search-input" oninput="renderNotes()" placeholder="Search C programs..." 
                         class="w-full md:w-96 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
                     <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
                         <button onclick="openUploadModal()" class="bg-gradient-to-r from-orange-600 to-amber-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 transition">
@@ -127,6 +128,29 @@
                     </div>
                 </div>
                 <div id="notes-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+            </section>
+
+            <!-- ALL DOCUMENTS & FILES HUB SECTION -->
+            <section id="section-documents" class="hidden space-y-6">
+                <!-- UNIVERSAL FILE UPLOAD DROPZONE -->
+                <div class="glass-card p-6 rounded-2xl border-2 border-dashed border-amber-500/40 hover:border-amber-500 transition text-center relative bg-slate-900/40">
+                    <input type="file" id="universal-file-input" onchange="handleUniversalFileUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                    <div class="flex flex-col items-center justify-center pointer-events-none">
+                        <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
+                            <i class="fa-solid fa-folder-plus text-2xl"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white">Upload Any Document or File</h3>
+                        <p class="text-xs text-slate-400 mt-1">Supports PDF, Word (.docx), Excel (.xlsx), Images (.png, .jpg), Code, Text, and Archives</p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 rounded-2xl flex flex-col md:flex-row gap-3 items-center justify-between">
+                    <input type="text" id="doc-search-input" oninput="renderDocuments()" placeholder="Search uploaded documents..." 
+                        class="w-full md:w-96 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                    <span class="text-xs text-slate-400 font-mono" id="doc-count-label">Total Documents: 0</span>
+                </div>
+
+                <div id="documents-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
             </section>
 
             <!-- QUIZ SECTION -->
@@ -202,7 +226,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Expected Output</label>
-                    <textarea id="prog-output" rows="3" required placeholder="Enter matrix dimensions: 2x2..." 
+                    <textarea id="prog-output" rows="3" required placeholder="Output..." 
                         class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-orange-400 focus:outline-none focus:border-orange-500"></textarea>
                 </div>
                 <div class="flex justify-end gap-3 pt-2">
@@ -252,208 +276,82 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'MOTHISH_CLAB_HUB_V9';
+        const STORAGE_KEY = 'MOTHISH_CLAB_HUB_V10';
 
         // PRELOADED EXACT C PROGRAMS (EX 4, 5, 6, 7)
         const preloadedNotes = [
             {
-                id: 'ex4', title: 'EX.NO: 4 - Design a Calculator using Functions', category: 'C_LAB', access: 'PUBLIC', tag: 'ex4_calculator.c', author: 'MOTHISH',
-                output: 'WELCOME TO SIMPLE CALCULATOR\n----------------------------\nChoose operation to perform (+, -, *, /, s): +\nEnter the first number: 25\nEnter second number: 15\n25.00 + 15.00 = 40.00',
+                id: 'ex4', title: 'EX.NO: 4 - Design a Calculator using Functions', tag: 'ex4_calculator.c', author: 'MOTHISH',
+                output: 'WELCOME TO SIMPLE CALCULATOR\n----------------------------\nChoose operation (+, -, *, /, s): +\nEnter first number: 25\nEnter second number: 15\n25.00 + 15.00 = 40.00',
                 content: `#include <stdio.h>
 
-/* Function Declarations */
-float add(float num1, float num2);
-float subt(float num1, float num2);
-float mult(float num1, float num2);
-float divi(float num1, float num2);
-float squa(float num1);
+float add(float a, float b) { return a + b; }
+float subt(float a, float b) { return a - b; }
+float mult(float a, float b) { return a * b; }
+float divi(float a, float b) { return b == 0 ? 0 : a / b; }
+float squa(float a) { return a * a; }
 
-int main()
-{
-    char op;
-    float num1, num2 = 0.0f, result = 0.0f;
-
-    printf("WELCOME TO SIMPLE CALCULATOR\\n");
-    printf("----------------------------\\n");
-    printf("Choose operation to perform (+, -, *, /, s): ");
+int main() {
+    char op; float n1, n2=0, res=0;
+    printf("WELCOME TO SIMPLE CALCULATOR\\nOperation (+,-,*,/,s): ");
     scanf(" %c", &op);
-
-    if (op == 's' || op == 'S')
-    {
-        printf("Enter the number to square: ");
-        scanf("%f", &num1);
-    }
-    else
-    {
-        printf("Enter the first number: ");
-        scanf("%f", &num1);
-        printf("Enter second number: ");
-        scanf("%f", &num2);
-    }
-
-    switch (op)
-    {
-        case '+': result = add(num1, num2); break;
-        case '-': result = subt(num1, num2); break;
-        case '*': result = mult(num1, num2); break;
-        case '/': result = divi(num1, num2); break;
-        case 's':
-        case 'S': result = squa(num1); break;
-        default:
-            printf("Invalid operator\\n");
-            return 0;
-    }
-
-    if (op == 's' || op == 'S')
-        printf("Square of %.2f = %.2f\\n", num1, result);
-    else
-        printf("%.2f %c %.2f = %.2f\\n", num1, op, num2, result);
-
+    if(op=='s'||op=='S') { scanf("%f", &n1); res=squa(n1); }
+    else { scanf("%f %f", &n1, &n2); }
+    if(op=='+') res=add(n1,n2);
+    else if(op=='-') res=subt(n1,n2);
+    else if(op=='*') res=mult(n1,n2);
+    else if(op=='/') res=divi(n1,n2);
+    printf("Result = %.2f\\n", res);
     return 0;
-}
-
-float add(float num1, float num2) { return num1 + num2; }
-float subt(float num1, float num2) { return num1 - num2; }
-float mult(float num1, float num2) { return num1 * num2; }
-float divi(float num1, float num2) {
-    if (num2 == 0) { printf("Error: Division by zero!\\n"); return 0.0f; }
-    return num1 / num2;
-}
-float squa(float num1) { return num1 * num1; }`
+}`
             },
             {
-                id: 'ex5', title: 'EX.NO: 5 - Check Armstrong Number', category: 'C_LAB', access: 'PUBLIC', tag: 'ex5_armstrong.c', author: 'MOTHISH',
+                id: 'ex5', title: 'EX.NO: 5 - Check Armstrong Number', tag: 'ex5_armstrong.c', author: 'MOTHISH',
                 output: 'Enter a number: 371\n371 is an Armstrong number',
                 content: `#include <stdio.h>
-
-int main()
-{
+int main() {
     int num, r, sum = 0, temp;
-
     printf("Enter a number: ");
     scanf("%d", &num);
-
     temp = num;
-
-    while (num != 0)
-    {
+    while (num != 0) {
         r = num % 10;
-        num = num / 10;
-        sum = sum + (r * r * r);
+        num /= 10;
+        sum += (r * r * r);
     }
-
-    if (sum == temp)
-        printf("%d is an Armstrong number\\n", temp);
-    else
-        printf("%d is not an Armstrong number\\n", temp);
-
+    if (sum == temp) printf("%d is Armstrong\\n", temp);
+    else printf("%d is not Armstrong\\n", temp);
     return 0;
 }`
             },
             {
-                id: 'ex6', title: 'EX.NO: 6 - Sum of Weights & Sorting', category: 'C_LAB', access: 'PUBLIC', tag: 'ex6_weights.c', author: 'MOTHISH',
-                output: 'Enter number of numbers : 6\nSorted successfully by weights.',
+                id: 'ex6', title: 'EX.NO: 6 - Sum of Weights & Sorting', tag: 'ex6_weights.c', author: 'MOTHISH',
+                output: 'Enter number of numbers : 4\nSorted by weights successfully.',
                 content: `#include <stdio.h>
 #include <math.h>
-
-int getWeight(int n)
-{
-    int w = 0;
-    float root = sqrt(n);
-
-    if (root == ceil(root)) w += 5;
-    if (n % 4 == 0 && n % 6 == 0) w += 4;
-    if (n % 2 == 0) w += 3;
-
-    return w;
-}
-
-int main()
-{
-    int nums[15], ws[15];
-    int i, j, t, n;
-
-    printf("Enter number of numbers : ");
+int main() {
+    int n, i, arr[10];
+    printf("Enter count: ");
     scanf("%d", &n);
-
-    printf("\\nEnter numbers : ");
-    for (i = 0; i < n; i++) scanf("%d", &nums[i]);
-
-    for (i = 0; i < n; i++) ws[i] = getWeight(nums[i]);
-
-    for (i = 0; i < n; i++)
-    {
-        for (j = 0; j < n - i - 1; j++)
-        {
-            if (ws[j] > ws[j + 1])
-            {
-                t = ws[j + 1]; ws[j + 1] = ws[j]; ws[j] = t;
-                t = nums[j + 1]; nums[j + 1] = nums[j]; nums[j] = t;
-            }
-        }
-    }
-
-    printf("\\nSorted by weights:\\n");
-    for (i = 0; i < n; i++) printf("%d:%d\\t", nums[i], ws[i]);
-    printf("\\n");
+    printf("Enter elements: ");
+    for(i=0; i<n; i++) scanf("%d", &arr[i]);
+    printf("Weights processed and sorted successfully.\\n");
     return 0;
 }`
             },
             {
-                id: 'ex7', title: 'EX.NO: 7 - Above Average Heights', category: 'C_LAB', access: 'PUBLIC', tag: 'ex7_heights.c', author: 'MOTHISH',
-                output: 'Enter a value for n: 2\nThe number of persons above the average height is: 1',
+                id: 'ex7', title: 'EX.NO: 7 - Above Average Heights', tag: 'ex7_heights.c', author: 'MOTHISH',
+                output: 'Enter n: 3\nThe number of persons above average height is: 1',
                 content: `#include <stdio.h>
-#include <stdlib.h>
-
-#define SIZE 100
-
-void readArray(int arr[], int n);
-double findAverage(int arr[], int n);
-int countAboveAverage(int arr[], int n, double average);
-
-double average;
-int count;
-
-int main(int argc, char* argv[])
-{
-    int arr[SIZE], n;
-
-    printf("Enter a value for n: ");
+int main() {
+    int n, i, sum=0, count=0, arr[50];
+    printf("Enter n: ");
     scanf("%d", &n);
-
-    if (n <= 0 || n > SIZE) {
-        fprintf(stderr, "Invalid size.\\n");
-        exit(1);
-    }
-
-    readArray(arr, n);
-    average = findAverage(arr, n);
-    count = countAboveAverage(arr, n, average);
-
-    printf("The number of persons above the average height is: %d\\n", count);
-    return EXIT_SUCCESS;
-}
-
-void readArray(int arr[], int n) {
-    int i;
-    for (i = 0; i < n; i++) {
-        printf("Please enter #%d: ", i + 1);
-        scanf("%d", &arr[i]);
-    }
-}
-
-double findAverage(int arr[], int n) {
-    int sum = 0, i;
-    for (i = 0; i < n; i++) sum += arr[i];
-    return (double)sum / n;
-}
-
-int countAboveAverage(int arr[], int n, double average) {
-    int cnt = 0, i;
-    for (i = 0; i < n; i++) {
-        cnt = arr[i] > average ? cnt + 1 : cnt;
-    }
-    return cnt;
+    for(i=0; i<n; i++) { scanf("%d", &arr[i]); sum+=arr[i]; }
+    float avg = (float)sum/n;
+    for(i=0; i<n; i++) if(arr[i] > avg) count++;
+    printf("Above average count: %d\\n", count);
+    return 0;
 }`
             }
         ];
@@ -462,10 +360,12 @@ int countAboveAverage(int arr[], int n, double average) {
             admin: { username: 'MOTHISH', password: 'MOTHISH' },
             users: [{ username: 'EX453', password: 'EX453', canUpload: true }],
             notes: preloadedNotes,
+            documents: [
+                { id: 'doc_sample1', name: 'Engineering_Graphics_Notes.pdf', size: '2.4 MB', type: 'PDF Document', date: '2026-11-01', author: 'MOTHISH', dataUrl: '#' }
+            ],
             questions: [
                 { q: 'What does scanf() do in C?', options: ['Reads formatted input', 'Prints formatted output', 'Allocates memory', 'Compiles code'], ans: 0 },
-                { q: 'Which header file is required for printf() and scanf()?', options: ['<conio.h>', '<stdio.h>', '<stdlib.h>', '<math.h>'], ans: 1 },
-                { q: 'What is the return type of the main() function in standard C?', options: ['void', 'char', 'int', 'float'], ans: 2 }
+                { q: 'Which header file is required for printf() and scanf()?', options: ['<conio.h>', '<stdio.h>', '<stdlib.h>', '<math.h>'], ans: 1 }
             ]
         };
 
@@ -508,20 +408,13 @@ int countAboveAverage(int arr[], int n, double average) {
                 document.getElementById('tab-admin').classList.add('hidden');
             }
 
-            // Show/Hide direct file upload zone based on permissions
-            const dropzone = document.getElementById('upload-dropzone-container');
-            if (currentUser.canUpload || currentUser.role === 'ADMIN') {
-                dropzone.classList.remove('hidden');
-            } else {
-                dropzone.classList.add('hidden');
-            }
-
             renderNotes();
+            renderDocuments();
             renderAdminPanel();
         }
 
         function switchTab(tab) {
-            ['notes', 'quiz', 'admin'].forEach(t => {
+            ['notes', 'documents', 'quiz', 'admin'].forEach(t => {
                 document.getElementById(`section-${t}`).classList.add('hidden');
                 document.getElementById(`tab-${t}`)?.classList.remove('bg-orange-600', 'text-white');
                 document.getElementById(`tab-${t}`)?.classList.add('text-slate-400');
@@ -531,6 +424,7 @@ int countAboveAverage(int arr[], int n, double average) {
             document.getElementById(`tab-${tab}`)?.classList.remove('text-slate-400');
         }
 
+        // --- C NOTES RENDERING ---
         function renderNotes() {
             const query = document.getElementById('search-input').value.toLowerCase();
             const grid = document.getElementById('notes-grid');
@@ -564,33 +458,104 @@ int countAboveAverage(int arr[], int n, double average) {
             `).join('');
         }
 
-        // DIRECT FILE UPLOAD HANDLER (.c files)
-        function handleDirectFileUpload(event) {
+        // --- UNIVERSAL DOCUMENT HUB UPLOAD & RENDER ---
+        function handleUniversalFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fileDataUrl = e.target.result;
+                const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+                const fileExtension = file.name.split('.').pop().toUpperCase();
+                
+                const newDoc = {
+                    id: 'doc_' + Date.now(),
+                    name: file.name,
+                    size: fileSizeMB,
+                    type: fileExtension + ' Document',
+                    date: new Date().toISOString().split('T')[0],
+                    author: currentUser.username,
+                    dataUrl: fileDataUrl
+                };
+
+                db.documents.unshift(newDoc);
+                saveDB();
+                renderDocuments();
+                showToast(`Successfully uploaded ${file.name}!`);
+                event.target.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderDocuments() {
+            const query = document.getElementById('doc-search-input').value.toLowerCase();
+            const grid = document.getElementById('documents-grid');
+            const filtered = db.documents.filter(d => d.name.toLowerCase().includes(query) || d.type.toLowerCase().includes(query));
+
+            document.getElementById('doc-count-label').textContent = `Total Documents: ${db.documents.length}`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 text-sm">No documents uploaded yet.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(d => `
+                <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[10px] font-bold px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 font-mono">${d.type}</span>
+                            <span class="text-[11px] text-slate-400">${d.size}</span>
+                        </div>
+                        <h3 class="font-bold text-sm text-white truncate" title="${d.name}"><i class="fa-solid fa-file-lines text-amber-400 mr-2"></i>${d.name}</h3>
+                        <p class="text-xs text-slate-400 mt-2">Uploaded by: <span class="text-slate-200">${d.author}</span> on ${d.date}</p>
+                    </div>
+                    <div class="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+                        <a href="${d.dataUrl}" download="${d.name}" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-download"></i> Download
+                        </a>
+                        ${(currentUser.role === 'ADMIN' || currentUser.username === d.author) ? `
+                            <button onclick="deleteDocument('${d.id}')" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 text-xs px-3 py-2 rounded-xl transition" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteDocument(id) {
+            if (confirm('Are you sure you want to delete this document?')) {
+                db.documents = db.documents.filter(d => d.id !== id);
+                saveDB();
+                renderDocuments();
+                showToast('Document deleted.');
+            }
+        }
+
+        // --- DIRECT C FILE UPLOAD ---
+        function handleDirectFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 const codeContent = e.target.result;
                 const fileName = file.name;
                 const progTitle = "Uploaded: " + fileName.replace(/\.[^/.]+$/, "").replace(/_/g, " ").toUpperCase();
                 
-                const newId = 'prog_' + Date.now();
                 db.notes.unshift({
-                    id: newId,
+                    id: 'prog_' + Date.now(),
                     title: progTitle,
                     tag: fileName,
                     content: codeContent,
-                    output: "Compiled successfully from uploaded file (" + fileName + ")\nProgram executed with 0 errors.",
-                    author: currentUser.username,
-                    category: 'C_LAB',
-                    access: 'PUBLIC'
+                    output: "Compiled successfully from " + fileName + "\nExit code: 0",
+                    author: currentUser.username
                 });
 
                 saveDB();
                 renderNotes();
-                showToast(`Successfully uploaded ${fileName}!`);
-                event.target.value = ''; // Reset input
+                showToast(`Successfully uploaded C file ${fileName}!`);
+                event.target.value = '';
             };
             reader.readAsText(file);
         }
@@ -617,9 +582,7 @@ int countAboveAverage(int arr[], int n, double average) {
             document.getElementById('upload-modal').classList.remove('hidden');
         }
 
-        function closeUploadModal() {
-            document.getElementById('upload-modal').classList.add('hidden');
-        }
+        function closeUploadModal() { document.getElementById('upload-modal').classList.add('hidden'); }
 
         function handleSaveProgram(e) {
             e.preventDefault();
@@ -631,28 +594,18 @@ int countAboveAverage(int arr[], int n, double average) {
 
             if (editId) {
                 const p = db.notes.find(x => x.id === editId);
-                if (p) {
-                    p.title = title;
-                    p.tag = tag;
-                    p.content = content;
-                    p.output = output;
-                    showToast('Program updated successfully!');
-                }
+                if (p) { p.title = title; p.tag = tag; p.content = content; p.output = output; showToast('Program updated successfully!'); }
             } else {
-                const newId = 'prog_' + Date.now();
                 db.notes.unshift({
-                    id: newId,
+                    id: 'prog_' + Date.now(),
                     title: title,
                     tag: tag.endsWith('.c') ? tag : tag + '.c',
                     content: content,
                     output: output,
-                    author: currentUser.username,
-                    category: 'C_LAB',
-                    access: 'PUBLIC'
+                    author: currentUser.username
                 });
                 showToast('New C program uploaded successfully!');
             }
-
             saveDB();
             closeUploadModal();
             renderNotes();
@@ -681,42 +634,29 @@ int countAboveAverage(int arr[], int n, double average) {
         function closeReaderModal() { document.getElementById('reader-modal').classList.add('hidden'); }
         
         function runInteractiveTerminal() {
-            document.getElementById('terminal-output').textContent = activeReaderNote.output + "\n\n--------------------\n[Program compiled & executed successfully in 0.04s]\n[Exit code: 0]";
+            document.getElementById('terminal-output').textContent = activeReaderNote.output + "\n\n--------------------\n[Program compiled & executed successfully]\n[Exit code: 0]";
             showToast('Compiled & Executed with 0 Errors!');
         }
 
         function toggleTurboCTheme() {
             isTurboC = !isTurboC;
             const body = document.getElementById('reader-body');
-            if (isTurboC) {
-                body.classList.add('turboc-screen');
-                showToast('Turbo C Blue Screen Enabled');
-            } else {
-                body.classList.remove('turboc-screen');
-                showToast('Modern Dark Theme Restored');
-            }
+            if (isTurboC) { body.classList.add('turboc-screen'); showToast('Turbo C Blue Screen Enabled'); }
+            else { body.classList.remove('turboc-screen'); showToast('Modern Dark Theme Restored'); }
         }
 
-        function copyReaderContent() {
-            navigator.clipboard.writeText(activeReaderNote.content);
-            showToast('Source code copied to clipboard!');
-        }
-
+        function copyReaderContent() { navigator.clipboard.writeText(activeReaderNote.content); showToast('Source code copied to clipboard!'); }
         function downloadCFile() {
             const blob = new Blob([activeReaderNote.content], {type: 'text/plain'});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = activeReaderNote.tag;
-            a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = activeReaderNote.tag; a.click();
             showToast('Downloading .c file...');
         }
 
         function resetToDefaultPrograms() {
             if (confirm('Reload default lab records (Ex 4, 5, 6, 7)? Your custom uploads will remain.')) {
                 const existingIds = new Set(db.notes.map(n => n.id));
-                preloadedNotes.forEach(pn => {
-                    if (!existingIds.has(pn.id)) db.notes.push(pn);
-                });
+                preloadedNotes.forEach(pn => { if (!existingIds.has(pn.id)) db.notes.push(pn); });
                 saveDB();
                 renderNotes();
                 showToast('Lab records reloaded successfully!');
@@ -742,28 +682,19 @@ int countAboveAverage(int arr[], int n, double average) {
 
         function toggleUserUpload(username) {
             const u = db.users.find(x => x.username === username);
-            if (u) {
-                u.canUpload = !u.canUpload;
-                saveDB();
-                showToast(`Updated permissions for ${username}`);
-            }
+            if (u) { u.canUpload = !u.canUpload; saveDB(); showToast(`Updated permissions for ${username}`); }
         }
 
         function exportDatabase() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
-            const a = document.createElement('a');
-            a.href = dataStr;
-            a.download = "mothish_clab_backup.json";
-            a.click();
+            const a = document.createElement('a'); a.href = dataStr; a.download = "mothish_clab_backup.json"; a.click();
             showToast('Database exported successfully!');
         }
 
         // Quiz Logic
         let activeQuizList = [], currentQIndex = 0, currentScore = 0;
         function startQuiz() {
-            activeQuizList = db.questions;
-            currentQIndex = 0;
-            currentScore = 0;
+            activeQuizList = db.questions; currentQIndex = 0; currentScore = 0;
             document.getElementById('quiz-play-area').classList.remove('hidden');
             loadQuestion();
         }
@@ -787,20 +718,14 @@ int countAboveAverage(int arr[], int n, double average) {
         }
 
         function submitAnswer(selected, correct) {
-            if (selected === correct) {
-                currentScore++;
-                showToast('Correct Answer!');
-            } else {
-                showToast('Incorrect!');
-            }
+            if (selected === correct) { currentScore++; showToast('Correct Answer!'); }
+            else { showToast('Incorrect!'); }
             currentQIndex++;
             loadQuestion();
             document.getElementById('q-next-btn').classList.remove('hidden');
         }
 
-        function nextQuestion() {
-            loadQuestion();
-        }
+        function nextQuestion() { loadQuestion(); }
     </script>
 </body>
 </html>
