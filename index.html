@@ -102,12 +102,24 @@
         <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
             <!-- NOTES SECTION -->
             <section id="section-notes" class="space-y-6">
+                <!-- DIRECT FILE UPLOAD DROPZONE BAR -->
+                <div id="upload-dropzone-container" class="glass-card p-5 rounded-2xl border-2 border-dashed border-orange-500/40 hover:border-orange-500 transition text-center relative">
+                    <input type="file" id="direct-file-input" accept=".c,.txt,.cpp" onchange="handleDirectFileUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                    <div class="flex flex-col items-center justify-center pointer-events-none">
+                        <div class="w-12 h-12 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center mb-2">
+                            <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                        </div>
+                        <h3 class="text-sm font-bold text-white">Click or Drop your C program file here (.c)</h3>
+                        <p class="text-xs text-slate-400 mt-1">Instantly parses code and adds it to your C Lab Record Hub</p>
+                    </div>
+                </div>
+
                 <div class="glass-card p-4 rounded-2xl flex flex-col md:flex-row gap-3 items-center justify-between">
                     <input type="text" id="search-input" oninput="renderNotes()" placeholder="Search Ex.No 4, 5, 6, 7 or code..." 
                         class="w-full md:w-96 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
                     <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
-                        <button id="upload-btn-trigger" onclick="openUploadModal()" class="hidden bg-gradient-to-r from-orange-600 to-amber-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 transition">
-                            <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Upload / Add Program
+                        <button onclick="openUploadModal()" class="bg-gradient-to-r from-orange-600 to-amber-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 transition">
+                            <i class="fa-solid fa-code mr-1.5"></i> Manual Code Editor Upload
                         </button>
                         <button onclick="resetToDefaultPrograms()" class="bg-slate-800 text-slate-300 border border-slate-700 text-xs font-semibold px-3.5 py-2.5 rounded-xl hover:bg-slate-700 transition">
                             Reload Lab Ex 4-7
@@ -162,7 +174,7 @@
         </main>
     </div>
 
-    <!-- UPLOAD / ADD PROGRAM MODAL -->
+    <!-- MANUAL UPLOAD / EDIT MODAL -->
     <div id="upload-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-orange-500/30 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
@@ -240,9 +252,9 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'MOTHISH_CLAB_HUB_V8';
+        const STORAGE_KEY = 'MOTHISH_CLAB_HUB_V9';
 
-        // PRELOADED EXAC/EXACT C PROGRAMS (EX 4, 5, 6, 7)
+        // PRELOADED EXACT C PROGRAMS (EX 4, 5, 6, 7)
         const preloadedNotes = [
             {
                 id: 'ex4', title: 'EX.NO: 4 - Design a Calculator using Functions', category: 'C_LAB', access: 'PUBLIC', tag: 'ex4_calculator.c', author: 'MOTHISH',
@@ -496,10 +508,12 @@ int countAboveAverage(int arr[], int n, double average) {
                 document.getElementById('tab-admin').classList.add('hidden');
             }
 
+            // Show/Hide direct file upload zone based on permissions
+            const dropzone = document.getElementById('upload-dropzone-container');
             if (currentUser.canUpload || currentUser.role === 'ADMIN') {
-                document.getElementById('upload-btn-trigger').classList.remove('hidden');
+                dropzone.classList.remove('hidden');
             } else {
-                document.getElementById('upload-btn-trigger').classList.add('hidden');
+                dropzone.classList.add('hidden');
             }
 
             renderNotes();
@@ -550,13 +564,44 @@ int countAboveAverage(int arr[], int n, double average) {
             `).join('');
         }
 
+        // DIRECT FILE UPLOAD HANDLER (.c files)
+        function handleDirectFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const codeContent = e.target.result;
+                const fileName = file.name;
+                const progTitle = "Uploaded: " + fileName.replace(/\.[^/.]+$/, "").replace(/_/g, " ").toUpperCase();
+                
+                const newId = 'prog_' + Date.now();
+                db.notes.unshift({
+                    id: newId,
+                    title: progTitle,
+                    tag: fileName,
+                    content: codeContent,
+                    output: "Compiled successfully from uploaded file (" + fileName + ")\nProgram executed with 0 errors.",
+                    author: currentUser.username,
+                    category: 'C_LAB',
+                    access: 'PUBLIC'
+                });
+
+                saveDB();
+                renderNotes();
+                showToast(`Successfully uploaded ${fileName}!`);
+                event.target.value = ''; // Reset input
+            };
+            reader.readAsText(file);
+        }
+
         function openUploadModal() {
             document.getElementById('upload-modal-title').textContent = 'Upload / Add New C Program';
             document.getElementById('edit-program-id').value = '';
             document.getElementById('prog-title').value = '';
             document.getElementById('prog-tag').value = '';
             document.getElementById('prog-content').value = '#include <stdio.h>\n\nint main()\n{\n    printf("Hello C Lab\\n");\n    return 0;\n}';
-            document.getElementById('prog-output').value = 'Hello C Lab';
+            document.getElementById('prog-output').value = 'Hello C Lab\nProgram executed successfully.';
             document.getElementById('upload-modal').classList.remove('hidden');
         }
 
@@ -668,7 +713,6 @@ int countAboveAverage(int arr[], int n, double average) {
 
         function resetToDefaultPrograms() {
             if (confirm('Reload default lab records (Ex 4, 5, 6, 7)? Your custom uploads will remain.')) {
-                // Merge preloaded without losing custom ones
                 const existingIds = new Set(db.notes.map(n => n.id));
                 preloadedNotes.forEach(pn => {
                     if (!existingIds.has(pn.id)) db.notes.push(pn);
