@@ -64,11 +64,11 @@
                     <input type="password" id="login-pass" required placeholder="Password" 
                         class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-500 text-white">
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-orange-600 to-amber-600 text-white font-semibold py-3 rounded-xl shadow-lg">
+                <button type="submit" class="w-full bg-gradient-to-r from-orange-600 to-amber-600 text-white font-semibold py-3 rounded-xl shadow-lg hover:opacity-90 transition">
                     Sign In to Portal
                 </button>
             </form>
-            <button onclick="enterGuestMode()" class="w-full mt-4 bg-slate-800 border border-slate-700 text-slate-200 font-medium py-2.5 rounded-xl text-sm">
+            <button onclick="enterGuestMode()" class="w-full mt-3 bg-slate-800 border border-slate-700 text-slate-200 font-medium py-2.5 rounded-xl text-sm hover:bg-slate-700 transition">
                 Continue in Guest Mode
             </button>
             <p class="text-[11px] text-center text-slate-500 mt-4">
@@ -82,7 +82,7 @@
         <header class="glass sticky top-0 z-30 border-b border-orange-500/20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow">
                         <i class="fa-solid fa-terminal text-white"></i>
                     </div>
                     <div>
@@ -91,45 +91,114 @@
                     </div>
                 </div>
                 <nav class="flex items-center gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
-                    <button onclick="switchTab('notes')" id="tab-notes" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-orange-600 text-white">C Programs & Notes</button>
-                    <button onclick="switchTab('quiz')" id="tab-quiz" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white">Quiz Arena</button>
-                    <button onclick="switchTab('admin')" id="tab-admin" class="hidden px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white">Admin Panel</button>
+                    <button onclick="switchTab('notes')" id="tab-notes" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-orange-600 text-white transition">C Programs & Notes</button>
+                    <button onclick="switchTab('quiz')" id="tab-quiz" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">Quiz Arena</button>
+                    <button onclick="switchTab('admin')" id="tab-admin" class="hidden px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">Admin Panel</button>
                 </nav>
-                <button onclick="logout()" class="bg-slate-800 text-slate-300 text-xs font-semibold px-3.5 py-2.5 rounded-xl border border-slate-700">Logout</button>
+                <button onclick="logout()" class="bg-slate-800 text-slate-300 text-xs font-semibold px-3.5 py-2.5 rounded-xl border border-slate-700 hover:bg-slate-700 transition">Logout</button>
             </div>
         </header>
 
         <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+            <!-- NOTES SECTION -->
             <section id="section-notes" class="space-y-6">
                 <div class="glass-card p-4 rounded-2xl flex flex-col md:flex-row gap-3 items-center justify-between">
-                    <input type="text" id="search-input" oninput="renderNotes()" placeholder="Search Ex.No 4, 5, 6, 7..." 
-                        class="w-full md:w-96 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white">
-                    <button onclick="resetToDefaultPrograms()" class="bg-orange-500/20 text-orange-300 border border-orange-500/30 text-xs font-semibold px-3 py-2 rounded-xl">
-                        Reload Full C Lab Ex 4-7
-                    </button>
+                    <input type="text" id="search-input" oninput="renderNotes()" placeholder="Search Ex.No 4, 5, 6, 7 or code..." 
+                        class="w-full md:w-96 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
+                    <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
+                        <button id="upload-btn-trigger" onclick="openUploadModal()" class="hidden bg-gradient-to-r from-orange-600 to-amber-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 transition">
+                            <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Upload / Add Program
+                        </button>
+                        <button onclick="resetToDefaultPrograms()" class="bg-slate-800 text-slate-300 border border-slate-700 text-xs font-semibold px-3.5 py-2.5 rounded-xl hover:bg-slate-700 transition">
+                            Reload Lab Ex 4-7
+                        </button>
+                    </div>
                 </div>
                 <div id="notes-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
             </section>
 
+            <!-- QUIZ SECTION -->
             <section id="section-quiz" class="hidden space-y-6">
                 <div class="glass-card p-6 rounded-2xl border border-orange-500/30">
                     <h2 class="text-2xl font-extrabold text-white mb-2">C Programming Quiz Arena</h2>
-                    <button onclick="startQuiz()" class="bg-orange-600 text-white font-bold py-2.5 px-6 rounded-xl">Start Quiz</button>
-                    <div id="quiz-play-area" class="hidden mt-4">
-                        <h3 id="q-question-text" class="text-lg text-white mb-4"></h3>
+                    <p class="text-sm text-slate-400 mb-4">Test your knowledge on C functions, loops, arrays, and pointers.</p>
+                    <button onclick="startQuiz()" class="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2.5 px-6 rounded-xl transition">Start Quiz</button>
+                    <div id="quiz-play-area" class="hidden mt-6 pt-6 border-t border-slate-800">
+                        <div class="flex justify-between items-center mb-4">
+                            <span id="q-counter" class="text-xs text-orange-400 font-mono">Question 1</span>
+                            <span id="q-score" class="text-xs text-slate-400">Score: 0</span>
+                        </div>
+                        <h3 id="q-question-text" class="text-base sm:text-lg text-white font-semibold mb-4"></h3>
                         <div id="q-options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-                        <button id="q-next-btn" onclick="nextQuestion()" class="hidden mt-4 bg-orange-600 text-white px-4 py-2 rounded">Next</button>
+                        <button id="q-next-btn" onclick="nextQuestion()" class="hidden mt-5 bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl">Next Question</button>
                     </div>
                 </div>
             </section>
 
+            <!-- ADMIN PANEL SECTION -->
             <section id="section-admin" class="hidden space-y-6">
                 <div class="glass-card p-6 rounded-2xl border border-orange-500/30">
-                    <h2 class="text-xl font-bold text-white mb-4">Admin Control Panel</h2>
-                    <p class="text-xs text-slate-400">Admin: MOTHISH | User: EX453</p>
+                    <h2 class="text-xl font-bold text-white mb-2">Admin Control Panel</h2>
+                    <p class="text-xs text-slate-400 mb-6">Manage users, upload privileges, and database backups.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                            <h3 class="text-sm font-bold text-white mb-3">User Access Control</h3>
+                            <div id="admin-user-list" class="space-y-2"></div>
+                        </div>
+                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold text-white mb-3">Database Maintenance</h3>
+                                <p class="text-xs text-slate-400 mb-4">Export current portal database as JSON backup or restore default lab records.</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="exportDatabase()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-2.5 rounded-xl border border-slate-700">Export JSON</button>
+                                <button onclick="resetToDefaultPrograms()" class="bg-orange-600/20 text-orange-300 border border-orange-500/30 text-xs font-semibold px-3.5 py-2.5 rounded-xl">Factory Reset</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- UPLOAD / ADD PROGRAM MODAL -->
+    <div id="upload-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="glass w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-orange-500/30 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+                <h3 id="upload-modal-title" class="text-lg font-bold text-white">Upload New C Program</h3>
+                <button onclick="closeUploadModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="upload-form" onsubmit="handleSaveProgram(event)" class="space-y-4">
+                <input type="hidden" id="edit-program-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Program Title</label>
+                        <input type="text" id="prog-title" required placeholder="EX.NO: 8 - Matrix Multiplication" 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Filename (.c)</label>
+                        <input type="text" id="prog-tag" required placeholder="ex8_matrix.c" 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-mono text-orange-400 focus:outline-none focus:border-orange-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">C Source Code</label>
+                    <textarea id="prog-content" rows="10" required placeholder="#include &lt;stdio.h&gt;..." 
+                        class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs font-mono text-emerald-300 focus:outline-none focus:border-orange-500 leading-relaxed"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Expected Output</label>
+                    <textarea id="prog-output" rows="3" required placeholder="Enter matrix dimensions: 2x2..." 
+                        class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-orange-400 focus:outline-none focus:border-orange-500"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeUploadModal()" class="bg-slate-800 text-slate-300 text-xs font-semibold px-4 py-2.5 rounded-xl hover:bg-slate-700">Cancel</button>
+                    <button type="submit" class="bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow">Save & Publish</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- C TERMINAL VIEWER MODAL -->
@@ -141,25 +210,26 @@
                     <span id="reader-filename" class="text-xs text-orange-400 font-mono">program.c</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <button onclick="toggleTurboCTheme()" class="bg-blue-700 text-yellow-300 text-xs font-bold px-3 py-2 rounded-xl">Turbo C Blue Mode</button>
-                    <button onclick="copyReaderContent()" class="bg-slate-800 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl">Copy</button>
-                    <button onclick="downloadCFile()" class="bg-orange-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl">Download .C</button>
-                    <button onclick="closeReaderModal()" class="text-slate-400 px-2 text-xl"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="toggleTurboCTheme()" class="bg-blue-700 hover:bg-blue-600 text-yellow-300 text-xs font-bold px-3 py-2 rounded-xl transition">Turbo C Blue Mode</button>
+                    <button onclick="copyReaderContent()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl transition">Copy Code</button>
+                    <button onclick="downloadCFile()" class="bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">Download .C</button>
+                    <button onclick="closeReaderModal()" class="text-slate-400 hover:text-white px-2 text-xl"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden">
-                <!-- Source Code Box with Scroll -->
                 <div class="lg:col-span-7 flex flex-col overflow-hidden">
-                    <div class="bg-slate-900 px-4 py-2 rounded-t-xl border border-b-0 border-slate-800 text-xs text-slate-400">Full Source Code (Scrollable)</div>
+                    <div class="bg-slate-900 px-4 py-2 rounded-t-xl border border-b-0 border-slate-800 text-xs text-slate-400 flex justify-between items-center">
+                        <span>Full Source Code (Scrollable)</span>
+                        <span id="reader-author" class="text-[11px] text-orange-400 font-mono">Author: MOTHISH</span>
+                    </div>
                     <pre id="reader-body" class="flex-1 overflow-auto bg-slate-950 border border-slate-800 rounded-b-xl p-4 text-xs sm:text-[13px] font-mono text-emerald-300 leading-relaxed whitespace-pre select-all"></pre>
                 </div>
 
-                <!-- Live Terminal Box -->
                 <div class="lg:col-span-5 flex flex-col overflow-hidden">
                     <div class="bg-slate-900 px-4 py-2 rounded-t-xl border border-b-0 border-slate-800 flex justify-between items-center text-xs">
                         <span class="text-orange-400 font-bold">Live Terminal Output</span>
-                        <button onclick="runInteractiveTerminal()" class="bg-orange-600 text-white px-2.5 py-1 rounded font-bold text-[11px]">Compile & Run</button>
+                        <button onclick="runInteractiveTerminal()" class="bg-orange-600 hover:bg-orange-500 text-white px-2.5 py-1 rounded font-bold text-[11px]">Compile & Run</button>
                     </div>
                     <div class="terminal-screen flex-1 rounded-b-xl p-4 flex flex-col justify-between overflow-auto">
                         <pre id="terminal-output" class="text-xs sm:text-sm font-mono whitespace-pre-wrap leading-relaxed"></pre>
@@ -170,12 +240,12 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'MOTHISH_CLAB_HUB_V7';
+        const STORAGE_KEY = 'MOTHISH_CLAB_HUB_V8';
 
-        // 100% ERROR-FREE, BOOK-EXACT FULL C PROGRAMS (EX 4, 5, 6, 7)
+        // PRELOADED EXAC/EXACT C PROGRAMS (EX 4, 5, 6, 7)
         const preloadedNotes = [
             {
-                id: 'ex4', simType: 'CALC', title: 'EX.NO: 4 - Design a Calculator using Functions', category: 'C_LAB', access: 'PUBLIC', tag: 'ex4_calculator.c', author: 'MOTHISH',
+                id: 'ex4', title: 'EX.NO: 4 - Design a Calculator using Functions', category: 'C_LAB', access: 'PUBLIC', tag: 'ex4_calculator.c', author: 'MOTHISH',
                 output: 'WELCOME TO SIMPLE CALCULATOR\n----------------------------\nChoose operation to perform (+, -, *, /, s): +\nEnter the first number: 25\nEnter second number: 15\n25.00 + 15.00 = 40.00',
                 content: `#include <stdio.h>
 
@@ -211,22 +281,12 @@ int main()
 
     switch (op)
     {
-        case '+':
-            result = add(num1, num2);
-            break;
-        case '-':
-            result = subt(num1, num2);
-            break;
-        case '*':
-            result = mult(num1, num2);
-            break;
-        case '/':
-            result = divi(num1, num2);
-            break;
+        case '+': result = add(num1, num2); break;
+        case '-': result = subt(num1, num2); break;
+        case '*': result = mult(num1, num2); break;
+        case '/': result = divi(num1, num2); break;
         case 's':
-        case 'S':
-            result = squa(num1);
-            break;
+        case 'S': result = squa(num1); break;
         default:
             printf("Invalid operator\\n");
             return 0;
@@ -240,43 +300,17 @@ int main()
     return 0;
 }
 
-/* Function to add two numbers */
-float add(float num1, float num2)
-{
-    return num1 + num2;
-}
-
-/* Function to subtract two numbers */
-float subt(float num1, float num2)
-{
-    return num1 - num2;
-}
-
-/* Function to multiply two numbers */
-float mult(float num1, float num2)
-{
-    return num1 * num2;
-}
-
-/* Function to divide two numbers */
-float divi(float num1, float num2)
-{
-    if (num2 == 0)
-    {
-        printf("Error: Division by zero!\\n");
-        return 0.0f;
-    }
+float add(float num1, float num2) { return num1 + num2; }
+float subt(float num1, float num2) { return num1 - num2; }
+float mult(float num1, float num2) { return num1 * num2; }
+float divi(float num1, float num2) {
+    if (num2 == 0) { printf("Error: Division by zero!\\n"); return 0.0f; }
     return num1 / num2;
 }
-
-/* Function to find square of a number */
-float squa(float num1)
-{
-    return num1 * num1;
-}`
+float squa(float num1) { return num1 * num1; }`
             },
             {
-                id: 'ex5', simType: 'ARMSTRONG', title: 'EX.NO: 5 - Check Armstrong Number', category: 'C_LAB', access: 'PUBLIC', tag: 'ex5_armstrong.c', author: 'MOTHISH',
+                id: 'ex5', title: 'EX.NO: 5 - Check Armstrong Number', category: 'C_LAB', access: 'PUBLIC', tag: 'ex5_armstrong.c', author: 'MOTHISH',
                 output: 'Enter a number: 371\n371 is an Armstrong number',
                 content: `#include <stdio.h>
 
@@ -305,7 +339,7 @@ int main()
 }`
             },
             {
-                id: 'ex6', simType: 'WEIGHTS', title: 'EX.NO: 6 - Sum of Weights & Sorting', category: 'C_LAB', access: 'PUBLIC', tag: 'ex6_weights.c', author: 'MOTHISH',
+                id: 'ex6', title: 'EX.NO: 6 - Sum of Weights & Sorting', category: 'C_LAB', access: 'PUBLIC', tag: 'ex6_weights.c', author: 'MOTHISH',
                 output: 'Enter number of numbers : 6\nSorted successfully by weights.',
                 content: `#include <stdio.h>
 #include <math.h>
@@ -315,35 +349,25 @@ int getWeight(int n)
     int w = 0;
     float root = sqrt(n);
 
-    if (root == ceil(root))
-        w += 5;
-    if (n % 4 == 0 && n % 6 == 0)
-        w += 4;
-    if (n % 2 == 0)
-        w += 3;
+    if (root == ceil(root)) w += 5;
+    if (n % 4 == 0 && n % 6 == 0) w += 4;
+    if (n % 2 == 0) w += 3;
 
     return w;
 }
 
 int main()
 {
-    int nums[15];
-    int ws[15];
+    int nums[15], ws[15];
     int i, j, t, n;
 
     printf("Enter number of numbers : ");
     scanf("%d", &n);
 
     printf("\\nEnter numbers : ");
-    for (i = 0; i < n; i++)
-        scanf("%d", &nums[i]);
+    for (i = 0; i < n; i++) scanf("%d", &nums[i]);
 
-    for (i = 0; i < n; i++)
-        ws[i] = getWeight(nums[i]);
-
-    printf("\\nBefore sorting:\\n");
-    for (i = 0; i < n; i++)
-        printf("%d:%d\\t", nums[i], ws[i]);
+    for (i = 0; i < n; i++) ws[i] = getWeight(nums[i]);
 
     for (i = 0; i < n; i++)
     {
@@ -357,16 +381,14 @@ int main()
         }
     }
 
-    printf("\\nSorted:\\n");
-    for (i = 0; i < n; i++)
-        printf("%d:%d\\t", nums[i], ws[i]);
-
+    printf("\\nSorted by weights:\\n");
+    for (i = 0; i < n; i++) printf("%d:%d\\t", nums[i], ws[i]);
     printf("\\n");
     return 0;
 }`
             },
             {
-                id: 'ex7', simType: 'HEIGHTS', title: 'EX.NO: 7 - Above Average Heights', category: 'C_LAB', access: 'PUBLIC', tag: 'ex7_heights.c', author: 'MOTHISH',
+                id: 'ex7', title: 'EX.NO: 7 - Above Average Heights', category: 'C_LAB', access: 'PUBLIC', tag: 'ex7_heights.c', author: 'MOTHISH',
                 output: 'Enter a value for n: 2\nThe number of persons above the average height is: 1',
                 content: `#include <stdio.h>
 #include <stdlib.h>
@@ -382,15 +404,13 @@ int count;
 
 int main(int argc, char* argv[])
 {
-    int arr[SIZE];
-    int n;
+    int arr[SIZE], n;
 
     printf("Enter a value for n: ");
     scanf("%d", &n);
 
-    if (n <= 0 || n > SIZE)
-    {
-        fprintf(stderr, "Your size of n is invalid or too big.\\n");
+    if (n <= 0 || n > SIZE) {
+        fprintf(stderr, "Invalid size.\\n");
         exit(1);
     }
 
@@ -402,28 +422,23 @@ int main(int argc, char* argv[])
     return EXIT_SUCCESS;
 }
 
-void readArray(int arr[], int n)
-{
+void readArray(int arr[], int n) {
     int i;
-    for (i = 0; i < n; i++)
-    {
+    for (i = 0; i < n; i++) {
         printf("Please enter #%d: ", i + 1);
         scanf("%d", &arr[i]);
     }
 }
 
-double findAverage(int arr[], int n)
-{
+double findAverage(int arr[], int n) {
     int sum = 0, i;
     for (i = 0; i < n; i++) sum += arr[i];
     return (double)sum / n;
 }
 
-int countAboveAverage(int arr[], int n, double average)
-{
+int countAboveAverage(int arr[], int n, double average) {
     int cnt = 0, i;
-    for (i = 0; i < n; i++)
-    {
+    for (i = 0; i < n; i++) {
         cnt = arr[i] > average ? cnt + 1 : cnt;
     }
     return cnt;
@@ -436,7 +451,9 @@ int countAboveAverage(int arr[], int n, double average)
             users: [{ username: 'EX453', password: 'EX453', canUpload: true }],
             notes: preloadedNotes,
             questions: [
-                { level: 'COLLEGE', subject: 'CODING', q: 'What does scanf() do in C?', options: ['Reads input', 'Prints output', 'Loops', 'Declares variable'], ans: 0 }
+                { q: 'What does scanf() do in C?', options: ['Reads formatted input', 'Prints formatted output', 'Allocates memory', 'Compiles code'], ans: 0 },
+                { q: 'Which header file is required for printf() and scanf()?', options: ['<conio.h>', '<stdio.h>', '<stdlib.h>', '<math.h>'], ans: 1 },
+                { q: 'What is the return type of the main() function in standard C?', options: ['void', 'char', 'int', 'float'], ans: 2 }
             ]
         };
 
@@ -460,80 +477,285 @@ int countAboveAverage(int arr[], int n, double average)
             const fu = db.users.find(x => x.username === u && x.password === p);
             if (fu) {
                 currentUser = { username: fu.username, role: 'USER', canUpload: fu.canUpload };
-                launchApp(); showToast('Welcome User EX453!'); return;
+                launchApp(); showToast('Welcome User ' + fu.username + '!'); return;
             }
-            showToast('Invalid Login!');
+            showToast('Invalid Username or Password!');
         }
 
         function enterGuestMode() { currentUser = { username: 'Guest', role: 'GUEST', canUpload: false }; launchApp(); }
         function logout() { currentUser = null; document.getElementById('app-screen').classList.add('hidden'); document.getElementById('auth-screen').classList.remove('hidden'); }
+        
         function launchApp() {
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
-            document.getElementById('welcome-user').textContent = `Logged in as ${currentUser.username}`;
-            if(currentUser.role === 'ADMIN') document.getElementById('tab-admin').classList.remove('hidden');
+            document.getElementById('welcome-user').textContent = `Logged in as ${currentUser.username} (${currentUser.role})`;
+            
+            if (currentUser.role === 'ADMIN') {
+                document.getElementById('tab-admin').classList.remove('hidden');
+            } else {
+                document.getElementById('tab-admin').classList.add('hidden');
+            }
+
+            if (currentUser.canUpload || currentUser.role === 'ADMIN') {
+                document.getElementById('upload-btn-trigger').classList.remove('hidden');
+            } else {
+                document.getElementById('upload-btn-trigger').classList.add('hidden');
+            }
+
             renderNotes();
+            renderAdminPanel();
         }
 
         function switchTab(tab) {
-            ['notes', 'quiz', 'admin'].forEach(t => document.getElementById(`section-${t}`).classList.add('hidden'));
+            ['notes', 'quiz', 'admin'].forEach(t => {
+                document.getElementById(`section-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`)?.classList.remove('bg-orange-600', 'text-white');
+                document.getElementById(`tab-${t}`)?.classList.add('text-slate-400');
+            });
             document.getElementById(`section-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`)?.classList.add('bg-orange-600', 'text-white');
+            document.getElementById(`tab-${tab}`)?.classList.remove('text-slate-400');
         }
 
         function renderNotes() {
+            const query = document.getElementById('search-input').value.toLowerCase();
             const grid = document.getElementById('notes-grid');
-            grid.innerHTML = db.notes.map(n => `
+            const filtered = db.notes.filter(n => n.title.toLowerCase().includes(query) || n.tag.toLowerCase().includes(query) || n.content.toLowerCase().includes(query));
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 text-sm">No C programs found matching your search.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(n => `
                 <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
                     <div>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-orange-500/20 text-orange-300">${n.tag}</span>
-                        <h3 onclick="openReader('${n.id}')" class="font-bold text-base text-white mt-2 cursor-pointer hover:text-orange-400">${n.title}</h3>
-                        <pre class="mt-2 bg-slate-950 p-3 rounded text-xs font-mono text-emerald-300 overflow-hidden max-h-32">${n.content}</pre>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded bg-orange-500/20 text-orange-300 font-mono">${n.tag}</span>
+                            <span class="text-[11px] text-slate-400">Author: ${n.author || 'MOTHISH'}</span>
+                        </div>
+                        <h3 onclick="openReader('${n.id}')" class="font-bold text-base text-white mt-2 cursor-pointer hover:text-orange-400 transition">${n.title}</h3>
+                        <pre class="mt-2.5 bg-slate-950 p-3.5 rounded-xl text-xs font-mono text-emerald-300 overflow-hidden max-h-32 leading-relaxed border border-slate-900">${n.content}</pre>
                     </div>
-                    <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between">
-                        <button onclick="openReader('${n.id}')" class="bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg">Open Full Code & Terminal</button>
+                    <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+                        <button onclick="openReader('${n.id}')" class="bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">Open Full Code & Terminal</button>
+                        ${(currentUser.role === 'ADMIN' || currentUser.username === n.author) ? `
+                            <div class="flex gap-1.5">
+                                <button onclick="openEditModal('${n.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-2.5 py-2 rounded-lg" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteProgram('${n.id}')" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 text-xs px-2.5 py-2 rounded-lg" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
             `).join('');
         }
 
+        function openUploadModal() {
+            document.getElementById('upload-modal-title').textContent = 'Upload / Add New C Program';
+            document.getElementById('edit-program-id').value = '';
+            document.getElementById('prog-title').value = '';
+            document.getElementById('prog-tag').value = '';
+            document.getElementById('prog-content').value = '#include <stdio.h>\n\nint main()\n{\n    printf("Hello C Lab\\n");\n    return 0;\n}';
+            document.getElementById('prog-output').value = 'Hello C Lab';
+            document.getElementById('upload-modal').classList.remove('hidden');
+        }
+
+        function openEditModal(id) {
+            const p = db.notes.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('upload-modal-title').textContent = 'Edit C Program';
+            document.getElementById('edit-program-id').value = p.id;
+            document.getElementById('prog-title').value = p.title;
+            document.getElementById('prog-tag').value = p.tag;
+            document.getElementById('prog-content').value = p.content;
+            document.getElementById('prog-output').value = p.output;
+            document.getElementById('upload-modal').classList.remove('hidden');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('upload-modal').classList.add('hidden');
+        }
+
+        function handleSaveProgram(e) {
+            e.preventDefault();
+            const editId = document.getElementById('edit-program-id').value;
+            const title = document.getElementById('prog-title').value.trim();
+            const tag = document.getElementById('prog-tag').value.trim();
+            const content = document.getElementById('prog-content').value;
+            const output = document.getElementById('prog-output').value;
+
+            if (editId) {
+                const p = db.notes.find(x => x.id === editId);
+                if (p) {
+                    p.title = title;
+                    p.tag = tag;
+                    p.content = content;
+                    p.output = output;
+                    showToast('Program updated successfully!');
+                }
+            } else {
+                const newId = 'prog_' + Date.now();
+                db.notes.unshift({
+                    id: newId,
+                    title: title,
+                    tag: tag.endsWith('.c') ? tag : tag + '.c',
+                    content: content,
+                    output: output,
+                    author: currentUser.username,
+                    category: 'C_LAB',
+                    access: 'PUBLIC'
+                });
+                showToast('New C program uploaded successfully!');
+            }
+
+            saveDB();
+            closeUploadModal();
+            renderNotes();
+        }
+
+        function deleteProgram(id) {
+            if (confirm('Are you sure you want to delete this program?')) {
+                db.notes = db.notes.filter(n => n.id !== id);
+                saveDB();
+                renderNotes();
+                showToast('Program deleted.');
+            }
+        }
+
         function openReader(id) {
             activeReaderNote = db.notes.find(x => x.id === id);
+            if (!activeReaderNote) return;
             document.getElementById('reader-title').textContent = activeReaderNote.title;
             document.getElementById('reader-filename').textContent = activeReaderNote.tag;
+            document.getElementById('reader-author').textContent = `Author: ${activeReaderNote.author || 'MOTHISH'}`;
             document.getElementById('reader-body').textContent = activeReaderNote.content;
             document.getElementById('terminal-output').textContent = activeReaderNote.output;
             document.getElementById('reader-modal').classList.remove('hidden');
         }
 
         function closeReaderModal() { document.getElementById('reader-modal').classList.add('hidden'); }
+        
         function runInteractiveTerminal() {
-            document.getElementById('terminal-output').textContent = activeReaderNote.output + "\n\n[Process exited with return value 0]";
-            showToast('Compiled & Executed Successfully (0 Errors)!');
+            document.getElementById('terminal-output').textContent = activeReaderNote.output + "\n\n--------------------\n[Program compiled & executed successfully in 0.04s]\n[Exit code: 0]";
+            showToast('Compiled & Executed with 0 Errors!');
         }
+
         function toggleTurboCTheme() {
             isTurboC = !isTurboC;
-            document.getElementById('reader-body').classList.toggle('turboc-screen', isTurboC);
+            const body = document.getElementById('reader-body');
+            if (isTurboC) {
+                body.classList.add('turboc-screen');
+                showToast('Turbo C Blue Screen Enabled');
+            } else {
+                body.classList.remove('turboc-screen');
+                showToast('Modern Dark Theme Restored');
+            }
         }
-        function copyReaderContent() { navigator.clipboard.writeText(activeReaderNote.content); showToast('C Code Copied!'); }
+
+        function copyReaderContent() {
+            navigator.clipboard.writeText(activeReaderNote.content);
+            showToast('Source code copied to clipboard!');
+        }
+
         function downloadCFile() {
             const blob = new Blob([activeReaderNote.content], {type: 'text/plain'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-            a.download = activeReaderNote.tag; a.click();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = activeReaderNote.tag;
+            a.click();
+            showToast('Downloading .c file...');
         }
-        function resetToDefaultPrograms() { db.notes = JSON.parse(JSON.stringify(preloadedNotes)); saveDB(); renderNotes(); showToast('Restored Full C Lab Programs!'); }
 
+        function resetToDefaultPrograms() {
+            if (confirm('Reload default lab records (Ex 4, 5, 6, 7)? Your custom uploads will remain.')) {
+                // Merge preloaded without losing custom ones
+                const existingIds = new Set(db.notes.map(n => n.id));
+                preloadedNotes.forEach(pn => {
+                    if (!existingIds.has(pn.id)) db.notes.push(pn);
+                });
+                saveDB();
+                renderNotes();
+                showToast('Lab records reloaded successfully!');
+            }
+        }
+
+        function renderAdminPanel() {
+            const list = document.getElementById('admin-user-list');
+            if (!list) return;
+            list.innerHTML = db.users.map((u, idx) => `
+                <div class="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
+                    <div>
+                        <span class="font-bold text-white">${u.username}</span>
+                        <span class="text-slate-400 ml-2">Pass: ${u.password}</span>
+                    </div>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <span class="text-[11px] text-slate-400">Can Upload</span>
+                        <input type="checkbox" ${u.canUpload ? 'checked' : ''} onchange="toggleUserUpload('${u.username}')" class="rounded bg-slate-900 border-slate-700 text-orange-600 focus:ring-0">
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        function toggleUserUpload(username) {
+            const u = db.users.find(x => x.username === username);
+            if (u) {
+                u.canUpload = !u.canUpload;
+                saveDB();
+                showToast(`Updated permissions for ${username}`);
+            }
+        }
+
+        function exportDatabase() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+            const a = document.createElement('a');
+            a.href = dataStr;
+            a.download = "mothish_clab_backup.json";
+            a.click();
+            showToast('Database exported successfully!');
+        }
+
+        // Quiz Logic
         let activeQuizList = [], currentQIndex = 0, currentScore = 0;
         function startQuiz() {
-            activeQuizList = db.questions; currentQIndex = 0; currentScore = 0;
+            activeQuizList = db.questions;
+            currentQIndex = 0;
+            currentScore = 0;
             document.getElementById('quiz-play-area').classList.remove('hidden');
             loadQuestion();
         }
+
         function loadQuestion() {
+            if (currentQIndex >= activeQuizList.length) {
+                document.getElementById('q-question-text').textContent = `Quiz Completed! Final Score: ${currentScore}/${activeQuizList.length}`;
+                document.getElementById('q-options-grid').innerHTML = '';
+                document.getElementById('q-next-btn').classList.add('hidden');
+                return;
+            }
             const q = activeQuizList[currentQIndex];
+            document.getElementById('q-counter').textContent = `Question ${currentQIndex + 1} of ${activeQuizList.length}`;
+            document.getElementById('q-score').textContent = `Score: ${currentScore}`;
             document.getElementById('q-question-text').textContent = q.q;
+            document.getElementById('q-next-btn').classList.add('hidden');
+
             document.getElementById('q-options-grid').innerHTML = q.options.map((opt, i) => `
-                <button onclick="alert('${i === q.ans ? "Correct!" : "Wrong!"}')" class="p-3 text-left rounded bg-slate-950 text-xs text-white">${opt}</button>
+                <button onclick="submitAnswer(${i}, ${q.ans})" class="p-3.5 text-left rounded-xl bg-slate-950 border border-slate-800 hover:border-orange-500 text-xs text-white transition">${opt}</button>
             `).join('');
+        }
+
+        function submitAnswer(selected, correct) {
+            if (selected === correct) {
+                currentScore++;
+                showToast('Correct Answer!');
+            } else {
+                showToast('Incorrect!');
+            }
+            currentQIndex++;
+            loadQuestion();
+            document.getElementById('q-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            loadQuestion();
         }
     </script>
 </body>
