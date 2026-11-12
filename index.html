@@ -94,12 +94,16 @@ header .brand{font-size:21px;margin:0;margin-right:auto}
   <div class="wrap">
     <div class="tabs">
       <button class="tab on" data-t="files">My files</button>
+      <button class="tab" data-t="pub">Public files</button>
       <button class="tab hide" data-t="all" id="tAll">All files</button>
       <button class="tab hide" data-t="users" id="tUsers">Users</button>
     </div>
 
     <div id="vFiles">
-      <div class="drop" id="drop"><b>Choose files</b> or drop them here<br><span class="meta">.c .cpp .h .py .java .js and anything else</span></div>
+      <div id="upBox">
+        <div class="drop" id="drop"><b>Choose files</b> or drop them here<br><span class="meta">.c .cpp .h .py .java .js and anything else</span></div>
+        <label style="display:flex;gap:8px;align-items:center;color:var(--text);margin-top:12px;cursor:pointer"><input type="checkbox" id="pubChk"> Make uploaded files public (every approved user can see and download them)</label>
+      </div>
       <input type="file" id="pick" multiple class="hide">
       <div class="bar">
         <input type="search" id="q" placeholder="Search files">
@@ -115,8 +119,8 @@ header .brand{font-size:21px;margin:0;margin-right:auto}
 
 <script>
 /* ====== 1. PUT YOUR SUPABASE DETAILS HERE (see SETUP.md) ====== */
-const SUPABASE_URL = 'https://smnoorikjfqaygzkyrsf.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_CBOkwUWroYjf2-ZVPErRyQ_reCX5AuF';
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 /* ================================================================ */
 
 const SESSION_MS = 4 * 60 * 1000;   // auto sign-out after 4 minutes
@@ -200,7 +204,8 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => show(b.dataset.
 function show(t){
   tab = t;
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === t));
-  $('vFiles').classList.toggle('hide', t === 'users'); $('vUsers').classList.toggle('hide', t !== 'users');
+  $('vFiles').classList.toggle('hide', t === 'users');
+  $('upBox').classList.toggle('hide', t === 'pub'); $('vUsers').classList.toggle('hide', t !== 'users');
   t === 'users' ? loadUsers() : loadFiles();
 }
 
@@ -208,10 +213,11 @@ function show(t){
 async function loadFiles(){
   let q = sb.from('files').select('*').order('created_at', { ascending: false });
   if (tab === 'files') q = q.eq('owner', me.id);
+  if (tab === 'pub') q = q.eq('is_public', true);
   const { data, error } = await q;
   if (error) return toast(error.message);
   files = data || [];
-  if (tab === 'all') {
+  if (tab === 'all' || tab === 'pub') {
     const { data: ps } = await sb.from('profiles').select('id,username');
     names = Object.fromEntries((ps || []).map(p => [p.id, p.username]));
   }
@@ -227,16 +233,23 @@ function render(){
     <div class="row">
       <span class="ext mono">${esc(extOf(f.name))}</span>
       <div class="fn"><div class="mono">${esc(f.name)}</div>
-        <div class="meta">${size(f.size)} · ${new Date(f.created_at).toLocaleString()}${tab==='all' ? ' · by ' + esc(names[f.owner] || '?') : ''}</div></div>
+        <div class="meta">${size(f.size)} · ${new Date(f.created_at).toLocaleString()} · ${f.is_public ? 'public' : 'private'}${tab!=='files' ? ' · by ' + esc(names[f.owner] || '?') : ''}</div></div>
       <div class="actions">
         ${canDl ? `<button class="btn sm" data-dl="${f.id}">Download</button>` : '<span class="pill r">Download blocked</span>'}
-        <button class="btn danger sm" data-rm="${f.id}">Delete</button>
+        ${(f.owner === me.id || profile.role === 'admin') ? `<button class="btn ghost sm" data-pb="${f.id}">${f.is_public ? 'Make private' : 'Make public'}</button>
+        <button class="btn danger sm" data-rm="${f.id}">Delete</button>` : ''}
       </div>
     </div>`).join('') : '<div class="empty">No files yet. Upload your first one above.</div>';
 }
 $('q').oninput = render; $('ext').onchange = render;
 $('fileList').onclick = async e => {
-  const dl = e.target.dataset.dl, rm = e.target.dataset.rm;
+  const dl = e.target.dataset.dl, rm = e.target.dataset.rm, pb = e.target.dataset.pb;
+  if (pb) {
+    const f = files.find(x => x.id === pb);
+    const { error } = await sb.from('files').update({ is_public: !f.is_public }).eq('id', pb);
+    error ? toast(error.message) : (toast(f.is_public ? 'Now private' : 'Now public'), loadFiles());
+    return;
+  }
   if (dl) {
     const f = files.find(x => x.id === dl);
     const { data, error } = await sb.storage.from('files').createSignedUrl(f.path, 60, { download: f.name });
@@ -256,7 +269,7 @@ async function upload(list){
     const path = me.id + '/' + Date.now() + '-' + f.name.replace(/[^\w.\-]/g, '_');
     const up = await sb.storage.from('files').upload(path, f);
     if (up.error) { toast('Upload failed: ' + up.error.message); continue; }
-    await sb.from('files').insert({ owner: me.id, name: f.name, path, size: f.size });
+    await sb.from('files').insert({ owner: me.id, name: f.name, path, size: f.size, is_public: $('pubChk').checked });
   }
   toast('Upload complete'); if (tab === 'users') show('files'); else loadFiles();
 }
