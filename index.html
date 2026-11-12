@@ -1,731 +1,297 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C-LAB & CLOUD HUB</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['Fira Code', 'monospace'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { background: #090d16; color: #f8fafc; overflow-x: hidden; }
-        .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(249, 115, 22, 0.15); }
-        .glass-card { background: rgba(30, 41, 59, 0.55); backdrop-filter: blur(12px); border: 1px solid rgba(249, 115, 22, 0.1); transition: all 0.25s ease; }
-        .glass-card:hover { border-color: rgba(249, 115, 22, 0.5); transform: translateY(-2px); }
-        .turboc-screen { background: #0000a8; color: #ffff55; font-family: 'Fira Code', monospace; border: 4px double #aaaaaa; }
-        .terminal-screen { background: #050811; color: #f97316; font-family: 'Fira Code', monospace; border: 1px solid #1e293b; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #f97316; border-radius: 3px; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CodeVault – your code files, anywhere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+:root{--bg:#0e1319;--panel:#151c25;--line:#243040;--text:#e6edf5;--mute:#8393a7;--acc:#5eead4;--acc2:#0e1319;--bad:#ff7a8a;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Manrope,system-ui,sans-serif;min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+.mono{font-family:'JetBrains Mono',monospace}
+.hide{display:none!important}
+.wrap{max-width:980px;margin:0 auto;padding:20px}
+/* auth */
+.auth{min-height:100vh;display:grid;place-items:center;padding:20px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:28px;width:100%;max-width:400px}
+.brand{font-weight:800;font-size:28px;letter-spacing:-.5px;margin:0 0 4px}
+.brand span{color:var(--acc)}
+.sub{color:var(--mute);margin:0 0 22px}
+label{display:block;font-size:13px;color:var(--mute);margin:14px 0 6px}
+input[type=text],input[type=password],input[type=search],select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 13px;outline:none}
+input:focus,select:focus{border-color:var(--acc)}
+.btn{background:var(--acc);color:var(--acc2);border:0;border-radius:10px;padding:11px 18px;font-weight:700;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--acc)}
+.btn.danger{background:transparent;color:var(--bad);border:1px solid var(--line)}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
+.full{width:100%;margin-top:20px}
+.switch{text-align:center;color:var(--mute);margin:16px 0 0;font-size:14px}
+.switch a{color:var(--acc);cursor:pointer}
+.msg{margin-top:14px;font-size:14px;color:var(--bad);min-height:20px}
+.msg.ok{color:var(--acc)}
+/* app */
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:14px 20px;position:sticky;top:0;background:var(--bg);z-index:5}
+header .brand{font-size:21px;margin:0;margin-right:auto}
+.timer{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--mute)}
+.timer.low{color:var(--bad);border-color:var(--bad)}
+.who{color:var(--mute);font-size:14px}
+.tabs{display:flex;gap:6px;margin:22px 0 18px}
+.tab{background:none;border:0;padding:8px 14px;border-radius:9px;cursor:pointer;color:var(--mute);font-weight:600}
+.tab.on{background:var(--panel);color:var(--text)}
+.drop{border:2px dashed var(--line);border-radius:var(--r);padding:34px 20px;text-align:center;color:var(--mute);cursor:pointer;transition:.15s}
+.drop.over,.drop:hover{border-color:var(--acc);color:var(--text);background:rgba(94,234,212,.05)}
+.drop b{color:var(--acc)}
+.bar{display:flex;gap:10px;margin:22px 0 12px}
+.bar input{flex:1}.bar select{width:auto}
+.list{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel)}
+.row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.ext{min-width:52px;text-align:center;font-size:12px;font-weight:600;padding:4px 0;border-radius:6px;background:var(--bg);color:var(--acc);border:1px solid var(--line)}
+.fn{flex:1;min-width:0}
+.fn div:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{font-size:12px;color:var(--mute)}
+.empty{padding:34px;text-align:center;color:var(--mute)}
+.pill{font-size:12px;padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--mute)}
+.pill.g{color:var(--acc);border-color:var(--acc)}
+.pill.r{color:var(--bad);border-color:var(--bad)}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--acc);padding:10px 18px;border-radius:10px;z-index:20}
+@media(max-width:600px){.row{flex-wrap:wrap}.actions{width:100%}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-orange-500 selection:text-white">
+<body>
 
-    <!-- NOTIFICATION TOAST -->
-    <div id="toast" class="fixed top-5 right-5 z-50 hidden transition-all duration-300">
-        <div class="glass px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border-l-4 border-orange-500">
-            <i id="toast-icon" class="fa-solid fa-circle-check text-orange-400 text-lg"></i>
-            <span id="toast-msg" class="text-sm font-medium">Action successful!</span>
-        </div>
+<!-- LOGIN / SIGN UP -->
+<section id="auth" class="auth">
+  <div class="card">
+    <h1 class="brand">Code<span>Vault</span></h1>
+    <p class="sub">Store your C, C++ and Python files and open them from any device.</p>
+    <label for="u">Username</label>
+    <input id="u" type="text" autocomplete="username" autocapitalize="off">
+    <label for="p">Password</label>
+    <input id="p" type="password" autocomplete="current-password">
+    <button class="btn full" id="authBtn">Sign in</button>
+    <div class="msg" id="authMsg"></div>
+    <p class="switch" id="sw">No account? <a id="swLink">Create one</a></p>
+  </div>
+</section>
+
+<!-- APP -->
+<section id="app" class="hide">
+  <header>
+    <h1 class="brand">Code<span>Vault</span></h1>
+    <span class="who" id="who"></span>
+    <span class="timer mono" id="timer">4:00</span>
+    <button class="btn ghost sm" id="out">Sign out</button>
+  </header>
+  <div class="wrap">
+    <div class="tabs">
+      <button class="tab on" data-t="files">My files</button>
+      <button class="tab hide" data-t="all" id="tAll">All files</button>
+      <button class="tab hide" data-t="users" id="tUsers">Users</button>
     </div>
 
-    <!-- LOGIN SCREEN -->
-    <div id="auth-screen" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-[#060911] bg-opacity-95">
-        <div class="glass w-full max-w-md rounded-2xl p-8 shadow-2xl border border-orange-500/30">
-            <div class="text-center mb-7">
-                <div class="w-16 h-16 bg-gradient-to-tr from-orange-600 to-amber-500 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-orange-500/30 mb-4">
-                    <i class="fa-solid fa-terminal text-2xl text-white"></i>
-                </div>
-                <h1 class="text-2xl font-extrabold tracking-tight text-white">MOTHISH C-LAB HUB</h1>
-                <p class="text-xs text-slate-400 mt-1">Full C Lab & Document Cloud Portal</p>
-            </div>
-
-            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1.5">Username</label>
-                    <input type="text" id="login-user" required placeholder="MOTHISH or EX453" 
-                        class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-500 text-white">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1.5">Password</label>
-                    <input type="password" id="login-pass" required placeholder="Password" 
-                        class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-500 text-white">
-                </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-orange-600 to-amber-600 text-white font-semibold py-3 rounded-xl shadow-lg hover:opacity-90 transition">
-                    Sign In to Portal
-                </button>
-            </form>
-            <button onclick="enterGuestMode()" class="w-full mt-3 bg-slate-800 border border-slate-700 text-slate-200 font-medium py-2.5 rounded-xl text-sm hover:bg-slate-700 transition">
-                Continue in Guest Mode
-            </button>
-            <p class="text-[11px] text-center text-slate-500 mt-4">
-                Admin: <span class="text-orange-400 font-mono">MOTHISH</span> | User: <span class="text-orange-400 font-mono">EX453</span>
-            </p>
-        </div>
+    <div id="vFiles">
+      <div class="drop" id="drop"><b>Choose files</b> or drop them here<br><span class="meta">.c .cpp .h .py .java .js and anything else</span></div>
+      <input type="file" id="pick" multiple class="hide">
+      <div class="bar">
+        <input type="search" id="q" placeholder="Search files">
+        <select id="ext"><option value="">All types</option></select>
+      </div>
+      <div class="list" id="fileList"></div>
     </div>
 
-    <!-- MAIN APP -->
-    <div id="app-screen" class="hidden flex-1 flex flex-col">
-        <header class="glass sticky top-0 z-30 border-b border-orange-500/20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow">
-                        <i class="fa-solid fa-terminal text-white"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-bold text-base text-white">MOTHISH C-HUB</h2>
-                        <p class="text-xs text-slate-400" id="welcome-user">Logged in</p>
-                    </div>
-                </div>
-                <nav class="flex items-center gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-800 overflow-x-auto">
-                    <button onclick="switchTab('notes')" id="tab-notes" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-orange-600 text-white transition whitespace-nowrap">C Programs</button>
-                    <button onclick="switchTab('documents')" id="tab-documents" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition whitespace-nowrap">All Documents Hub</button>
-                    <button onclick="switchTab('quiz')" id="tab-quiz" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition whitespace-nowrap">Quiz Arena</button>
-                    <button onclick="switchTab('admin')" id="tab-admin" class="hidden px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition whitespace-nowrap">Admin Panel</button>
-                </nav>
-                <button onclick="logout()" class="bg-slate-800 text-slate-300 text-xs font-semibold px-3.5 py-2.5 rounded-xl border border-slate-700 hover:bg-slate-700 transition">Logout</button>
-            </div>
-        </header>
+    <div id="vUsers" class="hide"><div class="list" id="userList"></div></div>
+  </div>
+</section>
+<div class="toast hide" id="toast"></div>
 
-        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
-            <!-- C PROGRAMS SECTION -->
-            <section id="section-notes" class="space-y-6">
-                <!-- C FILE DROPZONE -->
-                <div class="glass-card p-5 rounded-2xl border-2 border-dashed border-orange-500/40 hover:border-orange-500 transition text-center relative">
-                    <input type="file" id="direct-file-input" accept=".c,.txt,.cpp" onchange="handleDirectFileUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer z-10">
-                    <div class="flex flex-col items-center justify-center pointer-events-none">
-                        <div class="w-12 h-12 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center mb-2">
-                            <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
-                        </div>
-                        <h3 class="text-sm font-bold text-white">Click or Drop your C program file here (.c)</h3>
-                        <p class="text-xs text-slate-400 mt-1">Instantly parses code and adds it to your C Lab Record Hub</p>
-                    </div>
-                </div>
+<script>
+/* ====== 1. PUT YOUR SUPABASE DETAILS HERE (see SETUP.md) ====== */
+const SUPABASE_URL = 'https://smnoorikjfqaygzkyrsf.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_CBOkwUWroYjf2-ZVPErRyQ_reCX5AuF';
+/* ================================================================ */
 
-                <div class="glass-card p-4 rounded-2xl flex flex-col md:flex-row gap-3 items-center justify-between">
-                    <input type="text" id="search-input" oninput="renderNotes()" placeholder="Search C programs..." 
-                        class="w-full md:w-96 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
-                    <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
-                        <button onclick="openUploadModal()" class="bg-gradient-to-r from-orange-600 to-amber-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 transition">
-                            <i class="fa-solid fa-code mr-1.5"></i> Manual Code Editor Upload
-                        </button>
-                        <button onclick="resetToDefaultPrograms()" class="bg-slate-800 text-slate-300 border border-slate-700 text-xs font-semibold px-3.5 py-2.5 rounded-xl hover:bg-slate-700 transition">
-                            Reload Lab Ex 4-7
-                        </button>
-                    </div>
-                </div>
-                <div id="notes-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
-            </section>
+const SESSION_MS = 4 * 60 * 1000;   // auto sign-out after 4 minutes
+const DOMAIN = '@codevault.app';
+let sb = null, initError = '';
+try {
+  if (typeof supabase === 'undefined') throw new Error('Could not load the Supabase library. Check your internet connection.');
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} catch (e) {
+  initError = SUPABASE_URL.startsWith('YOUR_')
+    ? 'Setup needed: open index.html and replace YOUR_SUPABASE_URL and YOUR_SUPABASE_ANON_KEY (see SETUP.md).'
+    : 'Setup error: ' + e.message + ' (check the URL starts with https:// and the key is the anon public key)';
+}
+window.addEventListener('unhandledrejection', e => { const m = $('authMsg'); if (m) setMsg('Error: ' + (e.reason && e.reason.message || e.reason)); });
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let me = null, profile = null, tick = null, mode = 'in', files = [], names = {}, tab = 'files';
 
-            <!-- ALL DOCUMENTS & FILES HUB SECTION -->
-            <section id="section-documents" class="hidden space-y-6">
-                <!-- UNIVERSAL FILE UPLOAD DROPZONE -->
-                <div class="glass-card p-6 rounded-2xl border-2 border-dashed border-amber-500/40 hover:border-amber-500 transition text-center relative bg-slate-900/40">
-                    <input type="file" id="universal-file-input" onchange="handleUniversalFileUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer z-10">
-                    <div class="flex flex-col items-center justify-center pointer-events-none">
-                        <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
-                            <i class="fa-solid fa-folder-plus text-2xl"></i>
-                        </div>
-                        <h3 class="text-base font-bold text-white">Upload Any Document or File</h3>
-                        <p class="text-xs text-slate-400 mt-1">Supports PDF, Word (.docx), Excel (.xlsx), Images (.png, .jpg), Code, Text, and Archives</p>
-                    </div>
-                </div>
+function toast(t){const e=$('toast');e.textContent=t;e.classList.remove('hide');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.add('hide'),2800)}
+function setMsg(t,ok){const m=$('authMsg');m.textContent=t||'';m.className='msg'+(ok?' ok':'')}
+function size(n){return n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(1)+' MB'}
+const extOf = n => (n.includes('.') ? n.split('.').pop() : 'file').toLowerCase().slice(0,6);
 
-                <div class="glass-card p-4 rounded-2xl flex flex-col md:flex-row gap-3 items-center justify-between">
-                    <input type="text" id="doc-search-input" oninput="renderDocuments()" placeholder="Search uploaded documents..." 
-                        class="w-full md:w-96 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-                    <span class="text-xs text-slate-400 font-mono" id="doc-count-label">Total Documents: 0</span>
-                </div>
+/* ---------- auth ---------- */
+function showAuth(msg, ok){
+  clearInterval(tick); me = profile = null;
+  $('app').classList.add('hide'); $('auth').classList.remove('hide'); setMsg(msg, ok);
+}
+$('swLink').onclick = () => {
+  mode = mode === 'in' ? 'up' : 'in';
+  $('authBtn').textContent = mode === 'in' ? 'Sign in' : 'Create account';
+  $('sw').innerHTML = mode === 'in' ? 'No account? <a id="swLink2">Create one</a>' : 'Have an account? <a id="swLink2">Sign in</a>';
+  $('swLink2').onclick = $('swLink').onclick; setMsg('');
+};
+$('authBtn').onclick = async () => {
+  const u = $('u').value.trim().toLowerCase(), p = $('p').value;
+  if (!/^[a-z0-9_]{3,20}$/.test(u)) return setMsg('Username: 3–20 letters, numbers or _');
+  if (p.length < 6) return setMsg('Password must be at least 6 characters');
+  setMsg('Please wait…', true);
+  if (mode === 'up') {
+    const { error } = await sb.auth.signUp({ email: u + DOMAIN, password: p });
+    if (error) return setMsg(error.message);
+    await sb.auth.signOut();
+    return setMsg('Account created. You can sign in once the admin approves it.', true);
+  }
+  const { error } = await sb.auth.signInWithPassword({ email: u + DOMAIN, password: p });
+  if (error) return setMsg('Wrong username or password');
+  localStorage.setItem('cv_login_at', Date.now());
+  boot();
+};
+$('p').addEventListener('keydown', e => e.key === 'Enter' && $('authBtn').click());
+async function logout(msg){ await sb.auth.signOut(); localStorage.removeItem('cv_login_at'); showAuth(msg); }
+$('out').onclick = () => logout();
 
-                <div id="documents-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-            </section>
+async function boot(){
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return showAuth();
+  const at = +localStorage.getItem('cv_login_at');
+  if (!at || Date.now() - at >= SESSION_MS) return logout(at ? 'Your 4-minute session ended. Please sign in again.' : '');
+  me = session.user;
+  const { data } = await sb.from('profiles').select('*').eq('id', me.id).single();
+  profile = data;
+  if (!profile || !profile.approved) return logout('Your account is not approved (or is blocked) by the admin.');
+  $('auth').classList.add('hide'); $('app').classList.remove('hide');
+  $('who').textContent = profile.username + (profile.role === 'admin' ? ' (admin)' : '');
+  const adm = profile.role === 'admin';
+  $('tAll').classList.toggle('hide', !adm); $('tUsers').classList.toggle('hide', !adm);
+  clearInterval(tick); tick = setInterval(clock, 1000); clock();
+  show('files');
+}
+function clock(){
+  const left = SESSION_MS - (Date.now() - +localStorage.getItem('cv_login_at'));
+  if (left <= 0) return logout('Your 4-minute session ended. Please sign in again.');
+  const s = Math.ceil(left / 1000);
+  $('timer').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  $('timer').classList.toggle('low', s <= 30);
+}
 
-            <!-- QUIZ SECTION -->
-            <section id="section-quiz" class="hidden space-y-6">
-                <div class="glass-card p-6 rounded-2xl border border-orange-500/30">
-                    <h2 class="text-2xl font-extrabold text-white mb-2">C Programming Quiz Arena</h2>
-                    <p class="text-sm text-slate-400 mb-4">Test your knowledge on C functions, loops, arrays, and pointers.</p>
-                    <button onclick="startQuiz()" class="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2.5 px-6 rounded-xl transition">Start Quiz</button>
-                    <div id="quiz-play-area" class="hidden mt-6 pt-6 border-t border-slate-800">
-                        <div class="flex justify-between items-center mb-4">
-                            <span id="q-counter" class="text-xs text-orange-400 font-mono">Question 1</span>
-                            <span id="q-score" class="text-xs text-slate-400">Score: 0</span>
-                        </div>
-                        <h3 id="q-question-text" class="text-base sm:text-lg text-white font-semibold mb-4"></h3>
-                        <div id="q-options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-                        <button id="q-next-btn" onclick="nextQuestion()" class="hidden mt-5 bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl">Next Question</button>
-                    </div>
-                </div>
-            </section>
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => show(b.dataset.t));
+function show(t){
+  tab = t;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  $('vFiles').classList.toggle('hide', t === 'users'); $('vUsers').classList.toggle('hide', t !== 'users');
+  t === 'users' ? loadUsers() : loadFiles();
+}
 
-            <!-- ADMIN PANEL SECTION -->
-            <section id="section-admin" class="hidden space-y-6">
-                <div class="glass-card p-6 rounded-2xl border border-orange-500/30">
-                    <h2 class="text-xl font-bold text-white mb-2">Admin Control Panel</h2>
-                    <p class="text-xs text-slate-400 mb-6">Manage users, upload privileges, and database backups.</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                            <h3 class="text-sm font-bold text-white mb-3">User Access Control</h3>
-                            <div id="admin-user-list" class="space-y-2"></div>
-                        </div>
-                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
-                            <div>
-                                <h3 class="text-sm font-bold text-white mb-3">Database Maintenance</h3>
-                                <p class="text-xs text-slate-400 mb-4">Export current portal database as JSON backup or restore default lab records.</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="exportDatabase()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-2.5 rounded-xl border border-slate-700">Export JSON</button>
-                                <button onclick="resetToDefaultPrograms()" class="bg-orange-600/20 text-orange-300 border border-orange-500/30 text-xs font-semibold px-3.5 py-2.5 rounded-xl">Factory Reset</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
+/* ---------- files ---------- */
+async function loadFiles(){
+  let q = sb.from('files').select('*').order('created_at', { ascending: false });
+  if (tab === 'files') q = q.eq('owner', me.id);
+  const { data, error } = await q;
+  if (error) return toast(error.message);
+  files = data || [];
+  if (tab === 'all') {
+    const { data: ps } = await sb.from('profiles').select('id,username');
+    names = Object.fromEntries((ps || []).map(p => [p.id, p.username]));
+  }
+  const exts = [...new Set(files.map(f => extOf(f.name)))].sort(), cur = $('ext').value;
+  $('ext').innerHTML = '<option value="">All types</option>' + exts.map(e => `<option ${e===cur?'selected':''}>${esc(e)}</option>`).join('');
+  render();
+}
+function render(){
+  const t = $('q').value.toLowerCase(), e = $('ext').value;
+  const list = files.filter(f => f.name.toLowerCase().includes(t) && (!e || extOf(f.name) === e));
+  const canDl = profile.role === 'admin' || profile.can_download;
+  $('fileList').innerHTML = list.length ? list.map(f => `
+    <div class="row">
+      <span class="ext mono">${esc(extOf(f.name))}</span>
+      <div class="fn"><div class="mono">${esc(f.name)}</div>
+        <div class="meta">${size(f.size)} · ${new Date(f.created_at).toLocaleString()}${tab==='all' ? ' · by ' + esc(names[f.owner] || '?') : ''}</div></div>
+      <div class="actions">
+        ${canDl ? `<button class="btn sm" data-dl="${f.id}">Download</button>` : '<span class="pill r">Download blocked</span>'}
+        <button class="btn danger sm" data-rm="${f.id}">Delete</button>
+      </div>
+    </div>`).join('') : '<div class="empty">No files yet. Upload your first one above.</div>';
+}
+$('q').oninput = render; $('ext').onchange = render;
+$('fileList').onclick = async e => {
+  const dl = e.target.dataset.dl, rm = e.target.dataset.rm;
+  if (dl) {
+    const f = files.find(x => x.id === dl);
+    const { data, error } = await sb.storage.from('files').createSignedUrl(f.path, 60, { download: f.name });
+    if (error) return toast('Download not allowed for your account');
+    location.href = data.signedUrl;
+  }
+  if (rm && confirm('Delete this file?')) {
+    const f = files.find(x => x.id === rm);
+    await sb.storage.from('files').remove([f.path]);
+    await sb.from('files').delete().eq('id', rm);
+    toast('Deleted'); loadFiles();
+  }
+};
+async function upload(list){
+  for (const f of list) {
+    toast('Uploading ' + f.name + '…');
+    const path = me.id + '/' + Date.now() + '-' + f.name.replace(/[^\w.\-]/g, '_');
+    const up = await sb.storage.from('files').upload(path, f);
+    if (up.error) { toast('Upload failed: ' + up.error.message); continue; }
+    await sb.from('files').insert({ owner: me.id, name: f.name, path, size: f.size });
+  }
+  toast('Upload complete'); if (tab === 'users') show('files'); else loadFiles();
+}
+const drop = $('drop');
+drop.onclick = () => $('pick').click();
+$('pick').onchange = e => { upload([...e.target.files]); e.target.value = ''; };
+['dragenter','dragover'].forEach(v => drop.addEventListener(v, e => { e.preventDefault(); drop.classList.add('over') }));
+['dragleave','drop'].forEach(v => drop.addEventListener(v, e => { e.preventDefault(); drop.classList.remove('over') }));
+drop.addEventListener('drop', e => upload([...e.dataTransfer.files]));
 
-    <!-- MANUAL UPLOAD / EDIT MODAL -->
-    <div id="upload-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="glass w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-orange-500/30 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
-                <h3 id="upload-modal-title" class="text-lg font-bold text-white">Upload New C Program</h3>
-                <button onclick="closeUploadModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <form id="upload-form" onsubmit="handleSaveProgram(event)" class="space-y-4">
-                <input type="hidden" id="edit-program-id">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Program Title</label>
-                        <input type="text" id="prog-title" required placeholder="EX.NO: 8 - Matrix Multiplication" 
-                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Filename (.c)</label>
-                        <input type="text" id="prog-tag" required placeholder="ex8_matrix.c" 
-                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-mono text-orange-400 focus:outline-none focus:border-orange-500">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">C Source Code</label>
-                    <textarea id="prog-content" rows="10" required placeholder="#include &lt;stdio.h&gt;..." 
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs font-mono text-emerald-300 focus:outline-none focus:border-orange-500 leading-relaxed"></textarea>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Expected Output</label>
-                    <textarea id="prog-output" rows="3" required placeholder="Output..." 
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-orange-400 focus:outline-none focus:border-orange-500"></textarea>
-                </div>
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" onclick="closeUploadModal()" class="bg-slate-800 text-slate-300 text-xs font-semibold px-4 py-2.5 rounded-xl hover:bg-slate-700">Cancel</button>
-                    <button type="submit" class="bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow">Save & Publish</button>
-                </div>
-            </form>
-        </div>
-    </div>
+/* ---------- admin: users ---------- */
+async function loadUsers(){
+  const { data, error } = await sb.from('profiles').select('*').order('created_at');
+  if (error) return toast(error.message);
+  $('userList').innerHTML = data.map(u => `
+    <div class="row">
+      <div class="fn"><div><b>${esc(u.username)}</b> ${u.role==='admin'?'<span class="pill g">admin</span>':''}</div>
+        <div class="meta">Joined ${new Date(u.created_at).toLocaleDateString()}</div></div>
+      <span class="pill ${u.approved?'g':'r'}">${u.approved?'Can log in':'Blocked / pending'}</span>
+      <span class="pill ${u.can_download?'g':'r'}">${u.can_download?'Can download':'No download'}</span>
+      ${u.role==='admin' ? '' : `<div class="actions">
+        <button class="btn ghost sm" data-ap="${u.id}" data-v="${!u.approved}">${u.approved?'Block login':'Allow login'}</button>
+        <button class="btn ghost sm" data-dw="${u.id}" data-v="${!u.can_download}">${u.can_download?'Block download':'Allow download'}</button></div>`}
+    </div>`).join('');
+}
+$('userList').onclick = async e => {
+  const d = e.target.dataset, id = d.ap || d.dw; if (!id) return;
+  const patch = d.ap ? { approved: d.v === 'true' } : { can_download: d.v === 'true' };
+  const { error } = await sb.from('profiles').update(patch).eq('id', id);
+  error ? toast(error.message) : (toast('Saved'), loadUsers());
+};
 
-    <!-- C TERMINAL VIEWER MODAL -->
-    <div id="reader-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md">
-        <div class="glass w-full max-w-6xl rounded-2xl p-4 sm:p-6 shadow-2xl border border-slate-700 max-h-[95vh] flex flex-col">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-4">
-                <div>
-                    <h2 id="reader-title" class="text-base sm:text-xl font-bold text-white">Title</h2>
-                    <span id="reader-filename" class="text-xs text-orange-400 font-mono">program.c</span>
-                </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <button onclick="toggleTurboCTheme()" class="bg-blue-700 hover:bg-blue-600 text-yellow-300 text-xs font-bold px-3 py-2 rounded-xl transition">Turbo C Blue Mode</button>
-                    <button onclick="copyReaderContent()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl transition">Copy Code</button>
-                    <button onclick="downloadCFile()" class="bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">Download .C</button>
-                    <button onclick="closeReaderModal()" class="text-slate-400 hover:text-white px-2 text-xl"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden">
-                <div class="lg:col-span-7 flex flex-col overflow-hidden">
-                    <div class="bg-slate-900 px-4 py-2 rounded-t-xl border border-b-0 border-slate-800 text-xs text-slate-400 flex justify-between items-center">
-                        <span>Full Source Code (Scrollable)</span>
-                        <span id="reader-author" class="text-[11px] text-orange-400 font-mono">Author: MOTHISH</span>
-                    </div>
-                    <pre id="reader-body" class="flex-1 overflow-auto bg-slate-950 border border-slate-800 rounded-b-xl p-4 text-xs sm:text-[13px] font-mono text-emerald-300 leading-relaxed whitespace-pre select-all"></pre>
-                </div>
-
-                <div class="lg:col-span-5 flex flex-col overflow-hidden">
-                    <div class="bg-slate-900 px-4 py-2 rounded-t-xl border border-b-0 border-slate-800 flex justify-between items-center text-xs">
-                        <span class="text-orange-400 font-bold">Live Terminal Output</span>
-                        <button onclick="runInteractiveTerminal()" class="bg-orange-600 hover:bg-orange-500 text-white px-2.5 py-1 rounded font-bold text-[11px]">Compile & Run</button>
-                    </div>
-                    <div class="terminal-screen flex-1 rounded-b-xl p-4 flex flex-col justify-between overflow-auto">
-                        <pre id="terminal-output" class="text-xs sm:text-sm font-mono whitespace-pre-wrap leading-relaxed"></pre>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const STORAGE_KEY = 'MOTHISH_CLAB_HUB_V10';
-
-        // PRELOADED EXACT C PROGRAMS (EX 4, 5, 6, 7)
-        const preloadedNotes = [
-            {
-                id: 'ex4', title: 'EX.NO: 4 - Design a Calculator using Functions', tag: 'ex4_calculator.c', author: 'MOTHISH',
-                output: 'WELCOME TO SIMPLE CALCULATOR\n----------------------------\nChoose operation (+, -, *, /, s): +\nEnter first number: 25\nEnter second number: 15\n25.00 + 15.00 = 40.00',
-                content: `#include <stdio.h>
-
-float add(float a, float b) { return a + b; }
-float subt(float a, float b) { return a - b; }
-float mult(float a, float b) { return a * b; }
-float divi(float a, float b) { return b == 0 ? 0 : a / b; }
-float squa(float a) { return a * a; }
-
-int main() {
-    char op; float n1, n2=0, res=0;
-    printf("WELCOME TO SIMPLE CALCULATOR\\nOperation (+,-,*,/,s): ");
-    scanf(" %c", &op);
-    if(op=='s'||op=='S') { scanf("%f", &n1); res=squa(n1); }
-    else { scanf("%f %f", &n1, &n2); }
-    if(op=='+') res=add(n1,n2);
-    else if(op=='-') res=subt(n1,n2);
-    else if(op=='*') res=mult(n1,n2);
-    else if(op=='/') res=divi(n1,n2);
-    printf("Result = %.2f\\n", res);
-    return 0;
-}`
-            },
-            {
-                id: 'ex5', title: 'EX.NO: 5 - Check Armstrong Number', tag: 'ex5_armstrong.c', author: 'MOTHISH',
-                output: 'Enter a number: 371\n371 is an Armstrong number',
-                content: `#include <stdio.h>
-int main() {
-    int num, r, sum = 0, temp;
-    printf("Enter a number: ");
-    scanf("%d", &num);
-    temp = num;
-    while (num != 0) {
-        r = num % 10;
-        num /= 10;
-        sum += (r * r * r);
-    }
-    if (sum == temp) printf("%d is Armstrong\\n", temp);
-    else printf("%d is not Armstrong\\n", temp);
-    return 0;
-}`
-            },
-            {
-                id: 'ex6', title: 'EX.NO: 6 - Sum of Weights & Sorting', tag: 'ex6_weights.c', author: 'MOTHISH',
-                output: 'Enter number of numbers : 4\nSorted by weights successfully.',
-                content: `#include <stdio.h>
-#include <math.h>
-int main() {
-    int n, i, arr[10];
-    printf("Enter count: ");
-    scanf("%d", &n);
-    printf("Enter elements: ");
-    for(i=0; i<n; i++) scanf("%d", &arr[i]);
-    printf("Weights processed and sorted successfully.\\n");
-    return 0;
-}`
-            },
-            {
-                id: 'ex7', title: 'EX.NO: 7 - Above Average Heights', tag: 'ex7_heights.c', author: 'MOTHISH',
-                output: 'Enter n: 3\nThe number of persons above average height is: 1',
-                content: `#include <stdio.h>
-int main() {
-    int n, i, sum=0, count=0, arr[50];
-    printf("Enter n: ");
-    scanf("%d", &n);
-    for(i=0; i<n; i++) { scanf("%d", &arr[i]); sum+=arr[i]; }
-    float avg = (float)sum/n;
-    for(i=0; i<n; i++) if(arr[i] > avg) count++;
-    printf("Above average count: %d\\n", count);
-    return 0;
-}`
-            }
-        ];
-
-        let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
-            admin: { username: 'MOTHISH', password: 'MOTHISH' },
-            users: [{ username: 'EX453', password: 'EX453', canUpload: true }],
-            notes: preloadedNotes,
-            documents: [
-                { id: 'doc_sample1', name: 'Engineering_Graphics_Notes.pdf', size: '2.4 MB', type: 'PDF Document', date: '2026-11-01', author: 'MOTHISH', dataUrl: '#' }
-            ],
-            questions: [
-                { q: 'What does scanf() do in C?', options: ['Reads formatted input', 'Prints formatted output', 'Allocates memory', 'Compiles code'], ans: 0 },
-                { q: 'Which header file is required for printf() and scanf()?', options: ['<conio.h>', '<stdio.h>', '<stdlib.h>', '<math.h>'], ans: 1 }
-            ]
-        };
-
-        let currentUser = null, activeReaderNote = null, isTurboC = false;
-        function saveDB() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            document.getElementById('toast-msg').textContent = msg;
-            t.classList.remove('hidden');
-            setTimeout(() => t.classList.add('hidden'), 2500);
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const u = document.getElementById('login-user').value.trim();
-            const p = document.getElementById('login-pass').value.trim();
-            if (u === db.admin.username && p === db.admin.password) {
-                currentUser = { username: db.admin.username, role: 'ADMIN', canUpload: true };
-                launchApp(); showToast('Welcome Admin MOTHISH!'); return;
-            }
-            const fu = db.users.find(x => x.username === u && x.password === p);
-            if (fu) {
-                currentUser = { username: fu.username, role: 'USER', canUpload: fu.canUpload };
-                launchApp(); showToast('Welcome User ' + fu.username + '!'); return;
-            }
-            showToast('Invalid Username or Password!');
-        }
-
-        function enterGuestMode() { currentUser = { username: 'Guest', role: 'GUEST', canUpload: false }; launchApp(); }
-        function logout() { currentUser = null; document.getElementById('app-screen').classList.add('hidden'); document.getElementById('auth-screen').classList.remove('hidden'); }
-        
-        function launchApp() {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-screen').classList.remove('hidden');
-            document.getElementById('welcome-user').textContent = `Logged in as ${currentUser.username} (${currentUser.role})`;
-            
-            if (currentUser.role === 'ADMIN') {
-                document.getElementById('tab-admin').classList.remove('hidden');
-            } else {
-                document.getElementById('tab-admin').classList.add('hidden');
-            }
-
-            renderNotes();
-            renderDocuments();
-            renderAdminPanel();
-        }
-
-        function switchTab(tab) {
-            ['notes', 'documents', 'quiz', 'admin'].forEach(t => {
-                document.getElementById(`section-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`)?.classList.remove('bg-orange-600', 'text-white');
-                document.getElementById(`tab-${t}`)?.classList.add('text-slate-400');
-            });
-            document.getElementById(`section-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`)?.classList.add('bg-orange-600', 'text-white');
-            document.getElementById(`tab-${tab}`)?.classList.remove('text-slate-400');
-        }
-
-        // --- C NOTES RENDERING ---
-        function renderNotes() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const grid = document.getElementById('notes-grid');
-            const filtered = db.notes.filter(n => n.title.toLowerCase().includes(query) || n.tag.toLowerCase().includes(query) || n.content.toLowerCase().includes(query));
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 text-sm">No C programs found matching your search.</div>`;
-                return;
-            }
-
-            grid.innerHTML = filtered.map(n => `
-                <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded bg-orange-500/20 text-orange-300 font-mono">${n.tag}</span>
-                            <span class="text-[11px] text-slate-400">Author: ${n.author || 'MOTHISH'}</span>
-                        </div>
-                        <h3 onclick="openReader('${n.id}')" class="font-bold text-base text-white mt-2 cursor-pointer hover:text-orange-400 transition">${n.title}</h3>
-                        <pre class="mt-2.5 bg-slate-950 p-3.5 rounded-xl text-xs font-mono text-emerald-300 overflow-hidden max-h-32 leading-relaxed border border-slate-900">${n.content}</pre>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
-                        <button onclick="openReader('${n.id}')" class="bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">Open Full Code & Terminal</button>
-                        ${(currentUser.role === 'ADMIN' || currentUser.username === n.author) ? `
-                            <div class="flex gap-1.5">
-                                <button onclick="openEditModal('${n.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-2.5 py-2 rounded-lg" title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="deleteProgram('${n.id}')" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 text-xs px-2.5 py-2 rounded-lg" title="Delete"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // --- UNIVERSAL DOCUMENT HUB UPLOAD & RENDER ---
-        function handleUniversalFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const fileDataUrl = e.target.result;
-                const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
-                const fileExtension = file.name.split('.').pop().toUpperCase();
-                
-                const newDoc = {
-                    id: 'doc_' + Date.now(),
-                    name: file.name,
-                    size: fileSizeMB,
-                    type: fileExtension + ' Document',
-                    date: new Date().toISOString().split('T')[0],
-                    author: currentUser.username,
-                    dataUrl: fileDataUrl
-                };
-
-                db.documents.unshift(newDoc);
-                saveDB();
-                renderDocuments();
-                showToast(`Successfully uploaded ${file.name}!`);
-                event.target.value = '';
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function renderDocuments() {
-            const query = document.getElementById('doc-search-input').value.toLowerCase();
-            const grid = document.getElementById('documents-grid');
-            const filtered = db.documents.filter(d => d.name.toLowerCase().includes(query) || d.type.toLowerCase().includes(query));
-
-            document.getElementById('doc-count-label').textContent = `Total Documents: ${db.documents.length}`;
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 text-sm">No documents uploaded yet.</div>`;
-                return;
-            }
-
-            grid.innerHTML = filtered.map(d => `
-                <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-bold px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 font-mono">${d.type}</span>
-                            <span class="text-[11px] text-slate-400">${d.size}</span>
-                        </div>
-                        <h3 class="font-bold text-sm text-white truncate" title="${d.name}"><i class="fa-solid fa-file-lines text-amber-400 mr-2"></i>${d.name}</h3>
-                        <p class="text-xs text-slate-400 mt-2">Uploaded by: <span class="text-slate-200">${d.author}</span> on ${d.date}</p>
-                    </div>
-                    <div class="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
-                        <a href="${d.dataUrl}" download="${d.name}" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-download"></i> Download
-                        </a>
-                        ${(currentUser.role === 'ADMIN' || currentUser.username === d.author) ? `
-                            <button onclick="deleteDocument('${d.id}')" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 text-xs px-3 py-2 rounded-xl transition" title="Delete">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function deleteDocument(id) {
-            if (confirm('Are you sure you want to delete this document?')) {
-                db.documents = db.documents.filter(d => d.id !== id);
-                saveDB();
-                renderDocuments();
-                showToast('Document deleted.');
-            }
-        }
-
-        // --- DIRECT C FILE UPLOAD ---
-        function handleDirectFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const codeContent = e.target.result;
-                const fileName = file.name;
-                const progTitle = "Uploaded: " + fileName.replace(/\.[^/.]+$/, "").replace(/_/g, " ").toUpperCase();
-                
-                db.notes.unshift({
-                    id: 'prog_' + Date.now(),
-                    title: progTitle,
-                    tag: fileName,
-                    content: codeContent,
-                    output: "Compiled successfully from " + fileName + "\nExit code: 0",
-                    author: currentUser.username
-                });
-
-                saveDB();
-                renderNotes();
-                showToast(`Successfully uploaded C file ${fileName}!`);
-                event.target.value = '';
-            };
-            reader.readAsText(file);
-        }
-
-        function openUploadModal() {
-            document.getElementById('upload-modal-title').textContent = 'Upload / Add New C Program';
-            document.getElementById('edit-program-id').value = '';
-            document.getElementById('prog-title').value = '';
-            document.getElementById('prog-tag').value = '';
-            document.getElementById('prog-content').value = '#include <stdio.h>\n\nint main()\n{\n    printf("Hello C Lab\\n");\n    return 0;\n}';
-            document.getElementById('prog-output').value = 'Hello C Lab\nProgram executed successfully.';
-            document.getElementById('upload-modal').classList.remove('hidden');
-        }
-
-        function openEditModal(id) {
-            const p = db.notes.find(x => x.id === id);
-            if (!p) return;
-            document.getElementById('upload-modal-title').textContent = 'Edit C Program';
-            document.getElementById('edit-program-id').value = p.id;
-            document.getElementById('prog-title').value = p.title;
-            document.getElementById('prog-tag').value = p.tag;
-            document.getElementById('prog-content').value = p.content;
-            document.getElementById('prog-output').value = p.output;
-            document.getElementById('upload-modal').classList.remove('hidden');
-        }
-
-        function closeUploadModal() { document.getElementById('upload-modal').classList.add('hidden'); }
-
-        function handleSaveProgram(e) {
-            e.preventDefault();
-            const editId = document.getElementById('edit-program-id').value;
-            const title = document.getElementById('prog-title').value.trim();
-            const tag = document.getElementById('prog-tag').value.trim();
-            const content = document.getElementById('prog-content').value;
-            const output = document.getElementById('prog-output').value;
-
-            if (editId) {
-                const p = db.notes.find(x => x.id === editId);
-                if (p) { p.title = title; p.tag = tag; p.content = content; p.output = output; showToast('Program updated successfully!'); }
-            } else {
-                db.notes.unshift({
-                    id: 'prog_' + Date.now(),
-                    title: title,
-                    tag: tag.endsWith('.c') ? tag : tag + '.c',
-                    content: content,
-                    output: output,
-                    author: currentUser.username
-                });
-                showToast('New C program uploaded successfully!');
-            }
-            saveDB();
-            closeUploadModal();
-            renderNotes();
-        }
-
-        function deleteProgram(id) {
-            if (confirm('Are you sure you want to delete this program?')) {
-                db.notes = db.notes.filter(n => n.id !== id);
-                saveDB();
-                renderNotes();
-                showToast('Program deleted.');
-            }
-        }
-
-        function openReader(id) {
-            activeReaderNote = db.notes.find(x => x.id === id);
-            if (!activeReaderNote) return;
-            document.getElementById('reader-title').textContent = activeReaderNote.title;
-            document.getElementById('reader-filename').textContent = activeReaderNote.tag;
-            document.getElementById('reader-author').textContent = `Author: ${activeReaderNote.author || 'MOTHISH'}`;
-            document.getElementById('reader-body').textContent = activeReaderNote.content;
-            document.getElementById('terminal-output').textContent = activeReaderNote.output;
-            document.getElementById('reader-modal').classList.remove('hidden');
-        }
-
-        function closeReaderModal() { document.getElementById('reader-modal').classList.add('hidden'); }
-        
-        function runInteractiveTerminal() {
-            document.getElementById('terminal-output').textContent = activeReaderNote.output + "\n\n--------------------\n[Program compiled & executed successfully]\n[Exit code: 0]";
-            showToast('Compiled & Executed with 0 Errors!');
-        }
-
-        function toggleTurboCTheme() {
-            isTurboC = !isTurboC;
-            const body = document.getElementById('reader-body');
-            if (isTurboC) { body.classList.add('turboc-screen'); showToast('Turbo C Blue Screen Enabled'); }
-            else { body.classList.remove('turboc-screen'); showToast('Modern Dark Theme Restored'); }
-        }
-
-        function copyReaderContent() { navigator.clipboard.writeText(activeReaderNote.content); showToast('Source code copied to clipboard!'); }
-        function downloadCFile() {
-            const blob = new Blob([activeReaderNote.content], {type: 'text/plain'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-            a.download = activeReaderNote.tag; a.click();
-            showToast('Downloading .c file...');
-        }
-
-        function resetToDefaultPrograms() {
-            if (confirm('Reload default lab records (Ex 4, 5, 6, 7)? Your custom uploads will remain.')) {
-                const existingIds = new Set(db.notes.map(n => n.id));
-                preloadedNotes.forEach(pn => { if (!existingIds.has(pn.id)) db.notes.push(pn); });
-                saveDB();
-                renderNotes();
-                showToast('Lab records reloaded successfully!');
-            }
-        }
-
-        function renderAdminPanel() {
-            const list = document.getElementById('admin-user-list');
-            if (!list) return;
-            list.innerHTML = db.users.map((u, idx) => `
-                <div class="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
-                    <div>
-                        <span class="font-bold text-white">${u.username}</span>
-                        <span class="text-slate-400 ml-2">Pass: ${u.password}</span>
-                    </div>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <span class="text-[11px] text-slate-400">Can Upload</span>
-                        <input type="checkbox" ${u.canUpload ? 'checked' : ''} onchange="toggleUserUpload('${u.username}')" class="rounded bg-slate-900 border-slate-700 text-orange-600 focus:ring-0">
-                    </label>
-                </div>
-            `).join('');
-        }
-
-        function toggleUserUpload(username) {
-            const u = db.users.find(x => x.username === username);
-            if (u) { u.canUpload = !u.canUpload; saveDB(); showToast(`Updated permissions for ${username}`); }
-        }
-
-        function exportDatabase() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
-            const a = document.createElement('a'); a.href = dataStr; a.download = "mothish_clab_backup.json"; a.click();
-            showToast('Database exported successfully!');
-        }
-
-        // Quiz Logic
-        let activeQuizList = [], currentQIndex = 0, currentScore = 0;
-        function startQuiz() {
-            activeQuizList = db.questions; currentQIndex = 0; currentScore = 0;
-            document.getElementById('quiz-play-area').classList.remove('hidden');
-            loadQuestion();
-        }
-
-        function loadQuestion() {
-            if (currentQIndex >= activeQuizList.length) {
-                document.getElementById('q-question-text').textContent = `Quiz Completed! Final Score: ${currentScore}/${activeQuizList.length}`;
-                document.getElementById('q-options-grid').innerHTML = '';
-                document.getElementById('q-next-btn').classList.add('hidden');
-                return;
-            }
-            const q = activeQuizList[currentQIndex];
-            document.getElementById('q-counter').textContent = `Question ${currentQIndex + 1} of ${activeQuizList.length}`;
-            document.getElementById('q-score').textContent = `Score: ${currentScore}`;
-            document.getElementById('q-question-text').textContent = q.q;
-            document.getElementById('q-next-btn').classList.add('hidden');
-
-            document.getElementById('q-options-grid').innerHTML = q.options.map((opt, i) => `
-                <button onclick="submitAnswer(${i}, ${q.ans})" class="p-3.5 text-left rounded-xl bg-slate-950 border border-slate-800 hover:border-orange-500 text-xs text-white transition">${opt}</button>
-            `).join('');
-        }
-
-        function submitAnswer(selected, correct) {
-            if (selected === correct) { currentScore++; showToast('Correct Answer!'); }
-            else { showToast('Incorrect!'); }
-            currentQIndex++;
-            loadQuestion();
-            document.getElementById('q-next-btn').classList.remove('hidden');
-        }
-
-        function nextQuestion() { loadQuestion(); }
-    </script>
+/* ---------- start ---------- */
+if (initError) { showAuth(initError); $('authBtn').disabled = true; }
+else boot().catch(e => showAuth('Error: ' + e.message));
+</script>
 </body>
 </html>
