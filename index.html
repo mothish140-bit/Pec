@@ -3,174 +3,267 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CodeVault – your code files, anywhere</title>
+<meta name="theme-color" content="#07090f">
+<title>CodeVault – your code, everywhere</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
-:root{--bg:#0e1319;--panel:#151c25;--line:#243040;--text:#e6edf5;--mute:#8393a7;--acc:#5eead4;--acc2:#0e1319;--bad:#ff7a8a;--r:14px}
+:root{--bg:#07090f;--text:#eaf0f8;--mute:#8a98ad;--line:rgba(255,255,255,.09);--glass:rgba(255,255,255,.045);--a:#5eead4;--b:#60a5fa;--c:#a78bfa;--bad:#ff6b81;--grad:linear-gradient(120deg,#5eead4,#60a5fa 50%,#a78bfa)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Manrope,system-ui,sans-serif;min-height:100vh}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 Manrope,system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
 button,input,select{font:inherit;color:inherit}
 .mono{font-family:'JetBrains Mono',monospace}
 .hide{display:none!important}
-.wrap{max-width:980px;margin:0 auto;padding:20px}
-/* auth */
-.auth{min-height:100vh;display:grid;place-items:center;padding:20px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:28px;width:100%;max-width:400px}
-.brand{font-weight:800;font-size:28px;letter-spacing:-.5px;margin:0 0 4px}
-.brand span{color:var(--acc)}
-.sub{color:var(--mute);margin:0 0 22px}
-label{display:block;font-size:13px;color:var(--mute);margin:14px 0 6px}
-input[type=text],input[type=password],input[type=search],select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 13px;outline:none}
-input:focus,select:focus{border-color:var(--acc)}
-.btn{background:var(--acc);color:var(--acc2);border:0;border-radius:10px;padding:11px 18px;font-weight:700;cursor:pointer}
-.btn:hover{filter:brightness(1.08)}
-.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
-.btn.ghost:hover{border-color:var(--acc)}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* animated background */
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden}
+.bg i{position:absolute;width:48vmax;height:48vmax;border-radius:50%;filter:blur(100px);opacity:.28;animation:drift 24s ease-in-out infinite alternate}
+.bg i:nth-child(1){background:#14b8a6;top:-18%;left:-12%}
+.bg i:nth-child(2){background:#6366f1;bottom:-25%;right:-10%;animation-delay:-8s}
+.bg i:nth-child(3){background:#ec4899;top:35%;left:40%;opacity:.14;animation-delay:-15s}
+.bg::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:28px 28px;-webkit-mask-image:radial-gradient(circle at 50% 40%,#000,transparent 75%);mask-image:radial-gradient(circle at 50% 40%,#000,transparent 75%)}
+@keyframes drift{to{transform:translate(9vmax,6vmax) scale(1.2)}}
+@keyframes pop{from{opacity:0;transform:translateY(26px) scale(.97)}}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}}
+@keyframes line{from{opacity:0;transform:translateX(-14px)}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{50%{opacity:0}}
+.glass{background:var(--glass);border:1px solid var(--line);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+/* buttons / fields */
+.btn{position:relative;background:var(--grad);background-size:200% 100%;color:#06131a;border:0;border-radius:12px;padding:11px 20px;font-weight:800;cursor:pointer;transition:.25s}
+.btn:hover{background-position:100% 0;transform:translateY(-2px);box-shadow:0 8px 28px -6px rgba(94,234,212,.55)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn.ghost{background:var(--glass);color:var(--text);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--a);box-shadow:none}
 .btn.danger{background:transparent;color:var(--bad);border:1px solid var(--line)}
-.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
-.full{width:100%;margin-top:20px}
-.switch{text-align:center;color:var(--mute);margin:16px 0 0;font-size:14px}
-.switch a{color:var(--acc);cursor:pointer}
-.msg{margin-top:14px;font-size:14px;color:var(--bad);min-height:20px}
-.msg.ok{color:var(--acc)}
+.btn.danger:hover{border-color:var(--bad);box-shadow:none}
+.btn.sm{padding:7px 13px;font-size:13px;border-radius:9px}
+.btn:disabled{opacity:.6;cursor:wait}
+.spin{display:none;width:16px;height:16px;border:2px solid #06131a;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;margin-left:8px;vertical-align:-3px}
+.busy .spin{display:inline-block}
+label.l{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:18px 0 7px}
+.field{position:relative}
+.field input,.bar input,.bar select{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;padding:13px 14px;outline:none;transition:.2s}
+.field input:focus,.bar input:focus,.bar select:focus{border-color:var(--a);box-shadow:0 0 0 4px rgba(94,234,212,.12)}
+#eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--mute);padding:8px;cursor:pointer;border-radius:8px;display:grid}
+#eye:hover{color:var(--a)}
+#eye .sl{opacity:0;transition:.2s}#eye.on .sl{opacity:1}
+.field #p{padding-right:46px}
+/* auth */
+.auth{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:30px;padding:40px 6vw;max-width:1280px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:22px}
+.logo i{width:38px;height:38px;border-radius:11px;background:var(--grad);display:grid;place-items:center;color:#06131a;font-style:normal;font-family:'JetBrains Mono';font-weight:600}
+.hero h1{font-size:clamp(38px,5vw,64px);line-height:1.05;letter-spacing:-.03em;margin:26px 0 14px;font-weight:800}
+.hero p{color:var(--mute);max-width:460px;font-size:17px}
+.codebox{margin-top:30px;padding:20px 22px;border-radius:16px;font-size:13px;line-height:1.8;max-width:470px}
+.codebox span{display:block;opacity:0;animation:line .6s forwards;animation-delay:var(--d)}
+.codebox b{color:var(--c);font-weight:600}.codebox em{color:var(--a);font-style:normal}.codebox u{text-decoration:none;color:var(--mute)}
+.codebox .cur{display:inline-block;width:8px;height:15px;background:var(--a);vertical-align:-2px;animation:blink 1s infinite}
+.card{width:100%;max-width:420px;justify-self:center;border-radius:22px;padding:30px;animation:pop .7s cubic-bezier(.2,.8,.2,1) both;box-shadow:0 30px 80px -30px rgba(0,0,0,.8)}
+.card.shake{animation:shake .45s}
+.seg{position:relative;display:grid;grid-template-columns:1fr 1fr;background:rgba(0,0,0,.35);border-radius:13px;padding:4px;border:1px solid var(--line)}
+.seg i{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);background:var(--grad);border-radius:10px;transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
+.seg button{position:relative;background:none;border:0;padding:9px;font-weight:700;color:var(--mute);cursor:pointer;transition:.25s}
+.seg button.on{color:#06131a}
+.card h2{margin:24px 0 2px;font-size:26px;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:0}
+.full{width:100%;margin-top:24px;padding:14px}
+.msg{margin-top:14px;font-size:14px;color:var(--bad);min-height:22px}
+.msg.ok{color:var(--a)}
+.switch{text-align:center;color:var(--mute);font-size:14px;margin:14px 0 0}
+.switch a{color:var(--a);cursor:pointer;font-weight:700}
 /* app */
-header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:14px 20px;position:sticky;top:0;background:var(--bg);z-index:5}
-header .brand{font-size:21px;margin:0;margin-right:auto}
-.timer{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--mute)}
-.timer.low{color:var(--bad);border-color:var(--bad)}
-.who{color:var(--mute);font-size:14px}
-.tabs{display:flex;gap:6px;margin:22px 0 18px}
-.tab{background:none;border:0;padding:8px 14px;border-radius:9px;cursor:pointer;color:var(--mute);font-weight:600}
-.tab.on{background:var(--panel);color:var(--text)}
-.drop{border:2px dashed var(--line);border-radius:var(--r);padding:34px 20px;text-align:center;color:var(--mute);cursor:pointer;transition:.15s}
-.drop.over,.drop:hover{border-color:var(--acc);color:var(--text);background:rgba(94,234,212,.05)}
-.drop b{color:var(--acc)}
-.bar{display:flex;gap:10px;margin:22px 0 12px}
-.bar input{flex:1}.bar select{width:auto}
-.list{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel)}
-.row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line)}
-.row:first-child{border-top:0}
-.ext{min-width:52px;text-align:center;font-size:12px;font-weight:600;padding:4px 0;border-radius:6px;background:var(--bg);color:var(--acc);border:1px solid var(--line)}
-.fn{flex:1;min-width:0}
-.fn div:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav{position:sticky;top:12px;z-index:10;margin:12px auto 0;max-width:1100px;width:calc(100% - 24px);border-radius:18px;padding:10px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;animation:rise .6s both}
+.nav .logo{font-size:19px;margin-right:auto}.nav .logo i{width:32px;height:32px;font-size:14px}
+.tabs{display:flex;gap:4px;background:rgba(0,0,0,.3);padding:4px;border-radius:12px}
+.tab{background:none;border:0;padding:8px 15px;border-radius:9px;cursor:pointer;color:var(--mute);font-weight:700;transition:.25s}
+.tab:hover{color:var(--text)}
+.tab.on{background:var(--grad);color:#06131a}
+.av{width:34px;height:34px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#06131a;font-weight:800;flex:none}
+.who{font-size:13px;line-height:1.2}.who small{color:var(--mute);display:block}
+.timer{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
+.timer svg{width:34px;height:34px;transform:rotate(-90deg)}
+.timer circle{fill:none;stroke-width:3.5}
+.timer .t0{stroke:var(--line)}
+.timer .t1{stroke:var(--a);stroke-linecap:round;stroke-dasharray:94.25;transition:stroke-dashoffset 1s linear,stroke .4s}
+.timer.low{color:var(--bad)}.timer.low .t1{stroke:var(--bad)}.timer.low svg{animation:bob .8s infinite}
+.wrap{max-width:1100px;margin:0 auto;padding:26px 14px 60px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.stat{border-radius:16px;padding:18px 20px;animation:rise .6s both;animation-delay:calc(var(--i)*80ms)}
+.stat small{color:var(--mute);text-transform:uppercase;letter-spacing:.08em;font-size:11px}
+.stat div{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.drop{border:2px dashed rgba(255,255,255,.16);border-radius:20px;padding:36px 20px;text-align:center;color:var(--mute);cursor:pointer;transition:.3s;background:var(--glass)}
+.drop svg{display:block;margin:0 auto 10px;color:var(--a);animation:bob 2.6s ease-in-out infinite}
+.drop:hover,.drop.over{border-color:var(--a);color:var(--text);background:rgba(94,234,212,.07);transform:scale(1.01)}
+.drop b{color:var(--a)}
+.pubrow{display:flex;align-items:center;gap:12px;margin-top:14px;color:var(--mute);font-size:14px}
+.bar{display:flex;gap:10px;margin:22px 0 16px}.bar input{flex:1}.bar select{width:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.fc{border-radius:18px;padding:16px;animation:rise .55s both;animation-delay:calc(var(--i)*45ms);transition:.3s;position:relative;overflow:hidden}
+.fc::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--c)}
+.fc:hover{transform:translateY(-5px);border-color:rgba(255,255,255,.22);box-shadow:0 18px 40px -18px var(--c)}
+.fc .top{display:flex;justify-content:space-between;align-items:center}
+.ext{font-size:12px;font-weight:600;padding:3px 10px;border-radius:7px;color:var(--c);background:rgba(255,255,255,.06)}
+.nm{margin:14px 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
 .meta{font-size:12px;color:var(--mute)}
-.empty{padding:34px;text-align:center;color:var(--mute)}
-.pill{font-size:12px;padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--mute)}
-.pill.g{color:var(--acc);border-color:var(--acc)}
-.pill.r{color:var(--bad);border-color:var(--bad)}
-.actions{display:flex;gap:6px;flex-wrap:wrap}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--acc);padding:10px 18px;border-radius:10px;z-index:20}
-@media(max-width:600px){.row{flex-wrap:wrap}.actions{width:100%}}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.pill{font-size:11px;padding:2px 10px;border-radius:999px;border:1px solid var(--line);color:var(--mute)}
+.pill.g{color:var(--a);border-color:rgba(94,234,212,.5)}.pill.r{color:var(--bad);border-color:rgba(255,107,129,.5)}
+.empty{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--mute);animation:rise .5s both}
+.empty svg{opacity:.5;margin-bottom:8px}
+.ur{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:16px;margin-bottom:10px;animation:rise .5s both;animation-delay:calc(var(--i)*50ms);flex-wrap:wrap}
+.ur .fn{flex:1;min-width:140px}
+.tg{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--mute)}
+.sw{position:relative;width:46px;height:26px;display:inline-block}
+.sw input{opacity:0;width:0;height:0}
+.sw span{position:absolute;inset:0;background:rgba(255,255,255,.12);border-radius:99px;cursor:pointer;transition:.3s}
+.sw span::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.3s cubic-bezier(.3,1.4,.5,1)}
+.sw input:checked+span{background:var(--grad)}
+.sw input:checked+span::after{transform:translateX(20px)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,30px);opacity:0;background:rgba(20,26,36,.95);border:1px solid var(--a);padding:11px 20px;border-radius:12px;z-index:30;transition:.4s;pointer-events:none}
+.toast.show{transform:translate(-50%,0);opacity:1}
+@media(max-width:860px){.auth{grid-template-columns:1fr;padding:30px 18px}.codebox{display:none}.hero h1{font-size:38px;margin:16px 0 8px}.hero p{display:none}}
+@media(max-width:640px){.stats{grid-template-columns:1fr 1fr 1fr;gap:8px}.stat{padding:12px}.stat div{font-size:21px}.who{display:none}.bar{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){*,*::before{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
 </style>
 </head>
 <body>
+<div class="bg"><i></i><i></i><i></i></div>
 
-<!-- LOGIN / SIGN UP -->
 <section id="auth" class="auth">
-  <div class="card">
-    <h1 class="brand">Code<span>Vault</span></h1>
-    <p class="sub">Store your C, C++ and Python files and open them from any device.</p>
-    <label for="u">Username</label>
-    <input id="u" type="text" autocomplete="username" autocapitalize="off">
-    <label for="p">Password</label>
-    <input id="p" type="password" autocomplete="current-password">
-    <button class="btn full" id="authBtn">Sign in</button>
+  <div class="hero">
+    <div class="logo"><i>&lt;/&gt;</i>CodeVault</div>
+    <h1>Your code,<br><span class="grad">everywhere.</span></h1>
+    <p>Upload C, C++ and Python files once. Open, share and download them from any device.</p>
+    <div class="codebox mono glass">
+      <span style="--d:.5s"><b>#include</b> <em>&lt;stdio.h&gt;</em></span>
+      <span style="--d:.9s"><b>int</b> main() {</span>
+      <span style="--d:1.3s">&nbsp;&nbsp;printf(<em>"Hello, CodeVault!"</em>);</span>
+      <span style="--d:1.7s">}</span>
+      <span style="--d:2.1s"><u># python</u></span>
+      <span style="--d:2.5s"><b>print</b>(<em>"stored safely"</em>)<i class="cur"></i></span>
+    </div>
+  </div>
+  <div class="card glass" id="card">
+    <div class="seg"><i id="segI"></i>
+      <button type="button" data-m="in" class="on">Sign in</button>
+      <button type="button" data-m="up">Create account</button>
+    </div>
+    <h2 id="ttl">Welcome back</h2>
+    <p class="sub" id="sub">Sign in to open your files.</p>
+    <label class="l" for="u">Username</label>
+    <div class="field"><input id="u" type="text" autocomplete="username" autocapitalize="off" placeholder="your_username"></div>
+    <label class="l" for="p">Password</label>
+    <div class="field"><input id="p" type="password" autocomplete="current-password" placeholder="••••••••">
+      <button type="button" id="eye" aria-label="Show password"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><path class="sl" d="M3 3l18 18"/></svg></button></div>
+    <button class="btn full" id="authBtn"><span id="btnT">Sign in</span><i class="spin"></i></button>
     <div class="msg" id="authMsg"></div>
-    <p class="switch" id="sw">No account? <a id="swLink">Create one</a></p>
+    <p class="switch" id="sw"></p>
   </div>
 </section>
 
-<!-- APP -->
 <section id="app" class="hide">
-  <header>
-    <h1 class="brand">Code<span>Vault</span></h1>
-    <span class="who" id="who"></span>
-    <span class="timer mono" id="timer">4:00</span>
-    <button class="btn ghost sm" id="out">Sign out</button>
-  </header>
-  <div class="wrap">
-    <div class="tabs">
+  <header class="nav glass">
+    <div class="logo"><i>&lt;/&gt;</i>CodeVault</div>
+    <nav class="tabs">
       <button class="tab on" data-t="files">My files</button>
-      <button class="tab" data-t="pub">Public files</button>
+      <button class="tab" data-t="pub">Public</button>
       <button class="tab hide" data-t="all" id="tAll">All files</button>
       <button class="tab hide" data-t="users" id="tUsers">Users</button>
+    </nav>
+    <div class="av" id="av"></div>
+    <div class="who"><b id="wn"></b><small id="wr"></small></div>
+    <div class="timer" id="timer"><svg viewBox="0 0 36 36"><circle class="t0" cx="18" cy="18" r="15"/><circle class="t1" id="ring" cx="18" cy="18" r="15"/></svg><span class="mono" id="tm">4:00</span></div>
+    <button class="btn ghost sm" id="out">Sign out</button>
+  </header>
+  <main class="wrap">
+    <div class="stats" id="stats">
+      <div class="stat glass" style="--i:0"><small>Files</small><div id="s1">0</div></div>
+      <div class="stat glass" style="--i:1"><small>Storage</small><div id="s2">0 B</div></div>
+      <div class="stat glass" style="--i:2"><small>Public</small><div id="s3">0</div></div>
     </div>
-
     <div id="vFiles">
       <div id="upBox">
-        <div class="drop" id="drop"><b>Choose files</b> or drop them here<br><span class="meta">.c .cpp .h .py .java .js and anything else</span></div>
-        <label style="display:flex;gap:8px;align-items:center;color:var(--text);margin-top:12px;cursor:pointer"><input type="checkbox" id="pubChk"> Make uploaded files public (every approved user can see and download them)</label>
+        <div class="drop" id="drop"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7 9m5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><b>Choose files</b> or drop them here<br><span class="meta">.c .cpp .h .py .java .js and anything else</span></div>
+        <div class="pubrow"><label class="sw"><input type="checkbox" id="pubChk"><span></span></label> Make uploads public (every approved user can see and download them)</div>
       </div>
       <input type="file" id="pick" multiple class="hide">
-      <div class="bar">
-        <input type="search" id="q" placeholder="Search files">
-        <select id="ext"><option value="">All types</option></select>
-      </div>
-      <div class="list" id="fileList"></div>
+      <div class="bar"><input type="search" id="q" placeholder="Search files…"><select id="ext"><option value="">All types</option></select></div>
+      <div class="grid" id="fileList"></div>
     </div>
-
-    <div id="vUsers" class="hide"><div class="list" id="userList"></div></div>
-  </div>
+    <div id="vUsers" class="hide"><div id="userList"></div></div>
+  </main>
 </section>
-<div class="toast hide" id="toast"></div>
+<div class="toast" id="toast"></div>
 
 <script>
-/* ====== 1. PUT YOUR SUPABASE DETAILS HERE (see SETUP.md) ====== */const SUPABASE_URL = 'https://smnoorikjfqaygzkyrsf.supabase.co';
+const SUPABASE_URL = 'https://smnoorikjfqaygzkyrsf.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_CBOkwUWroYjf2-ZVPErRyQ_reCX5AuF';
-/* ================================================================ */
-
 const SESSION_MS = 4 * 60 * 1000;   // auto sign-out after 4 minutes
 const DOMAIN = '@codevault.app';
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let sb = null, initError = '';
 try {
   if (typeof supabase === 'undefined') throw new Error('Could not load the Supabase library. Check your internet connection.');
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-} catch (e) {
-  initError = SUPABASE_URL.startsWith('YOUR_')
-    ? 'Setup needed: open index.html and replace YOUR_SUPABASE_URL and YOUR_SUPABASE_ANON_KEY (see SETUP.md).'
-    : 'Setup error: ' + e.message + ' (check the URL starts with https:// and the key is the anon public key)';
-}
-window.addEventListener('unhandledrejection', e => { const m = $('authMsg'); if (m) setMsg('Error: ' + (e.reason && e.reason.message || e.reason)); });
-const $ = id => document.getElementById(id);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+} catch (e) { initError = 'Setup error: ' + e.message; }
+window.addEventListener('unhandledrejection', e => setMsg('Error: ' + (e.reason && e.reason.message || e.reason)));
 let me = null, profile = null, tick = null, mode = 'in', files = [], names = {}, tab = 'files';
 
-function toast(t){const e=$('toast');e.textContent=t;e.classList.remove('hide');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.add('hide'),2800)}
-function setMsg(t,ok){const m=$('authMsg');m.textContent=t||'';m.className='msg'+(ok?' ok':'')}
-function size(n){return n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(1)+' MB'}
-const extOf = n => (n.includes('.') ? n.split('.').pop() : 'file').toLowerCase().slice(0,6);
+const LANG = { c:'#5b9bd5', cpp:'#f34b7d', cc:'#f34b7d', h:'#a78bfa', hpp:'#a78bfa', py:'#ffd43b', java:'#f89820', js:'#f7df1e', ts:'#3b82f6', html:'#ff7849', css:'#38bdf8', go:'#22d3ee', rs:'#fb923c', cs:'#34d399', txt:'#94a3b8', json:'#fbbf24' };
+const lang = x => LANG[x] || '#5eead4';
+const extOf = n => (n.includes('.') ? n.split('.').pop() : 'file').toLowerCase().slice(0, 6);
+const size = n => n < 1024 ? Math.round(n) + ' B' : n < 1048576 ? (n / 1024).toFixed(1) + ' KB' : (n / 1048576).toFixed(1) + ' MB';
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove('show'),2800)}
+function countUp(el, to, fmt){const s=performance.now(),d=700;const f=t=>{const k=Math.min(1,(t-s)/d),v=to*(1-Math.pow(1-k,3));el.textContent=fmt?fmt(v):Math.round(v);if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+function setMsg(t, ok){const m=$('authMsg');if(!m)return;m.textContent=t||'';m.className='msg'+(ok?' ok':'');
+  if(t&&!ok){const c=$('card');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}}
+function busy(b){$('authBtn').classList.toggle('busy',b);$('authBtn').disabled=b}
+
+/* ---------- sign in / create account switch ---------- */
+function setMode(m){
+  mode = m; const up = m === 'up';
+  document.querySelectorAll('.seg button').forEach(b => b.classList.toggle('on', b.dataset.m === m));
+  $('segI').style.transform = up ? 'translateX(100%)' : 'none';
+  $('ttl').textContent = up ? 'Create your account' : 'Welcome back';
+  $('sub').textContent = up ? 'The admin must approve you before you can sign in.' : 'Sign in to open your files.';
+  $('btnT').textContent = up ? 'Create account' : 'Sign in';
+  $('p').autocomplete = up ? 'new-password' : 'current-password';
+  $('sw').innerHTML = up ? 'Already have an account? <a data-m="in">Sign in</a>' : 'New here? <a data-m="up">Create an account</a>';
+  setMsg('');
+}
+document.addEventListener('click', e => { const m = e.target.closest('[data-m]'); if (m) setMode(m.dataset.m); });
+$('eye').onclick = () => { const s = $('p').type === 'password'; $('p').type = s ? 'text' : 'password'; $('eye').classList.toggle('on', s); $('eye').setAttribute('aria-label', s ? 'Hide password' : 'Show password'); };
+setMode('in');
 
 /* ---------- auth ---------- */
 function showAuth(msg, ok){
   clearInterval(tick); me = profile = null;
-  $('app').classList.add('hide'); $('auth').classList.remove('hide'); setMsg(msg, ok);
+  $('app').classList.add('hide'); $('auth').classList.remove('hide'); busy(false); setMsg(msg, ok);
 }
-$('swLink').onclick = () => {
-  mode = mode === 'in' ? 'up' : 'in';
-  $('authBtn').textContent = mode === 'in' ? 'Sign in' : 'Create account';
-  $('sw').innerHTML = mode === 'in' ? 'No account? <a id="swLink2">Create one</a>' : 'Have an account? <a id="swLink2">Sign in</a>';
-  $('swLink2').onclick = $('swLink').onclick; setMsg('');
-};
 $('authBtn').onclick = async () => {
   const u = $('u').value.trim().toLowerCase(), p = $('p').value;
   if (!/^[a-z0-9_]{3,20}$/.test(u)) return setMsg('Username: 3–20 letters, numbers or _');
   if (p.length < 6) return setMsg('Password must be at least 6 characters');
-  setMsg('Please wait…', true);
+  busy(true); setMsg('');
   if (mode === 'up') {
     const { error } = await sb.auth.signUp({ email: u + DOMAIN, password: p });
-    if (error) return setMsg(error.message);
-    await sb.auth.signOut();
-    return setMsg('Account created. You can sign in once the admin approves it.', true);
+    if (error) { busy(false); return setMsg(error.message); }
+    await sb.auth.signOut(); busy(false); setMode('in'); $('p').value = '';
+    return setMsg('Account created! Sign in once the admin approves it.', true);
   }
   const { error } = await sb.auth.signInWithPassword({ email: u + DOMAIN, password: p });
-  if (error) return setMsg('Wrong username or password');
+  if (error) { busy(false); return setMsg('Wrong username or password'); }
   localStorage.setItem('cv_login_at', Date.now());
-  boot();
+  await boot();
 };
 $('p').addEventListener('keydown', e => e.key === 'Enter' && $('authBtn').click());
+$('u').addEventListener('keydown', e => e.key === 'Enter' && $('p').focus());
 async function logout(msg){ await sb.auth.signOut(); localStorage.removeItem('cv_login_at'); showAuth(msg); }
 $('out').onclick = () => logout();
 
@@ -183,9 +276,10 @@ async function boot(){
   const { data } = await sb.from('profiles').select('*').eq('id', me.id).single();
   profile = data;
   if (!profile || !profile.approved) return logout('Your account is not approved (or is blocked) by the admin.');
-  $('auth').classList.add('hide'); $('app').classList.remove('hide');
-  $('who').textContent = profile.username + (profile.role === 'admin' ? ' (admin)' : '');
   const adm = profile.role === 'admin';
+  $('auth').classList.add('hide'); $('app').classList.remove('hide'); busy(false);
+  $('av').textContent = profile.username[0].toUpperCase();
+  $('wn').textContent = profile.username; $('wr').textContent = adm ? 'Administrator' : 'Member';
   $('tAll').classList.toggle('hide', !adm); $('tUsers').classList.toggle('hide', !adm);
   clearInterval(tick); tick = setInterval(clock, 1000); clock();
   show('files');
@@ -194,7 +288,8 @@ function clock(){
   const left = SESSION_MS - (Date.now() - +localStorage.getItem('cv_login_at'));
   if (left <= 0) return logout('Your 4-minute session ended. Please sign in again.');
   const s = Math.ceil(left / 1000);
-  $('timer').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  $('tm').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  $('ring').style.strokeDashoffset = 94.25 * (1 - left / SESSION_MS);
   $('timer').classList.toggle('low', s <= 30);
 }
 
@@ -203,8 +298,8 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => show(b.dataset.
 function show(t){
   tab = t;
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === t));
-  $('vFiles').classList.toggle('hide', t === 'users');
-  $('upBox').classList.toggle('hide', t === 'pub'); $('vUsers').classList.toggle('hide', t !== 'users');
+  $('vFiles').classList.toggle('hide', t === 'users'); $('vUsers').classList.toggle('hide', t !== 'users');
+  $('stats').classList.toggle('hide', t === 'users'); $('upBox').classList.toggle('hide', t === 'pub');
   t === 'users' ? loadUsers() : loadFiles();
 }
 
@@ -216,38 +311,39 @@ async function loadFiles(){
   const { data, error } = await q;
   if (error) return toast(error.message);
   files = data || [];
-  if (tab === 'all' || tab === 'pub') {
+  if (tab !== 'files') {
     const { data: ps } = await sb.from('profiles').select('id,username');
     names = Object.fromEntries((ps || []).map(p => [p.id, p.username]));
   }
   const exts = [...new Set(files.map(f => extOf(f.name)))].sort(), cur = $('ext').value;
   $('ext').innerHTML = '<option value="">All types</option>' + exts.map(e => `<option ${e===cur?'selected':''}>${esc(e)}</option>`).join('');
+  countUp($('s1'), files.length); countUp($('s2'), files.reduce((a, f) => a + (f.size || 0), 0), size); countUp($('s3'), files.filter(f => f.is_public).length);
   render();
 }
 function render(){
   const t = $('q').value.toLowerCase(), e = $('ext').value;
   const list = files.filter(f => f.name.toLowerCase().includes(t) && (!e || extOf(f.name) === e));
-  const canDl = profile.role === 'admin' || profile.can_download;
-  $('fileList').innerHTML = list.length ? list.map(f => `
-    <div class="row">
-      <span class="ext mono">${esc(extOf(f.name))}</span>
-      <div class="fn"><div class="mono">${esc(f.name)}</div>
-        <div class="meta">${size(f.size)} · ${new Date(f.created_at).toLocaleString()} · ${f.is_public ? 'public' : 'private'}${tab!=='files' ? ' · by ' + esc(names[f.owner] || '?') : ''}</div></div>
+  const adm = profile.role === 'admin', canDl = adm || profile.can_download;
+  $('fileList').innerHTML = list.length ? list.map((f, i) => {
+    const x = extOf(f.name), mine = f.owner === me.id || adm;
+    return `<article class="fc glass" style="--i:${i};--c:${lang(x)}">
+      <div class="top"><span class="ext mono">.${esc(x)}</span><span class="pill ${f.is_public ? 'g' : ''}">${f.is_public ? 'Public' : 'Private'}</span></div>
+      <div class="nm mono" title="${esc(f.name)}">${esc(f.name)}</div>
+      <div class="meta">${size(f.size)} · ${new Date(f.created_at).toLocaleDateString()}${tab !== 'files' ? ' · by ' + esc(names[f.owner] || '?') : ''}</div>
       <div class="actions">
         ${canDl ? `<button class="btn sm" data-dl="${f.id}">Download</button>` : '<span class="pill r">Download blocked</span>'}
-        ${(f.owner === me.id || profile.role === 'admin') ? `<button class="btn ghost sm" data-pb="${f.id}">${f.is_public ? 'Make private' : 'Make public'}</button>
-        <button class="btn danger sm" data-rm="${f.id}">Delete</button>` : ''}
-      </div>
-    </div>`).join('') : '<div class="empty">No files yet. Upload your first one above.</div>';
+        ${mine ? `<button class="btn ghost sm" data-pb="${f.id}">${f.is_public ? 'Make private' : 'Make public'}</button><button class="btn danger sm" data-rm="${f.id}">Delete</button>` : ''}
+      </div></article>`;
+  }).join('') : `<div class="empty"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><div>${tab === 'pub' ? 'No public files yet.' : 'No files here yet. Upload your first one above.'}</div></div>`;
 }
 $('q').oninput = render; $('ext').onchange = render;
 $('fileList').onclick = async e => {
-  const dl = e.target.dataset.dl, rm = e.target.dataset.rm, pb = e.target.dataset.pb;
+  const b = e.target.closest('button'); if (!b) return;
+  const { dl, rm, pb } = b.dataset;
   if (pb) {
     const f = files.find(x => x.id === pb);
     const { error } = await sb.from('files').update({ is_public: !f.is_public }).eq('id', pb);
-    error ? toast(error.message) : (toast(f.is_public ? 'Now private' : 'Now public'), loadFiles());
-    return;
+    return error ? toast(error.message) : (toast(f.is_public ? 'Now private' : 'Now public'), loadFiles());
   }
   if (dl) {
     const f = files.find(x => x.id === dl);
@@ -263,14 +359,15 @@ $('fileList').onclick = async e => {
   }
 };
 async function upload(list){
+  let n = 0;
   for (const f of list) {
-    toast('Uploading ' + f.name + '…');
+    toast(`Uploading ${++n}/${list.length}: ${f.name}`);
     const path = me.id + '/' + Date.now() + '-' + f.name.replace(/[^\w.\-]/g, '_');
     const up = await sb.storage.from('files').upload(path, f);
     if (up.error) { toast('Upload failed: ' + up.error.message); continue; }
     await sb.from('files').insert({ owner: me.id, name: f.name, path, size: f.size, is_public: $('pubChk').checked });
   }
-  toast('Upload complete'); if (tab === 'users') show('files'); else loadFiles();
+  toast('Upload complete ✓'); loadFiles();
 }
 const drop = $('drop');
 drop.onclick = () => $('pick').click();
@@ -283,22 +380,21 @@ drop.addEventListener('drop', e => upload([...e.dataTransfer.files]));
 async function loadUsers(){
   const { data, error } = await sb.from('profiles').select('*').order('created_at');
   if (error) return toast(error.message);
-  $('userList').innerHTML = data.map(u => `
-    <div class="row">
-      <div class="fn"><div><b>${esc(u.username)}</b> ${u.role==='admin'?'<span class="pill g">admin</span>':''}</div>
+  $('userList').innerHTML = data.map((u, i) => `
+    <div class="ur glass" style="--i:${i}">
+      <div class="av">${esc(u.username[0].toUpperCase())}</div>
+      <div class="fn"><div><b>${esc(u.username)}</b> ${u.role === 'admin' ? '<span class="pill g">admin</span>' : (!u.approved ? '<span class="pill r">pending / blocked</span>' : '')}</div>
         <div class="meta">Joined ${new Date(u.created_at).toLocaleDateString()}</div></div>
-      <span class="pill ${u.approved?'g':'r'}">${u.approved?'Can log in':'Blocked / pending'}</span>
-      <span class="pill ${u.can_download?'g':'r'}">${u.can_download?'Can download':'No download'}</span>
-      ${u.role==='admin' ? '' : `<div class="actions">
-        <button class="btn ghost sm" data-ap="${u.id}" data-v="${!u.approved}">${u.approved?'Block login':'Allow login'}</button>
-        <button class="btn ghost sm" data-dw="${u.id}" data-v="${!u.can_download}">${u.can_download?'Block download':'Allow download'}</button></div>`}
+      ${u.role === 'admin' ? '<span class="pill g">Full access</span>' : `
+        <div class="tg">Login <label class="sw"><input type="checkbox" data-ap="${u.id}" ${u.approved ? 'checked' : ''}><span></span></label></div>
+        <div class="tg">Download <label class="sw"><input type="checkbox" data-dw="${u.id}" ${u.can_download ? 'checked' : ''}><span></span></label></div>`}
     </div>`).join('');
 }
-$('userList').onclick = async e => {
+$('userList').onchange = async e => {
   const d = e.target.dataset, id = d.ap || d.dw; if (!id) return;
-  const patch = d.ap ? { approved: d.v === 'true' } : { can_download: d.v === 'true' };
+  const patch = d.ap ? { approved: e.target.checked } : { can_download: e.target.checked };
   const { error } = await sb.from('profiles').update(patch).eq('id', id);
-  error ? toast(error.message) : (toast('Saved'), loadUsers());
+  error ? (toast(error.message), loadUsers()) : toast('Saved ✓');
 };
 
 /* ---------- start ---------- */
