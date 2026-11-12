@@ -16,7 +16,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 Manrope,syst
 button,input,select{font:inherit;color:inherit}
 .mono{font-family:'JetBrains Mono',monospace}
 .hide{display:none!important}
-.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.grad{background:linear-gradient(90deg,#5eead4,#60a5fa,#a78bfa,#5eead4);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
 /* animated background */
 .bg{position:fixed;inset:0;z-index:-1;overflow:hidden}
 .bg i{position:absolute;width:48vmax;height:48vmax;border-radius:50%;filter:blur(100px);opacity:.28;animation:drift 24s ease-in-out infinite alternate}
@@ -129,6 +129,63 @@ label.l{display:block;font-size:12px;letter-spacing:.08em;text-transform:upperca
 @media(max-width:860px){.auth{grid-template-columns:1fr;padding:30px 18px}.codebox{display:none}.hero h1{font-size:38px;margin:16px 0 8px}.hero p{display:none}}
 @media(max-width:640px){.stats{grid-template-columns:1fr 1fr 1fr;gap:8px}.stat{padding:12px}.stat div{font-size:21px}.who{display:none}.bar{flex-wrap:wrap}}
 @media(prefers-reduced-motion:reduce){*,*::before{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+
+@property --ang{syntax:'<angle>';initial-value:0deg;inherits:false}
+@keyframes ang{to{--ang:360deg}}
+@keyframes shine{to{background-position:200% 0}}
+@keyframes rp{to{transform:scale(4);opacity:0}}
+@keyframes fade{from{opacity:0}}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.11),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.card::before{content:"";position:absolute;inset:-1px;border-radius:23px;padding:1.5px;background:conic-gradient(from var(--ang),transparent 0 65%,var(--a),var(--b),var(--c),transparent);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:ang 5s linear infinite;pointer-events:none}
+.btn{overflow:hidden}
+.rp{position:absolute;border-radius:50%;background:rgba(255,255,255,.5);transform:scale(0);animation:rp .6s linear;pointer-events:none}
+.cf{position:fixed;left:50%;bottom:90px;width:9px;height:9px;border-radius:2px;z-index:70;pointer-events:none}
+.warnbar{margin:0 0 18px;padding:14px 18px;border-radius:14px;border:1px solid rgba(255,107,129,.5);background:rgba(255,107,129,.1);animation:rise .5s both}
+.av{background:linear-gradient(135deg,hsl(var(--h,170),80%,62%),hsl(calc(var(--h,170) + 60),80%,55%))}
+.av.big{width:56px;height:56px;font-size:24px}
+.sum{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.ugrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.uc{border-radius:20px;padding:18px;animation:rise .5s both;animation-delay:calc(var(--i)*55ms);transition:.3s}
+.uc:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.22)}
+.still .uc,.still .tr{animation:none}
+.uh{display:flex;gap:12px;align-items:center}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#475569;margin-left:7px}
+.dot.on{background:#34d399;animation:pulse 1.8s infinite}
+.pips{display:flex;align-items:center;gap:6px;margin:14px 0 4px;font-size:12px;color:var(--mute)}
+.pip{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.14)}
+.pip.on{background:var(--bad);box-shadow:0 0 10px var(--bad)}
+.mini{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.tgs{display:flex;gap:18px;margin:12px 0 2px;flex-wrap:wrap}
+.actions.end{justify-content:flex-end}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.3s;z-index:40}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(480px,100%);z-index:41;transform:translateX(105%);transition:transform .45s cubic-bezier(.2,.9,.2,1);overflow-y:auto;padding:24px;background:rgba(11,15,23,.94)}
+.drawer.open{transform:none}
+.close{position:absolute;top:16px;right:16px}
+.dg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.dg div{background:rgba(255,255,255,.05);border-radius:12px;padding:12px;text-align:center}
+.dg b{display:block;font-size:21px}.dg small{color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.drawer h4{margin:24px 0 8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.tl{border-radius:16px;padding:4px 16px}
+.drawer .tl{background:none;border:0;padding:0}
+.tr{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:14px;animation:rise .4s both}
+.tr:first-child{border-top:0}
+.ti{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.06);flex:none}
+.tt{flex:1;min-width:0;overflow-wrap:anywhere}.tt .mono{font-size:12px;color:var(--mute)}
+.tr.bad .ti{background:rgba(255,107,129,.2)}
+.modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:20px;animation:fade .25s}
+.mbox{width:100%;max-width:400px;border-radius:20px;padding:24px;background:rgba(14,19,28,.97);animation:pop .35s both}
+.mbox h3{margin:0 0 10px}.mb p{color:var(--mute);margin:0 0 12px}
+.mi{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--line);border-radius:12px;padding:12px;outline:none}
+.mi:focus{border-color:var(--a)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 18px}
+.chip{background:var(--glass);border:1px solid var(--line);border-radius:99px;padding:5px 12px;font-size:12px;cursor:pointer;color:var(--mute);transition:.2s}
+.chip:hover{border-color:var(--a);color:var(--text)}
+.btn.dng{background:linear-gradient(120deg,#ff6b81,#f43f5e);color:#fff}
+.btn.warn{background:transparent;color:#fbbf24;border:1px solid var(--line)}.btn.warn:hover{border-color:#fbbf24;box-shadow:none}
 </style>
 </head>
 <body>
@@ -148,7 +205,7 @@ label.l{display:block;font-size:12px;letter-spacing:.08em;text-transform:upperca
       <span style="--d:2.5s"><b>print</b>(<em>"stored safely"</em>)<i class="cur"></i></span>
     </div>
   </div>
-  <div class="card glass" id="card">
+  <div class="card glass spot" id="card">
     <div class="seg"><i id="segI"></i>
       <button type="button" data-m="in" class="on">Sign in</button>
       <button type="button" data-m="up">Create account</button>
@@ -174,6 +231,7 @@ label.l{display:block;font-size:12px;letter-spacing:.08em;text-transform:upperca
       <button class="tab" data-t="pub">Public</button>
       <button class="tab hide" data-t="all" id="tAll">All files</button>
       <button class="tab hide" data-t="users" id="tUsers">Users</button>
+      <button class="tab hide" data-t="act" id="tAct">Activity</button>
     </nav>
     <div class="av" id="av"></div>
     <div class="who"><b id="wn"></b><small id="wr"></small></div>
@@ -181,10 +239,11 @@ label.l{display:block;font-size:12px;letter-spacing:.08em;text-transform:upperca
     <button class="btn ghost sm" id="out">Sign out</button>
   </header>
   <main class="wrap">
+    <div class="warnbar hide" id="warnBar"></div>
     <div class="stats" id="stats">
-      <div class="stat glass" style="--i:0"><small>Files</small><div id="s1">0</div></div>
-      <div class="stat glass" style="--i:1"><small>Storage</small><div id="s2">0 B</div></div>
-      <div class="stat glass" style="--i:2"><small>Public</small><div id="s3">0</div></div>
+      <div class="stat glass spot" style="--i:0"><small>Files</small><div id="s1">0</div></div>
+      <div class="stat glass spot" style="--i:1"><small>Storage</small><div id="s2">0 B</div></div>
+      <div class="stat glass spot" style="--i:2"><small>Public</small><div id="s3">0</div></div>
     </div>
     <div id="vFiles">
       <div id="upBox">
@@ -196,8 +255,12 @@ label.l{display:block;font-size:12px;letter-spacing:.08em;text-transform:upperca
       <div class="grid" id="fileList"></div>
     </div>
     <div id="vUsers" class="hide"><div id="userList"></div></div>
+    <div id="vAct" class="hide"><div id="actList"></div></div>
   </main>
 </section>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer glass" id="drawer"><div id="dBody"></div></aside>
+<div class="modal hide" id="modal"><div class="mbox glass" id="mbox"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -213,7 +276,7 @@ try {
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 } catch (e) { initError = 'Setup error: ' + e.message; }
 window.addEventListener('unhandledrejection', e => setMsg('Error: ' + (e.reason && e.reason.message || e.reason)));
-let me = null, profile = null, tick = null, mode = 'in', files = [], names = {}, tab = 'files';
+let me = null, profile = null, tick = null, mode = 'in', files = [], names = {}, tab = 'files', pulseT = null, feedT = null, doing = 'Signing in';
 
 const LANG = { c:'#5b9bd5', cpp:'#f34b7d', cc:'#f34b7d', h:'#a78bfa', hpp:'#a78bfa', py:'#ffd43b', java:'#f89820', js:'#f7df1e', ts:'#3b82f6', html:'#ff7849', css:'#38bdf8', go:'#22d3ee', rs:'#fb923c', cs:'#34d399', txt:'#94a3b8', json:'#fbbf24' };
 const lang = x => LANG[x] || '#5eead4';
@@ -243,7 +306,8 @@ setMode('in');
 
 /* ---------- auth ---------- */
 function showAuth(msg, ok){
-  clearInterval(tick); me = profile = null;
+  clearInterval(tick); clearInterval(pulseT); clearInterval(feedT); me = profile = null;
+  $('drawer').classList.remove('open'); $('scrim').classList.remove('open'); $('warnBar').classList.add('hide');
   $('app').classList.add('hide'); $('auth').classList.remove('hide'); busy(false); setMsg(msg, ok);
 }
 $('authBtn').onclick = async () => {
@@ -259,12 +323,14 @@ $('authBtn').onclick = async () => {
   }
   const { error } = await sb.auth.signInWithPassword({ email: u + DOMAIN, password: p });
   if (error) { busy(false); return setMsg('Wrong username or password'); }
-  localStorage.setItem('cv_login_at', Date.now());
+  localStorage.setItem('cv_login_at', Date.now()); localStorage.setItem('cv_new', '1');
   await boot();
 };
 $('p').addEventListener('keydown', e => e.key === 'Enter' && $('authBtn').click());
 $('u').addEventListener('keydown', e => e.key === 'Enter' && $('p').focus());
-async function logout(msg){ await sb.auth.signOut(); localStorage.removeItem('cv_login_at'); showAuth(msg); }
+async function logout(msg, why){
+  if (me && profile) await sb.from('activity').insert({ user_id: me.id, username: profile.username, action: why || 'logout' });
+  await sb.auth.signOut(); localStorage.removeItem('cv_login_at'); showAuth(msg); }
 $('out').onclick = () => logout();
 
 async function boot(){
@@ -280,13 +346,15 @@ async function boot(){
   $('auth').classList.add('hide'); $('app').classList.remove('hide'); busy(false);
   $('av').textContent = profile.username[0].toUpperCase();
   $('wn').textContent = profile.username; $('wr').textContent = adm ? 'Administrator' : 'Member';
-  $('tAll').classList.toggle('hide', !adm); $('tUsers').classList.toggle('hide', !adm);
+  $('tAll').classList.toggle('hide', !adm); $('tUsers').classList.toggle('hide', !adm); $('tAct').classList.toggle('hide', !adm);
   clearInterval(tick); tick = setInterval(clock, 1000); clock();
-  show('files');
+  clearInterval(pulseT); pulseT = setInterval(pulse, 15000);
+  if (localStorage.getItem('cv_new')) { localStorage.removeItem('cv_new'); log('login'); }
+  show('files'); pulse(); warnBar();
 }
 function clock(){
   const left = SESSION_MS - (Date.now() - +localStorage.getItem('cv_login_at'));
-  if (left <= 0) return logout('Your 4-minute session ended. Please sign in again.');
+  if (left <= 0) return logout('Your 4-minute session ended. Please sign in again.', 'session_expired');
   const s = Math.ceil(left / 1000);
   $('tm').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
   $('ring').style.strokeDashoffset = 94.25 * (1 - left / SESSION_MS);
@@ -296,11 +364,15 @@ function clock(){
 /* ---------- tabs ---------- */
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => show(b.dataset.t));
 function show(t){
-  tab = t;
+  tab = t; doing = DO[t];
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === t));
-  $('vFiles').classList.toggle('hide', t === 'users'); $('vUsers').classList.toggle('hide', t !== 'users');
-  $('stats').classList.toggle('hide', t === 'users'); $('upBox').classList.toggle('hide', t === 'pub');
-  t === 'users' ? loadUsers() : loadFiles();
+  const adm2 = t === 'users' || t === 'act';
+  $('vFiles').classList.toggle('hide', adm2); $('vUsers').classList.toggle('hide', t !== 'users'); $('vAct').classList.toggle('hide', t !== 'act');
+  $('stats').classList.toggle('hide', adm2); $('upBox').classList.toggle('hide', t === 'pub');
+  clearInterval(feedT);
+  if (t === 'users') { loadUsers(); feedT = setInterval(() => loadUsers(true), 10000); }
+  else if (t === 'act') { loadFeed(); feedT = setInterval(() => loadFeed(true), 8000); }
+  else loadFiles();
 }
 
 /* ---------- files ---------- */
@@ -326,7 +398,7 @@ function render(){
   const adm = profile.role === 'admin', canDl = adm || profile.can_download;
   $('fileList').innerHTML = list.length ? list.map((f, i) => {
     const x = extOf(f.name), mine = f.owner === me.id || adm;
-    return `<article class="fc glass" style="--i:${i};--c:${lang(x)}">
+    return `<article class="fc glass spot" style="--i:${i};--c:${lang(x)}">
       <div class="top"><span class="ext mono">.${esc(x)}</span><span class="pill ${f.is_public ? 'g' : ''}">${f.is_public ? 'Public' : 'Private'}</span></div>
       <div class="nm mono" title="${esc(f.name)}">${esc(f.name)}</div>
       <div class="meta">${size(f.size)} · ${new Date(f.created_at).toLocaleDateString()}${tab !== 'files' ? ' · by ' + esc(names[f.owner] || '?') : ''}</div>
@@ -343,31 +415,32 @@ $('fileList').onclick = async e => {
   if (pb) {
     const f = files.find(x => x.id === pb);
     const { error } = await sb.from('files').update({ is_public: !f.is_public }).eq('id', pb);
-    return error ? toast(error.message) : (toast(f.is_public ? 'Now private' : 'Now public'), loadFiles());
+    return error ? toast(error.message) : (log('visibility', f.name + (f.is_public ? ' → private' : ' → public')), toast(f.is_public ? 'Now private' : 'Now public'), loadFiles());
   }
   if (dl) {
     const f = files.find(x => x.id === dl);
     const { data, error } = await sb.storage.from('files').createSignedUrl(f.path, 60, { download: f.name });
     if (error) return toast('Download not allowed for your account');
-    location.href = data.signedUrl;
+    log('download', f.name); location.href = data.signedUrl;
   }
   if (rm && confirm('Delete this file?')) {
     const f = files.find(x => x.id === rm);
     await sb.storage.from('files').remove([f.path]);
     await sb.from('files').delete().eq('id', rm);
-    toast('Deleted'); loadFiles();
+    log('delete', f.name); toast('Deleted'); loadFiles();
   }
 };
 async function upload(list){
   let n = 0;
   for (const f of list) {
-    toast(`Uploading ${++n}/${list.length}: ${f.name}`);
+    toast(`Uploading ${++n}/${list.length}: ${f.name}`); doing = 'Uploading ' + f.name;
     const path = me.id + '/' + Date.now() + '-' + f.name.replace(/[^\w.\-]/g, '_');
     const up = await sb.storage.from('files').upload(path, f);
     if (up.error) { toast('Upload failed: ' + up.error.message); continue; }
     await sb.from('files').insert({ owner: me.id, name: f.name, path, size: f.size, is_public: $('pubChk').checked });
+    log('upload', f.name + ' · ' + size(f.size) + ($('pubChk').checked ? ' · public' : ''));
   }
-  toast('Upload complete ✓'); loadFiles();
+  doing = DO[tab]; toast('Upload complete ✓'); burst(); loadFiles();
 }
 const drop = $('drop');
 drop.onclick = () => $('pick').click();
@@ -376,19 +449,78 @@ $('pick').onchange = e => { upload([...e.target.files]); e.target.value = ''; };
 ['dragleave','drop'].forEach(v => drop.addEventListener(v, e => { e.preventDefault(); drop.classList.remove('over') }));
 drop.addEventListener('drop', e => upload([...e.dataTransfer.files]));
 
-/* ---------- admin: users ---------- */
-async function loadUsers(){
-  const { data, error } = await sb.from('profiles').select('*').order('created_at');
+/* ---------- activity, warnings, admin ---------- */
+let users = [], curU = null, stat = {}, lastLogin = {};
+const ACT = { login:['🔑','Signed in'], logout:['🚪','Signed out'], session_expired:['⏱️','Session expired (4 min)'], upload:['⬆️','Uploaded'], download:['⬇️','Downloaded'], delete:['🗑️','Deleted'], visibility:['👁️','Changed visibility'], warning:['⚠️','Warning'], warnings_cleared:['✅','Warnings cleared'], kicked:['⛔','Forced out (blocked/removed)'] };
+const DO = { files:'Viewing My files', pub:'Viewing Public files', all:'Viewing All files', users:'Managing users', act:'Reading activity' };
+const hue = n => [...n].reduce((a, c) => a + c.charCodeAt(0), 0) * 37 % 360;
+const av = (n, c) => `<div class="av ${c || ''}" style="--h:${hue(n)}">${esc(n[0].toUpperCase())}</div>`;
+const online = u => u.last_seen && Date.now() - new Date(u.last_seen) < 45000;
+function ago(t){ const s = (Date.now() - new Date(t)) / 1000; return s < 45 ? 'just now' : s < 3600 ? Math.round(s / 60) + ' min ago' : s < 86400 ? Math.round(s / 3600) + ' h ago' : Math.round(s / 86400) + ' d ago'; }
+const status = u => online(u) ? 'Online · ' + esc(u.last_action || 'Active') : u.last_seen ? 'Last seen ' + ago(u.last_seen) : 'Never signed in';
+function log(action, detail){ if (!me || !profile) return; sb.from('activity').insert({ user_id: me.id, username: profile.username, action, detail: detail || null }).then(() => {}); }
+
+/* every 15s: tell the server what I'm doing, and check I'm still allowed in */
+async function pulse(){
+  if (!me) return;
+  await sb.rpc('heartbeat', { act: doing });
+  const { data } = await sb.from('profiles').select('approved,warnings').eq('id', me.id).maybeSingle();
+  if (!data || !data.approved) return logout('Your access was blocked or removed by the admin.', 'kicked');
+  if (data.warnings !== profile.warnings) { profile.warnings = data.warnings; warnBar(true); }
+}
+async function warnBar(notify){
+  const w = profile.warnings, el = $('warnBar');
+  if (!w) return el.classList.add('hide');
+  const { data } = await sb.from('warnings').select('reason').eq('user_id', me.id).order('created_at', { ascending: false }).limit(1);
+  el.innerHTML = `<b>⚠ Warning ${w} of 3</b> · ${esc((data && data[0] && data[0].reason) || 'Issued by the admin')}. At 3 warnings your account is blocked automatically.`;
+  el.classList.remove('hide'); if (notify) toast('⚠ You received a warning from the admin');
+}
+
+/* modal */
+function ask(o){ return new Promise(res => {
+  const m = $('modal'), b = $('mbox');
+  b.innerHTML = `<h3>${o.title}</h3><div class="mb">${o.html || ''}</div><div class="actions end"><button class="btn ghost sm" id="mNo">Cancel</button><button class="btn sm ${o.danger ? 'dng' : ''}" id="mYes">${o.ok || 'OK'}</button></div>`;
+  m.classList.remove('hide');
+  const done = v => { m.classList.add('hide'); res(v); };
+  $('mNo').onclick = () => done(null); $('mYes').onclick = () => done(o.get ? o.get() : true);
+  m.onclick = e => { if (e.target === m) done(null); };
+  b.querySelectorAll('[data-chip]').forEach(c => c.onclick = () => { $('mReason').value = c.dataset.chip; });
+  const f = b.querySelector('input'); if (f) f.focus();
+}); }
+
+/* timeline row */
+const tlRow = showUser => x => { const [ic, lb] = ACT[x.action] || ['•', x.action];
+  return `<div class="tr ${['warning','kicked'].includes(x.action) ? 'bad' : ''}"><span class="ti">${ic}</span><div class="tt"><b>${showUser ? esc(x.username || '?') + ' · ' : ''}${lb}</b>${x.detail ? ' <span class="mono">' + esc(x.detail) + '</span>' : ''}</div><span class="meta" title="${new Date(x.created_at).toLocaleString()}">${ago(x.created_at)}</span></div>`; };
+async function loadFeed(quiet){
+  const { data, error } = await sb.from('activity').select('*').order('created_at', { ascending: false }).limit(100);
   if (error) return toast(error.message);
-  $('userList').innerHTML = data.map((u, i) => `
-    <div class="ur glass" style="--i:${i}">
-      <div class="av">${esc(u.username[0].toUpperCase())}</div>
-      <div class="fn"><div><b>${esc(u.username)}</b> ${u.role === 'admin' ? '<span class="pill g">admin</span>' : (!u.approved ? '<span class="pill r">pending / blocked</span>' : '')}</div>
-        <div class="meta">Joined ${new Date(u.created_at).toLocaleDateString()}</div></div>
-      ${u.role === 'admin' ? '<span class="pill g">Full access</span>' : `
-        <div class="tg">Login <label class="sw"><input type="checkbox" data-ap="${u.id}" ${u.approved ? 'checked' : ''}><span></span></label></div>
-        <div class="tg">Download <label class="sw"><input type="checkbox" data-dw="${u.id}" ${u.can_download ? 'checked' : ''}><span></span></label></div>`}
-    </div>`).join('');
+  $('actList').classList.toggle('still', !!quiet);
+  $('actList').innerHTML = `<div class="tl glass">${(data || []).map(tlRow(true)).join('') || '<div class="empty">No activity yet.</div>'}</div>`;
+}
+
+/* users */
+function userCard(u, i){
+  const s = stat[u.id] || { n: 0, s: 0 }, adm = u.role === 'admin';
+  return `<div class="uc glass spot" style="--i:${i}">
+    <div class="uh">${av(u.username)}<div style="min-width:0"><b>${esc(u.username)}</b>${adm ? ' <span class="pill g">admin</span>' : ''}<i class="dot ${online(u) ? 'on' : ''}"></i><div class="meta">${status(u)}</div></div></div>
+    ${adm ? '' : `<div class="pips">${[0,1,2].map(k => `<i class="pip ${k < u.warnings ? 'on' : ''}"></i>`).join('')}<span>${u.warnings}/3 warnings${!u.approved ? ' · blocked' : ''}</span></div>`}
+    <div class="mini"><span class="pill">${s.n} files</span><span class="pill">${size(s.s)}</span><span class="pill">Login: ${lastLogin[u.id] ? ago(lastLogin[u.id]) : 'never'}</span></div>
+    ${adm ? '' : `<div class="tgs"><div class="tg">Login <label class="sw"><input type="checkbox" data-ap="${u.id}" ${u.approved ? 'checked' : ''}><span></span></label></div><div class="tg">Download <label class="sw"><input type="checkbox" data-dw="${u.id}" ${u.can_download ? 'checked' : ''}><span></span></label></div></div>`}
+    <div class="actions"><button class="btn sm" data-op="${u.id}">Details</button>${adm ? '' : `<button class="btn warn sm" data-wn="${u.id}">⚠ Warn</button><button class="btn danger sm" data-rmu="${u.id}">Remove</button>`}</div>
+  </div>`;
+}
+async function loadUsers(quiet){
+  const [p, f, a] = await Promise.all([
+    sb.from('profiles').select('*').order('created_at'),
+    sb.from('files').select('owner,size'),
+    sb.from('activity').select('user_id,created_at').eq('action', 'login').order('created_at', { ascending: false }).limit(400)]);
+  if (p.error) return toast(p.error.message);
+  users = p.data; stat = {}; lastLogin = {};
+  (f.data || []).forEach(x => { const s = stat[x.owner] || (stat[x.owner] = { n: 0, s: 0 }); s.n++; s.s += x.size || 0; });
+  (a.data || []).forEach(x => { if (!lastLogin[x.user_id]) lastLogin[x.user_id] = x.created_at; });
+  const on = users.filter(online).length, bl = users.filter(u => !u.approved).length, wd = users.filter(u => u.warnings > 0).length;
+  const el = $('userList'); el.classList.toggle('still', !!quiet);
+  el.innerHTML = `<div class="sum"><span class="pill g">${users.length} users</span><span class="pill g">${on} online</span><span class="pill ${bl ? 'r' : ''}">${bl} blocked / pending</span><span class="pill ${wd ? 'r' : ''}">${wd} warned</span></div><div class="ugrid">${users.map(userCard).join('')}</div>`;
 }
 $('userList').onchange = async e => {
   const d = e.target.dataset, id = d.ap || d.dw; if (!id) return;
@@ -396,6 +528,68 @@ $('userList').onchange = async e => {
   const { error } = await sb.from('profiles').update(patch).eq('id', id);
   error ? (toast(error.message), loadUsers()) : toast('Saved ✓');
 };
+
+/* drawer with full details */
+function closeDrawer(){ $('drawer').classList.remove('open'); $('scrim').classList.remove('open'); curU = null; }
+async function openDrawer(id){
+  const u = users.find(x => x.id === id); if (!u) return;
+  curU = id; $('drawer').classList.add('open'); $('scrim').classList.add('open');
+  $('dBody').innerHTML = '<div class="empty">Loading…</div>';
+  const [a, w] = await Promise.all([
+    sb.from('activity').select('*').eq('user_id', id).order('created_at', { ascending: false }).limit(500),
+    sb.from('warnings').select('*').eq('user_id', id).order('created_at', { ascending: false })]);
+  const act = a.data || [], wr = w.data || [], st = stat[id] || { n: 0, s: 0 }, cnt = k => act.filter(x => x.action === k).length, ll = act.find(x => x.action === 'login'), adm = u.role === 'admin';
+  $('dBody').innerHTML = `
+    <button class="btn ghost sm close" data-close>✕</button>
+    <div class="uh">${av(u.username, 'big')}<div><h3 style="margin:0">${esc(u.username)}<i class="dot ${online(u) ? 'on' : ''}"></i></h3><div class="meta">${status(u)}</div><div class="meta">Last login: ${ll ? new Date(ll.created_at).toLocaleString() : 'never'}</div></div></div>
+    <div class="dg"><div><b>${cnt('login')}</b><small>Logins</small></div><div><b>${cnt('upload')}</b><small>Uploads</small></div><div><b>${cnt('download')}</b><small>Downloads</small></div><div><b>${st.n}</b><small>Files</small></div><div><b>${size(st.s)}</b><small>Storage</small></div><div><b>${u.warnings}/3</b><small>Warnings</small></div></div>
+    ${adm ? '' : `<div class="actions"><button class="btn warn sm" data-wn="${id}">⚠ Warn</button>${u.warnings ? `<button class="btn ghost sm" data-cw="${id}">Clear warnings</button>` : ''}<button class="btn danger sm" data-rmu="${id}">Remove user</button></div>`}
+    <h4>Warnings</h4>${wr.length ? wr.map(x => `<div class="tr bad"><span class="ti">⚠️</span><div class="tt">${esc(x.reason || '—')}</div><span class="meta">${ago(x.created_at)}</span></div>`).join('') : '<div class="meta">No warnings.</div>'}
+    <h4>Activity</h4><div class="tl">${act.slice(0, 60).map(tlRow(false)).join('') || '<div class="meta">No activity recorded yet.</div>'}</div>`;
+}
+async function warnUser(id, name){
+  const why = await ask({ title: 'Warn ' + esc(name), ok: 'Send warning', get: () => $('mReason').value.trim(),
+    html: `<p>3 warnings = automatic block.</p><input id="mReason" class="mi" placeholder="Reason (shown to the user)"><div class="chips">${['Inappropriate file','Spam uploads','Sharing account','Breaking rules'].map(c => `<button type="button" class="chip" data-chip="${c}">${c}</button>`).join('')}</div>` });
+  if (why === null) return;
+  const { data, error } = await sb.rpc('warn_user', { target: id, why: why || 'Rule violation' });
+  if (error) return toast(error.message);
+  toast(data >= 3 ? name + ' reached 3 warnings and was blocked' : `Warning ${data}/3 sent to ${name}`);
+  await loadUsers(true); if (curU === id) openDrawer(id);
+}
+async function clearWarn(id, name){
+  const { error } = await sb.rpc('reset_warnings', { target: id });
+  if (error) return toast(error.message);
+  toast('Warnings cleared for ' + name + '. Use the Login switch to unblock.'); await loadUsers(true); if (curU === id) openDrawer(id);
+}
+async function removeUser(id, name){
+  const ok = await ask({ title: 'Remove ' + esc(name) + '?', danger: true, ok: 'Remove permanently', html: '<p>This deletes the account, all their files and their activity history. It cannot be undone.</p>' });
+  if (!ok) return;
+  const { data: fs } = await sb.from('files').select('path').eq('owner', id);
+  if (fs && fs.length) await sb.storage.from('files').remove(fs.map(f => f.path));
+  const { error } = await sb.rpc('remove_user', { target: id });
+  if (error) return toast(error.message);
+  closeDrawer(); toast(name + ' was removed'); loadUsers(true);
+}
+function adminClick(e){
+  const b = e.target.closest('button'); if (!b) return;
+  const d = b.dataset; if ('close' in d) return closeDrawer();
+  const id = d.op || d.wn || d.cw || d.rmu, u = users.find(x => x.id === id); if (!u) return;
+  if (d.op) openDrawer(id); else if (d.wn) warnUser(id, u.username); else if (d.cw) clearWarn(id, u.username); else if (d.rmu) removeUser(id, u.username);
+}
+$('userList').onclick = adminClick; $('drawer').onclick = adminClick; $('scrim').onclick = closeDrawer;
+
+/* polish: cursor spotlight, button ripple, confetti, shortcuts */
+document.addEventListener('mousemove', e => { const t = e.target.closest && e.target.closest('.spot'); if (t) { const r = t.getBoundingClientRect(); t.style.setProperty('--mx', e.clientX - r.left + 'px'); t.style.setProperty('--my', e.clientY - r.top + 'px'); } });
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.btn'); if (!b || b.disabled) return;
+  const r = b.getBoundingClientRect(), d = Math.max(r.width, r.height), s = document.createElement('span'); s.className = 'rp';
+  s.style.cssText = `width:${d}px;height:${d}px;left:${e.clientX - r.left - d / 2}px;top:${e.clientY - r.top - d / 2}px`; b.appendChild(s); setTimeout(() => s.remove(), 600); });
+function burst(){ for (let i = 0; i < 26; i++) { const d = document.createElement('i'); d.className = 'cf'; d.style.background = ['#5eead4','#60a5fa','#a78bfa','#f472b6','#fde047'][i % 5]; document.body.appendChild(d);
+  const a = Math.random() * Math.PI, v = 140 + Math.random() * 220, sx = Math.random() < .5 ? -1 : 1;
+  d.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 }, { transform: `translate(${Math.cos(a) * v * sx}px,${-Math.sin(a) * v}px) rotate(${Math.random() * 720}deg) scale(.4)`, opacity: 0 }], { duration: 1100, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => d.remove(); } }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeDrawer(); $('modal').classList.add('hide'); }
+  if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && !$('app').classList.contains('hide') && tab !== 'users' && tab !== 'act') { e.preventDefault(); $('q').focus(); }
+});
 
 /* ---------- start ---------- */
 if (initError) { showAuth(initError); $('authBtn').disabled = true; }
